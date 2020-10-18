@@ -43,22 +43,6 @@ namespace WorkLog
             }
         }
 
-        public void DisplayRecord(string cmd, Label label)
-        {
-            using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
-            {
-                using (SQLiteDataAdapter sda = new SQLiteDataAdapter(cmd, con))
-                {
-                    //Fill the DataTable with records from Table.
-                    DataTable dt = new DataTable();
-                    sda.Fill(dt);
-
-                    MessageBox.Show(dt.ToString());
-                    
-                }
-            }
-        }
-
         public void FillDataGrid(string cmd, DataGridView dgv)
         {
             using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
@@ -70,13 +54,11 @@ namespace WorkLog
                     sda.Fill(dt);
 
                     dgv.DataSource = dt;
-
                 }
             }
-        }
-         
+        }         
 
-        public void InsertRecord(Record record)
+        public void InsertRecord(Record record, bool isReimburse)
         {
             try
             {
@@ -96,10 +78,22 @@ namespace WorkLog
                     cmd.Parameters.Add("@Task", DbType.String).Value = record.Task;
                     cmd.Parameters.Add("@Item", DbType.String).Value = record.Item;
                     cmd.Parameters.Add("@Date", DbType.String).Value = record.Date.ToString("d");
-                    cmd.Parameters.Add("@StartTime", DbType.String).Value = record.StartTime.ToString("h:mm tt");
-                    cmd.Parameters.Add("@EndTime", DbType.String).Value = record.EndTime.ToString("h:mm tt");
-                    cmd.Parameters.Add("@Hours", DbType.String).Value = record.TotalHours.ToString();
-                    cmd.Parameters.Add("@ReimbursableCost", DbType.String).Value = record.ReimburseAmount.ToString();
+
+                    if (isReimburse == true)
+                    {
+                        cmd.Parameters.Add("@StartTime", DbType.String).Value = "";
+                        cmd.Parameters.Add("@EndTime", DbType.String).Value = "";
+                        cmd.Parameters.Add("@Hours", DbType.String).Value = "";
+                        cmd.Parameters.Add("@ReimbursableCost", DbType.String).Value = record.ReimburseAmount.ToString();
+                    }
+                    else
+                    {
+                        cmd.Parameters.Add("@StartTime", DbType.String).Value = record.StartTime.ToString("h:mm tt");
+                        cmd.Parameters.Add("@EndTime", DbType.String).Value = record.EndTime.ToString("h:mm tt");
+                        cmd.Parameters.Add("@Hours", DbType.String).Value = record.TotalHours.ToString();
+                        cmd.Parameters.Add("@ReimbursableCost", DbType.String).Value = "0";
+                    }
+                    
                     cmd.Parameters.Add("@Description", DbType.String).Value = record.Description;
                     cmd.Parameters.Add("@CreateDate", DbType.String).Value = DateTime.Now.ToString();
 

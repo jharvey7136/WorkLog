@@ -46,28 +46,16 @@
             this.dtpDate = new System.Windows.Forms.DateTimePicker();
             this.lblDate = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnPreview = new System.Windows.Forms.Button();
             this.txtReimburseCost = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lblItem = new System.Windows.Forms.Label();
             this.cbItem = new System.Windows.Forms.ComboBox();
-            this.lblPrevClient = new System.Windows.Forms.Label();
-            this.lblPrevProService = new System.Windows.Forms.Label();
-            this.gbPreview = new System.Windows.Forms.GroupBox();
-            this.lblPrevReimburse = new System.Windows.Forms.Label();
-            this.lblPrevDescription = new System.Windows.Forms.Label();
-            this.lblPrevTime = new System.Windows.Forms.Label();
-            this.lblPrevDate = new System.Windows.Forms.Label();
-            this.lblPrevHours = new System.Windows.Forms.Label();
-            this.lblPrevItem = new System.Windows.Forms.Label();
-            this.lblPrevTask = new System.Windows.Forms.Label();
             this.btnTest = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnSubmit = new System.Windows.Forms.Button();
             this.btnView = new System.Windows.Forms.Button();
             this.dgvRecords = new System.Windows.Forms.DataGridView();
             this.groupBox1.SuspendLayout();
-            this.gbPreview.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.SuspendLayout();
             // 
@@ -131,9 +119,9 @@
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(808, 556);
+            this.btnClose.Location = new System.Drawing.Point(763, 195);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(99, 36);
+            this.btnClose.Size = new System.Drawing.Size(78, 24);
             this.btnClose.TabIndex = 8;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
@@ -234,8 +222,9 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnPreview);
             this.groupBox1.Controls.Add(this.txtReimburseCost);
+            this.groupBox1.Controls.Add(this.btnSubmit);
+            this.groupBox1.Controls.Add(this.btnView);
             this.groupBox1.Controls.Add(this.txtDescription);
             this.groupBox1.Controls.Add(this.lblComments);
             this.groupBox1.Controls.Add(this.lblDate);
@@ -245,24 +234,15 @@
             this.groupBox1.Controls.Add(this.lblStartTime);
             this.groupBox1.Controls.Add(this.dtpEndTime);
             this.groupBox1.Controls.Add(this.lblEndTime);
+            this.groupBox1.Controls.Add(this.btnClose);
             this.groupBox1.Controls.Add(this.lblTotalHours);
             this.groupBox1.Controls.Add(this.lblHours);
-            this.groupBox1.Location = new System.Drawing.Point(16, 165);
+            this.groupBox1.Location = new System.Drawing.Point(16, 143);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(505, 243);
+            this.groupBox1.Size = new System.Drawing.Size(847, 227);
             this.groupBox1.TabIndex = 20;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Options";
-            // 
-            // btnPreview
-            // 
-            this.btnPreview.Location = new System.Drawing.Point(414, 195);
-            this.btnPreview.Name = "btnPreview";
-            this.btnPreview.Size = new System.Drawing.Size(75, 23);
-            this.btnPreview.TabIndex = 24;
-            this.btnPreview.Text = "Preview";
-            this.btnPreview.UseVisualStyleBackColor = true;
-            this.btnPreview.Click += new System.EventHandler(this.btnPreview_Click);
             // 
             // txtReimburseCost
             // 
@@ -302,101 +282,11 @@
             this.cbItem.Size = new System.Drawing.Size(215, 24);
             this.cbItem.TabIndex = 21;
             // 
-            // lblPrevClient
-            // 
-            this.lblPrevClient.Location = new System.Drawing.Point(5, 19);
-            this.lblPrevClient.Name = "lblPrevClient";
-            this.lblPrevClient.Size = new System.Drawing.Size(161, 13);
-            this.lblPrevClient.TabIndex = 23;
-            this.lblPrevClient.Text = "Client";
-            // 
-            // lblPrevProService
-            // 
-            this.lblPrevProService.Location = new System.Drawing.Point(28, 39);
-            this.lblPrevProService.Name = "lblPrevProService";
-            this.lblPrevProService.Size = new System.Drawing.Size(192, 13);
-            this.lblPrevProService.TabIndex = 24;
-            this.lblPrevProService.Text = "Professional Service";
-            // 
-            // gbPreview
-            // 
-            this.gbPreview.Controls.Add(this.lblPrevReimburse);
-            this.gbPreview.Controls.Add(this.lblPrevDescription);
-            this.gbPreview.Controls.Add(this.lblPrevTime);
-            this.gbPreview.Controls.Add(this.lblPrevDate);
-            this.gbPreview.Controls.Add(this.lblPrevHours);
-            this.gbPreview.Controls.Add(this.lblPrevItem);
-            this.gbPreview.Controls.Add(this.lblPrevTask);
-            this.gbPreview.Controls.Add(this.lblPrevClient);
-            this.gbPreview.Controls.Add(this.lblPrevProService);
-            this.gbPreview.Location = new System.Drawing.Point(16, 415);
-            this.gbPreview.Name = "gbPreview";
-            this.gbPreview.Size = new System.Drawing.Size(505, 139);
-            this.gbPreview.TabIndex = 25;
-            this.gbPreview.TabStop = false;
-            this.gbPreview.Text = "Preview";
-            // 
-            // lblPrevReimburse
-            // 
-            this.lblPrevReimburse.Location = new System.Drawing.Point(414, 58);
-            this.lblPrevReimburse.Name = "lblPrevReimburse";
-            this.lblPrevReimburse.Size = new System.Drawing.Size(75, 13);
-            this.lblPrevReimburse.TabIndex = 31;
-            this.lblPrevReimburse.Text = "Reimbursable";
-            // 
-            // lblPrevDescription
-            // 
-            this.lblPrevDescription.Location = new System.Drawing.Point(8, 100);
-            this.lblPrevDescription.Name = "lblPrevDescription";
-            this.lblPrevDescription.Size = new System.Drawing.Size(463, 13);
-            this.lblPrevDescription.TabIndex = 30;
-            this.lblPrevDescription.Text = "Description";
-            // 
-            // lblPrevTime
-            // 
-            this.lblPrevTime.Location = new System.Drawing.Point(266, 19);
-            this.lblPrevTime.Name = "lblPrevTime";
-            this.lblPrevTime.Size = new System.Drawing.Size(142, 13);
-            this.lblPrevTime.TabIndex = 29;
-            this.lblPrevTime.Text = "Time";
-            // 
-            // lblPrevDate
-            // 
-            this.lblPrevDate.Location = new System.Drawing.Point(172, 19);
-            this.lblPrevDate.Name = "lblPrevDate";
-            this.lblPrevDate.Size = new System.Drawing.Size(75, 13);
-            this.lblPrevDate.TabIndex = 28;
-            this.lblPrevDate.Text = "Date";
-            // 
-            // lblPrevHours
-            // 
-            this.lblPrevHours.Location = new System.Drawing.Point(414, 19);
-            this.lblPrevHours.Name = "lblPrevHours";
-            this.lblPrevHours.Size = new System.Drawing.Size(75, 13);
-            this.lblPrevHours.TabIndex = 27;
-            this.lblPrevHours.Text = "Hours";
-            // 
-            // lblPrevItem
-            // 
-            this.lblPrevItem.Location = new System.Drawing.Point(79, 76);
-            this.lblPrevItem.Name = "lblPrevItem";
-            this.lblPrevItem.Size = new System.Drawing.Size(139, 13);
-            this.lblPrevItem.TabIndex = 26;
-            this.lblPrevItem.Text = "Item";
-            // 
-            // lblPrevTask
-            // 
-            this.lblPrevTask.Location = new System.Drawing.Point(53, 58);
-            this.lblPrevTask.Name = "lblPrevTask";
-            this.lblPrevTask.Size = new System.Drawing.Size(231, 13);
-            this.lblPrevTask.TabIndex = 25;
-            this.lblPrevTask.Text = "Task";
-            // 
             // btnTest
             // 
-            this.btnTest.Location = new System.Drawing.Point(443, 556);
+            this.btnTest.Location = new System.Drawing.Point(458, 113);
             this.btnTest.Name = "btnTest";
-            this.btnTest.Size = new System.Drawing.Size(78, 20);
+            this.btnTest.Size = new System.Drawing.Size(78, 24);
             this.btnTest.TabIndex = 26;
             this.btnTest.Text = "Test";
             this.btnTest.UseVisualStyleBackColor = true;
@@ -404,9 +294,9 @@
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(704, 557);
+            this.btnClear.Location = new System.Drawing.Point(542, 113);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(98, 35);
+            this.btnClear.Size = new System.Drawing.Size(78, 24);
             this.btnClear.TabIndex = 27;
             this.btnClear.Text = "Clear";
             this.btnClear.UseVisualStyleBackColor = true;
@@ -414,9 +304,9 @@
             // 
             // btnSubmit
             // 
-            this.btnSubmit.Location = new System.Drawing.Point(326, 556);
+            this.btnSubmit.Location = new System.Drawing.Point(405, 196);
             this.btnSubmit.Name = "btnSubmit";
-            this.btnSubmit.Size = new System.Drawing.Size(98, 20);
+            this.btnSubmit.Size = new System.Drawing.Size(78, 23);
             this.btnSubmit.TabIndex = 28;
             this.btnSubmit.Text = "Submit";
             this.btnSubmit.UseVisualStyleBackColor = true;
@@ -424,9 +314,9 @@
             // 
             // btnView
             // 
-            this.btnView.Location = new System.Drawing.Point(12, 573);
+            this.btnView.Location = new System.Drawing.Point(489, 196);
             this.btnView.Name = "btnView";
-            this.btnView.Size = new System.Drawing.Size(133, 22);
+            this.btnView.Size = new System.Drawing.Size(109, 23);
             this.btnView.TabIndex = 31;
             this.btnView.Text = "View Records";
             this.btnView.UseVisualStyleBackColor = true;
@@ -435,37 +325,32 @@
             // dgvRecords
             // 
             this.dgvRecords.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvRecords.Location = new System.Drawing.Point(12, 601);
+            this.dgvRecords.Location = new System.Drawing.Point(16, 376);
             this.dgvRecords.Name = "dgvRecords";
-            this.dgvRecords.Size = new System.Drawing.Size(895, 147);
+            this.dgvRecords.Size = new System.Drawing.Size(847, 223);
             this.dgvRecords.TabIndex = 32;
             // 
             // WorkLog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(919, 760);
+            this.ClientSize = new System.Drawing.Size(882, 618);
             this.Controls.Add(this.dgvRecords);
-            this.Controls.Add(this.btnView);
-            this.Controls.Add(this.btnSubmit);
-            this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnTest);
-            this.Controls.Add(this.gbPreview);
             this.Controls.Add(this.lblItem);
             this.Controls.Add(this.cbItem);
             this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.btnClear);
             this.Controls.Add(this.lblTask);
             this.Controls.Add(this.cbTask);
             this.Controls.Add(this.lblProService);
             this.Controls.Add(this.cbProService);
-            this.Controls.Add(this.btnClose);
             this.Controls.Add(this.lblClient);
             this.Controls.Add(this.cbClient);
             this.Name = "WorkLog";
-            this.Text = "Form1";
+            this.Text = "Work Log";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.gbPreview.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -496,17 +381,6 @@
         private System.Windows.Forms.ComboBox cbItem;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtReimburseCost;
-        private System.Windows.Forms.Button btnPreview;
-        private System.Windows.Forms.Label lblPrevClient;
-        private System.Windows.Forms.Label lblPrevProService;
-        private System.Windows.Forms.GroupBox gbPreview;
-        private System.Windows.Forms.Label lblPrevTask;
-        private System.Windows.Forms.Label lblPrevItem;
-        private System.Windows.Forms.Label lblPrevHours;
-        private System.Windows.Forms.Label lblPrevTime;
-        private System.Windows.Forms.Label lblPrevDate;
-        private System.Windows.Forms.Label lblPrevDescription;
-        private System.Windows.Forms.Label lblPrevReimburse;
         private System.Windows.Forms.Button btnTest;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnSubmit;
