@@ -35,10 +35,10 @@ namespace WorkLog
 
             cbClient.SelectedValue = "";
             cbProService.SelectedValue = "";
+            lblMessage.Text = "";
 
             oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client", cbClient, "ClientName", "ClientID");
             oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService", cbProService, "ProServiceName", "ProServiceID");
-            ResetPreview();
         }
 
         private void dtpStartTime_ValueChanged(object sender, EventArgs e)
@@ -73,11 +73,11 @@ namespace WorkLog
         private void CbProService_SelectedIndexChanged(object sender, EventArgs e)
         {
             string cmd = "";
-            if (cbProService.SelectedValue.ToString() != "System.Data.DataRowView" && cbProService.SelectedValue != null)            
-                cmd = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = " + cbProService.SelectedValue;            
-            else           
-                cmd = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = 1";                        
-            
+            if (cbProService.SelectedValue.ToString() != "System.Data.DataRowView" && cbProService.SelectedValue != null)
+                cmd = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = " + cbProService.SelectedValue;
+            else
+                cmd = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = 1";
+
             oDAL.FillComboBox(cmd, cbTask, "TaskName", "TaskID");
 
             if (cbProService.Text == "Reimbursable")
@@ -85,34 +85,26 @@ namespace WorkLog
                 txtReimburseCost.Enabled = true;
                 dtpStartTime.Enabled = false;
                 dtpEndTime.Enabled = false;
+                lblHours.Enabled = false;
             }
             else
             {
                 txtReimburseCost.Enabled = false;
                 dtpStartTime.Enabled = true;
                 dtpEndTime.Enabled = true;
+                lblHours.Enabled = true;
             }
         }
 
         private void CbTask_SelectedIndexChanged(object sender, EventArgs e)
         {
             string cmd = "";
-            if (cbTask.SelectedValue.ToString() != "System.Data.DataRowView" && cbTask.SelectedValue != null)            
-                cmd = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = " + cbProService.SelectedValue;            
-            else            
-                cmd = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = 1";                        
-                
-            oDAL.FillComboBox(cmd, cbItem, "ItemName", "ItemID");
-        }
+            if (cbTask.SelectedValue.ToString() != "System.Data.DataRowView" && cbTask.SelectedValue != null)
+                cmd = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = " + cbProService.SelectedValue;
+            else
+                cmd = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = 1";
 
-        private void TxtRate_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar)
-                    && !char.IsDigit(e.KeyChar)
-                    && e.KeyChar != '.')
-            {
-                e.Handled = true;
-            }
+            oDAL.FillComboBox(cmd, cbItem, "ItemName", "ItemID");
         }
 
         private void TxtReimburseCost_KeyPress(object sender, KeyPressEventArgs e)
@@ -125,34 +117,16 @@ namespace WorkLog
             }
         }
 
-        private void btnPreview_Click(object sender, EventArgs e)
-        {
-            GeneratePreview();
-        }
-
-        private void ResetPreview()
-        {
-            lblPrevClient.Text = "";
-            lblPrevDate.Text = "";
-            lblPrevDescription.Text = "";
-            lblPrevHours.Text = "";
-            lblPrevItem.Text = "";
-            lblPrevProService.Text = "";
-            lblPrevTask.Text = "";
-            lblPrevTime.Text = "";
-            lblPrevReimburse.Text = "";
-        }
-
         private void BtnTest_Click(object sender, EventArgs e)
         {
             Random rnd = new Random();
 
-            int i = rnd.Next(1, 15);
+            int i = rnd.Next(1, 16);
             cbClient.SelectedValue = i;
 
-            i = rnd.Next(1, 3);
+            i = rnd.Next(1, 4);
             cbProService.SelectedValue = i;
-                       
+
             switch (i)
             {
                 case 1:
@@ -169,12 +143,21 @@ namespace WorkLog
 
             int hr = rnd.Next(1, 12);
             int m = rnd.Next(1, 29);
+            int d = rnd.Next(1, 30);
+
+            dtpDate.Value = DateTime.Now.AddDays(d * -1);
+
             dtpStartTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hr, m, 0);
 
             dtpEndTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hr + rnd.Next(1, 11), m + rnd.Next(1, 29), 0);
 
             txtDescription.Text = "The quick brown fox jumped over the lazy brown dog";
-            GeneratePreview();
+
+            int r = rnd.Next(1, 30);
+            r *= 10;
+
+            //if (cbProService.SelectedText == "Reimbursable")
+            txtReimburseCost.Text = r.ToString();
         }
 
         private Record NewRecord()
@@ -193,39 +176,6 @@ namespace WorkLog
             return myRecord;
         }
 
-        private void GeneratePreview()
-        {
-            try
-            {
-                Record myRecord = NewRecord();
-
-                lblPrevClient.Text = myRecord.Client;
-                lblPrevDate.Text = String.Format("{0:M/d/yyyy}", myRecord.Date);
-                lblPrevDescription.Text = myRecord.Description;
-                lblPrevHours.Text = myRecord.TotalHours.ToString();
-                lblPrevItem.Text = myRecord.Item;
-                lblPrevProService.Text = myRecord.ProService;
-                lblPrevTask.Text = myRecord.Task;
-                lblPrevTime.Text = String.Format("{0:t}", myRecord.StartTime) + " - " + String.Format("{0:t}", myRecord.EndTime);
-
-                if (cbProService.Text == "Reimbursable")
-                {
-                    lblPrevHours.Text = "";
-                    lblPrevTime.Text = "";
-                    lblPrevReimburse.Text = myRecord.ReimburseAmount.ToString();
-                }
-                else
-                {
-                    lblPrevReimburse.Text = "";
-                }
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
-            }
-
-        }
-
         private void BtnClear_Click(object sender, EventArgs e)
         {
             cbClient.SelectedValue = 0;
@@ -233,51 +183,108 @@ namespace WorkLog
             cbTask.SelectedValue = 0;
             cbItem.SelectedValue = 0;
 
+            dtpDate.Value = DateTime.Now;
             dtpStartTime.Value = DateTime.Now;
             dtpEndTime.Value = DateTime.Now;
 
             txtDescription.Text = "";
-
-            lblPrevClient.Text = "";
-            lblPrevDate.Text = "";
-            lblPrevDescription.Text = "";
-            lblPrevHours.Text = "";
-            lblPrevItem.Text = "";
-            lblPrevProService.Text = "";
-            lblPrevTask.Text = "";
-            lblPrevTime.Text = "";
-
-            
+            lblMessage.Text = "";
         }
 
         private void BtnSubmit_Click(object sender, EventArgs e)
         {
+            if (Validation() == true)
+            {
+                try
+                {
+                    Record myRecord = NewRecord();
+                    bool isReimburse = false;
+
+                    if (cbProService.Text == "Reimbursable")
+                        isReimburse = true;
+
+                    oDAL.InsertRecord(myRecord, isReimburse);
+                    FillDataGrid();
+                    lblMessage.Text = "Record submitted successfully!";
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }
+        }
+
+        private void BtnView_Click(object sender, EventArgs e)
+        {
+            FillDataGrid();
+        }
+
+        private void FillDataGrid()
+        {
+            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+                "FROM Record ORDER BY CreateDate DESC";
+            oDAL.FillDataGrid(cmd, dgvRecords);
+        }
+
+        private bool Validation()
+        {
+            if (Convert.ToInt32(cbClient.SelectedValue) < 1)
+            {
+                MessageBox.Show("Select a Client");
+                return false;
+            }
+
+            if (Convert.ToInt32(cbProService.SelectedValue) < 1)
+            {
+                MessageBox.Show("Select a Professional Service");
+                return false;
+            }
+
+            if (Convert.ToInt32(cbTask.SelectedValue) < 1)
+            {
+                MessageBox.Show("Select a Task");
+                return false;
+            }
+            return true;
+        }
+
+        private void BtnExport_Click(object sender, EventArgs e)
+        {
             try
             {
-                Record myRecord = NewRecord();
-                oDAL.InsertRecord(myRecord);
-                //MessageBox.Show(myRecord.PrintRecord());
+                string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+                                "FROM Record ORDER BY RowID DESC";
+                DataTable dt = DAL.CreateDataTable(cmd);
+                string filename = @"C:\Users\johnh\Desktop\WorkLogExport.csv";
+
+                dt.ToCSV(filename);
+
+                MessageBox.Show("Data exported successfully! " + filename);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
-
             
         }
 
-        private void BtnView_Click(object sender, EventArgs e)
+        private void BtnFilter_Click(object sender, EventArgs e)
         {
-            List<Record> record = new List<Record>();
-
-            record = DAL.LoadRecords();
-
-            //listOutput.DataSource = record;
-            //listOutput.DisplayMember = "FullRecord";
-
-            string cmd = "SELECT * FROM Record";
-
-            oDAL.FillDataGrid(cmd, dgvRecords);
+            try
+            {
+                string start = dtpFilterStart.Value.ToString("yyyy-MM-dd");
+                string end = dtpFilterEnd.Value.ToString("yyyy-MM-dd");
+                string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+                             "FROM Record " +
+                             "WHERE Date BETWEEN '" + start + "' AND '" + end + "' " +
+                             "ORDER BY Date";
+                oDAL.FillDataGrid(cmd, dgvRecords);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            
         }
     }
 }
