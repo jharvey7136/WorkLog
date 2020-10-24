@@ -8,6 +8,7 @@ using System.Data.SQLite;
 using System.Data;
 using System.Configuration;
 using System.Windows.Forms;
+using System.IO;
 
 namespace WorkLog
 {
@@ -45,6 +46,22 @@ namespace WorkLog
 
         public void FillDataGrid(string cmd, DataGridView dgv)
         {
+            dgv.DataSource = CreateDataTable(cmd);
+            //using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+            //{
+            //    using (SQLiteDataAdapter sda = new SQLiteDataAdapter(cmd, con))
+            //    {
+            //        //Fill the DataTable with records from Table.
+            //        DataTable dt = new DataTable();
+            //        sda.Fill(dt);
+
+            //        dgv.DataSource = dt;
+            //    }
+            //}
+        }
+
+        public static DataTable CreateDataTable(string cmd)
+        {
             using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
             {
                 using (SQLiteDataAdapter sda = new SQLiteDataAdapter(cmd, con))
@@ -52,11 +69,14 @@ namespace WorkLog
                     //Fill the DataTable with records from Table.
                     DataTable dt = new DataTable();
                     sda.Fill(dt);
-
-                    dgv.DataSource = dt;
+                    return dt;
                 }
             }
-        }         
+        }
+
+
+
+
 
         public void InsertRecord(Record record, bool isReimburse)
         {
@@ -67,7 +87,7 @@ namespace WorkLog
                     string insertSQL = @"INSERT INTO Record (Client, ProService, Task, Item, Date, StartTime, " +
                     "EndTime, Hours, ReimbursableCost, Description, CreateDate) " +
                     "VALUES (@Client, @ProService, @Task, @Item, @Date, @StartTime, @EndTime, @Hours, @ReimbursableCost, " +
-                    "@Description, @CreateDate)";                                      
+                    "@Description, @CreateDate)";
 
                     con.Open();
 
@@ -77,7 +97,7 @@ namespace WorkLog
                     cmd.Parameters.Add("@ProService", DbType.String).Value = record.ProService;
                     cmd.Parameters.Add("@Task", DbType.String).Value = record.Task;
                     cmd.Parameters.Add("@Item", DbType.String).Value = record.Item;
-                    cmd.Parameters.Add("@Date", DbType.String).Value = record.Date.ToString("d");
+                    cmd.Parameters.Add("@Date", DbType.String).Value = record.Date.ToString("yyyy-MM-dd");
 
                     if (isReimburse == true)
                     {
@@ -93,7 +113,7 @@ namespace WorkLog
                         cmd.Parameters.Add("@Hours", DbType.String).Value = record.TotalHours.ToString();
                         cmd.Parameters.Add("@ReimbursableCost", DbType.String).Value = "0";
                     }
-                    
+
                     cmd.Parameters.Add("@Description", DbType.String).Value = record.Description;
                     cmd.Parameters.Add("@CreateDate", DbType.String).Value = DateTime.Now.ToString();
 
@@ -107,15 +127,48 @@ namespace WorkLog
 
         }
 
-        public static List<Record> LoadRecords()
+    }
+
+    public static class CSVUtility
+    {
+        public static void ToCSV(this DataTable dtDataTable, string strFilePath)
         {
-            using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+            StreamWriter sw = new StreamWriter(strFilePath, false);
+            
+            for (int i = 0; i < dtDataTable.Columns.Count; i++)
             {
-                var output = cnn.Query<Record>("select * from Record", new DynamicParameters());
-                return output.ToList();
+                sw.Write(dtDataTable.Columns[i]);
+                if (i < dtDataTable.Columns.Count - 1)
+                {
+                    sw.Write(",");
+                }
             }
+            sw.Write(sw.NewLine);
+            foreach (DataRow dr in dtDataTable.Rows)
+            {
+                for (int i = 0; i < dtDataTable.Columns.Count; i++)
+                {
+                    if (!Convert.IsDBNull(dr[i]))
+                    {
+                        string value = dr[i].ToString();
+                        if (value.Contains(','))
+                        {
+                            value = String.Format("\"{0}\"", value);
+                            sw.Write(value);
+                        }
+                        else
+                        {
+                            sw.Write(dr[i].ToString());
+                        }
+                    }
+                    if (i < dtDataTable.Columns.Count - 1)
+                    {
+                        sw.Write(",");
+                    }
+                }
+                sw.Write(sw.NewLine);
+            }
+            sw.Close();
         }
-
-
     }
 }

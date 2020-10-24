@@ -35,10 +35,10 @@ namespace WorkLog
 
             cbClient.SelectedValue = "";
             cbProService.SelectedValue = "";
+            lblMessage.Text = "";
 
             oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client", cbClient, "ClientName", "ClientID");
             oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService", cbProService, "ProServiceName", "ProServiceID");
-
         }
 
         private void dtpStartTime_ValueChanged(object sender, EventArgs e)
@@ -105,16 +105,6 @@ namespace WorkLog
                 cmd = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = 1";
 
             oDAL.FillComboBox(cmd, cbItem, "ItemName", "ItemID");
-        }
-
-        private void TxtRate_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar)
-                    && !char.IsDigit(e.KeyChar)
-                    && e.KeyChar != '.')
-            {
-                e.Handled = true;
-            }
         }
 
         private void TxtReimburseCost_KeyPress(object sender, KeyPressEventArgs e)
@@ -198,6 +188,7 @@ namespace WorkLog
             dtpEndTime.Value = DateTime.Now;
 
             txtDescription.Text = "";
+            lblMessage.Text = "";
         }
 
         private void BtnSubmit_Click(object sender, EventArgs e)
@@ -214,6 +205,7 @@ namespace WorkLog
 
                     oDAL.InsertRecord(myRecord, isReimburse);
                     FillDataGrid();
+                    lblMessage.Text = "Record submitted successfully!";
                 }
                 catch (Exception ex)
                 {
@@ -254,6 +246,45 @@ namespace WorkLog
                 return false;
             }
             return true;
+        }
+
+        private void BtnExport_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+                                "FROM Record ORDER BY RowID DESC";
+                DataTable dt = DAL.CreateDataTable(cmd);
+                string filename = @"C:\Users\johnh\Desktop\WorkLogExport.csv";
+
+                dt.ToCSV(filename);
+
+                MessageBox.Show("Data exported successfully! " + filename);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            
+        }
+
+        private void BtnFilter_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string start = dtpFilterStart.Value.ToString("yyyy-MM-dd");
+                string end = dtpFilterEnd.Value.ToString("yyyy-MM-dd");
+                string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+                             "FROM Record " +
+                             "WHERE Date BETWEEN '" + start + "' AND '" + end + "' " +
+                             "ORDER BY Date";
+                oDAL.FillDataGrid(cmd, dgvRecords);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            
         }
     }
 }
