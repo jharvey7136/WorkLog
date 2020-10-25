@@ -297,11 +297,12 @@ namespace WorkLog
                 string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
                                 "FROM Record ORDER BY RowID DESC";
                 DataTable dt = DAL.CreateDataTable(cmd);
-                string filename = @"C:\Users\johnh\Desktop\WorkLogExport.csv";
-
-                dt.ToCSV(filename);
-
-                MessageBox.Show("Data exported successfully! " + filename);
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Filter = "csv|*.csv";
+                sfd.Title = "Export Records to CSV";
+                sfd.ShowDialog();
+                dt.ToCSV(sfd.FileName);
+                lblMessage.Text = "Data exported successfully!";                
             }
             catch (Exception ex)
             {

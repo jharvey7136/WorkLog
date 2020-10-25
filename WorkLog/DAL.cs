@@ -14,21 +14,11 @@ namespace WorkLog
 {
     public class DAL
     {
-        //private static BindingSource _bs = new BindingSource();
-        //private static SQLiteDataAdapter _sda = new SQLiteDataAdapter();
-        //private static DataTable _dt = new DataTable();
-
         private static string LoadConnectionString(string id = "Default")
         {
             return ConfigurationManager.ConnectionStrings[id].ConnectionString;
         }
 
-        //public BindingSource GetBindingSource() { return _bs; }
-        //public SQLiteDataAdapter GetSQLiteDataAdapter() { return _sda; }
-        //public DataTable GetDataTable() { return _dt; }
-                
-
-        //@"DataSource=C:\Users\johnh\source\repos\WorkLog\WorkLog\WorkLog.db;"
         public void FillComboBox(string cmd, ComboBox cb, string strDisplay, string strValue)
         {
             using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
@@ -67,49 +57,14 @@ namespace WorkLog
                     //Fill the DataTable with records from Table.
                     DataTable dt = new DataTable();
                     sda.Fill(dt);
-                    //_sda = sda;
-                    //_dt = dt;
-                    //_bs.DataSource = dt;
                     return dt;
                 }
             }
         }
 
-        public void UpdateClient(DataGridView dgv)
-        {
-            try
-            {
-                foreach (DataGridViewRow row in dgv.Rows)
-                {
-                    string sql = "UPDATE Client SET ClientName = @name, AddressLine1 = @a1, AddressLine2 = @a2, City = @city, State = @state, Zip = @zip WHERE ClientID = @ID";
-                    using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
-                    {
-                        using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
-                        {
-                            cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["ClientID"].Value;
-                            cmd.Parameters.Add("@name", DbType.String).Value = row.Cells["ClientName"].Value;
-                            cmd.Parameters.Add("@a1", DbType.String).Value = row.Cells["AddressLine1"].Value;
-                            cmd.Parameters.Add("@a2", DbType.String).Value = row.Cells["AddressLine2"].Value;
-                            cmd.Parameters.Add("@city", DbType.String).Value = row.Cells["City"].Value;
-                            cmd.Parameters.Add("@state", DbType.String).Value = row.Cells["State"].Value;
-                            cmd.Parameters.Add("@zip", DbType.String).Value = row.Cells["Zip"].Value;
 
-                            //CheckIfDataChanged(row);
 
-                            con.Open();
-                            cmd.ExecuteNonQuery();                            
-                        }
-                    }
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-        }
-
-        public void BackupDB()
+        public bool BackupDB()
         {
             try
             {
@@ -124,12 +79,13 @@ namespace WorkLog
                     src.BackupDatabase(dest, "main", "main", -1, null, 0);
                 }
                 DeleteOldestBackups();
+                return true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
+                return false;
             }
-            
         }
 
         private void DeleteOldestBackups()
@@ -190,6 +146,113 @@ namespace WorkLog
                 throw new Exception(ex.Message);
             }
         }
+
+        public void UpdateClient(DataGridView dgv)
+        {
+            try
+            {
+                if (BackupDB())
+                {
+                    foreach (DataGridViewRow row in dgv.Rows)
+                    {
+                        if (row.Cells["ClientID"].Value != null)
+                        {
+                            if (row.Cells["ClientID"].Value.ToString() == "")
+                            {
+                                string sqlInsert = "INSERT INTO Client(ClientName, AddressLine1, AddressLine2, City, State, Zip) VALUES(@name, @a1, @a2, @city, @state, @zip)";
+                                using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                                {
+                                    using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
+                                    {
+                                        cmd.Parameters.Add("@name", DbType.String).Value = row.Cells["ClientName"].Value;
+                                        cmd.Parameters.Add("@a1", DbType.String).Value = row.Cells["AddressLine1"].Value;
+                                        cmd.Parameters.Add("@a2", DbType.String).Value = row.Cells["AddressLine2"].Value;
+                                        cmd.Parameters.Add("@city", DbType.String).Value = row.Cells["City"].Value;
+                                        cmd.Parameters.Add("@state", DbType.String).Value = row.Cells["State"].Value;
+                                        cmd.Parameters.Add("@zip", DbType.String).Value = row.Cells["Zip"].Value;
+                                        con.Open();
+                                        cmd.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                string sql = "UPDATE Client SET ClientName = @name, AddressLine1 = @a1, AddressLine2 = @a2, City = @city, State = @state, Zip = @zip WHERE ClientID = @ID";
+                                using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                                {
+                                    using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
+                                    {
+                                        cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["ClientID"].Value;
+                                        cmd.Parameters.Add("@name", DbType.String).Value = row.Cells["ClientName"].Value;
+                                        cmd.Parameters.Add("@a1", DbType.String).Value = row.Cells["AddressLine1"].Value;
+                                        cmd.Parameters.Add("@a2", DbType.String).Value = row.Cells["AddressLine2"].Value;
+                                        cmd.Parameters.Add("@city", DbType.String).Value = row.Cells["City"].Value;
+                                        cmd.Parameters.Add("@state", DbType.String).Value = row.Cells["State"].Value;
+                                        cmd.Parameters.Add("@zip", DbType.String).Value = row.Cells["Zip"].Value;
+                                        con.Open();
+                                        cmd.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        public void UpdateProService(DataGridView dgv)
+        {
+            try
+            {
+                if (BackupDB())
+                {
+                    foreach (DataGridViewRow row in dgv.Rows)
+                    {
+                        if (row.Cells["ProServiceID"].Value != null)
+                        {
+                            if (row.Cells["ProServiceID"].Value.ToString() == "")
+                            {
+                                string sqlInsert = "INSERT INTO ProfessionalService(ProServiceName) VALUES(@proservice)";
+                                using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                                {
+                                    using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
+                                    {
+                                        cmd.Parameters.Add("@proservice", DbType.String).Value = row.Cells["ProServiceName"].Value;
+                                        con.Open();
+                                        cmd.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                string sql = "UPDATE ProfessionalService SET ProServiceName = @proservice WHERE ProServiceID = @ID";
+                                using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                                {
+                                    using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
+                                    {
+                                        cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["ProServiceID"].Value;
+                                        cmd.Parameters.Add("@proservice", DbType.String).Value = row.Cells["ProServiceName"].Value;
+                                        con.Open();
+                                        cmd.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+                        }                        
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+
+
     }
 
     public static class CSVUtility
