@@ -14,10 +14,19 @@ namespace WorkLog
 {
     public class DAL
     {
+        //private static BindingSource _bs = new BindingSource();
+        //private static SQLiteDataAdapter _sda = new SQLiteDataAdapter();
+        //private static DataTable _dt = new DataTable();
+
         private static string LoadConnectionString(string id = "Default")
         {
             return ConfigurationManager.ConnectionStrings[id].ConnectionString;
         }
+
+        //public BindingSource GetBindingSource() { return _bs; }
+        //public SQLiteDataAdapter GetSQLiteDataAdapter() { return _sda; }
+        //public DataTable GetDataTable() { return _dt; }
+                
 
         //@"DataSource=C:\Users\johnh\source\repos\WorkLog\WorkLog\WorkLog.db;"
         public void FillComboBox(string cmd, ComboBox cb, string strDisplay, string strValue)
@@ -58,10 +67,81 @@ namespace WorkLog
                     //Fill the DataTable with records from Table.
                     DataTable dt = new DataTable();
                     sda.Fill(dt);
+                    //_sda = sda;
+                    //_dt = dt;
+                    //_bs.DataSource = dt;
                     return dt;
                 }
             }
         }
+
+        public void UpdateClient(DataGridView dgv)
+        {
+            try
+            {
+                foreach (DataGridViewRow row in dgv.Rows)
+                {
+                    string sql = "UPDATE Client SET ClientName = @name, AddressLine1 = @a1, AddressLine2 = @a2, City = @city, State = @state, Zip = @zip WHERE ClientID = @ID";
+                    using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                    {
+                        using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
+                        {
+                            cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["ClientID"].Value;
+                            cmd.Parameters.Add("@name", DbType.String).Value = row.Cells["ClientName"].Value;
+                            cmd.Parameters.Add("@a1", DbType.String).Value = row.Cells["AddressLine1"].Value;
+                            cmd.Parameters.Add("@a2", DbType.String).Value = row.Cells["AddressLine2"].Value;
+                            cmd.Parameters.Add("@city", DbType.String).Value = row.Cells["City"].Value;
+                            cmd.Parameters.Add("@state", DbType.String).Value = row.Cells["State"].Value;
+                            cmd.Parameters.Add("@zip", DbType.String).Value = row.Cells["Zip"].Value;
+
+                            //CheckIfDataChanged(row);
+
+                            con.Open();
+                            cmd.ExecuteNonQuery();                            
+                        }
+                    }
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        public void BackupDB()
+        {
+            try
+            {
+                string now = DateTime.Now.ToString("yyyyMMddHHmmss");
+                string backupConnection = @"DataSource=..\..\..\db\WorkLog_" + now + ".db;Version=3;";
+
+                using (SQLiteConnection dest = new SQLiteConnection(backupConnection))
+                using (SQLiteConnection src = new SQLiteConnection(LoadConnectionString()))
+                {
+                    dest.Open();
+                    src.Open();
+                    src.BackupDatabase(dest, "main", "main", -1, null, 0);
+                }
+                DeleteOldestBackups();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            
+        }
+
+        private void DeleteOldestBackups()
+        {
+            foreach (var fi in new DirectoryInfo(@"..\..\..\db").GetFiles().OrderByDescending(x => x.LastWriteTime).Skip(50))
+                fi.Delete();
+        }
+
+        //private bool CheckIfDataChanged(DataGridViewRow row)
+        //{
+        //    return false;
+        //}
 
         public void InsertRecord(Record record, bool isReimburse)
         {

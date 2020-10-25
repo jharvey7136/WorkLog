@@ -48,32 +48,27 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txtReimburseCost = new System.Windows.Forms.TextBox();
             this.btnSubmit = new System.Windows.Forms.Button();
-            this.btnView = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnClear = new System.Windows.Forms.Button();
             this.lblItem = new System.Windows.Forms.Label();
             this.cbItem = new System.Windows.Forms.ComboBox();
             this.btnTest = new System.Windows.Forms.Button();
-            this.btnClear = new System.Windows.Forms.Button();
             this.dgvRecords = new System.Windows.Forms.DataGridView();
             this.lblMessage = new System.Windows.Forms.Label();
             this.btnExport = new System.Windows.Forms.Button();
             this.gbDataFilters = new System.Windows.Forms.GroupBox();
-            this.dtpFilterStart = new System.Windows.Forms.DateTimePicker();
-            this.dtpFilterEnd = new System.Windows.Forms.DateTimePicker();
+            this.btnView = new System.Windows.Forms.Button();
             this.lblFilterStart = new System.Windows.Forms.Label();
             this.lblFilterEnd = new System.Windows.Forms.Label();
-            this.btnFilter = new System.Windows.Forms.Button();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.dtpFilterStart = new System.Windows.Forms.DateTimePicker();
+            this.dtpFilterEnd = new System.Windows.Forms.DateTimePicker();
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.addSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clientToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.professionalServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.taskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.itemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripManageCat = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.gbDataFilters.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
+            this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbClient
@@ -136,9 +131,9 @@
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(763, 196);
+            this.btnClose.Location = new System.Drawing.Point(763, 40);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(78, 22);
+            this.btnClose.Size = new System.Drawing.Size(78, 24);
             this.btnClose.TabIndex = 8;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
@@ -239,20 +234,18 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnExport);
             this.groupBox1.Controls.Add(this.txtReimburseCost);
             this.groupBox1.Controls.Add(this.btnSubmit);
-            this.groupBox1.Controls.Add(this.btnView);
             this.groupBox1.Controls.Add(this.txtDescription);
             this.groupBox1.Controls.Add(this.lblComments);
             this.groupBox1.Controls.Add(this.lblDate);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.dtpDate);
+            this.groupBox1.Controls.Add(this.btnClear);
             this.groupBox1.Controls.Add(this.dtpStartTime);
             this.groupBox1.Controls.Add(this.lblStartTime);
             this.groupBox1.Controls.Add(this.dtpEndTime);
             this.groupBox1.Controls.Add(this.lblEndTime);
-            this.groupBox1.Controls.Add(this.btnClose);
             this.groupBox1.Controls.Add(this.lblTotalHours);
             this.groupBox1.Controls.Add(this.lblHours);
             this.groupBox1.Location = new System.Drawing.Point(16, 143);
@@ -273,23 +266,13 @@
             // 
             // btnSubmit
             // 
-            this.btnSubmit.Location = new System.Drawing.Point(405, 196);
+            this.btnSubmit.Location = new System.Drawing.Point(406, 196);
             this.btnSubmit.Name = "btnSubmit";
-            this.btnSubmit.Size = new System.Drawing.Size(78, 23);
+            this.btnSubmit.Size = new System.Drawing.Size(78, 24);
             this.btnSubmit.TabIndex = 28;
             this.btnSubmit.Text = "Submit";
             this.btnSubmit.UseVisualStyleBackColor = true;
             this.btnSubmit.Click += new System.EventHandler(this.BtnSubmit_Click);
-            // 
-            // btnView
-            // 
-            this.btnView.Location = new System.Drawing.Point(489, 196);
-            this.btnView.Name = "btnView";
-            this.btnView.Size = new System.Drawing.Size(109, 23);
-            this.btnView.TabIndex = 31;
-            this.btnView.Text = "View Records";
-            this.btnView.UseVisualStyleBackColor = true;
-            this.btnView.Click += new System.EventHandler(this.BtnView_Click);
             // 
             // label1
             // 
@@ -299,6 +282,16 @@
             this.label1.Size = new System.Drawing.Size(95, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Reimbursable Cost";
+            // 
+            // btnClear
+            // 
+            this.btnClear.Location = new System.Drawing.Point(490, 196);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(78, 24);
+            this.btnClear.TabIndex = 27;
+            this.btnClear.Text = "Clear";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.BtnClear_Click);
             // 
             // lblItem
             // 
@@ -330,16 +323,6 @@
             this.btnTest.UseVisualStyleBackColor = true;
             this.btnTest.Click += new System.EventHandler(this.BtnTest_Click);
             // 
-            // btnClear
-            // 
-            this.btnClear.Location = new System.Drawing.Point(542, 113);
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(78, 24);
-            this.btnClear.TabIndex = 27;
-            this.btnClear.Text = "Clear";
-            this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.BtnClear_Click);
-            // 
             // dgvRecords
             // 
             this.dgvRecords.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -350,6 +333,7 @@
             // 
             // lblMessage
             // 
+            this.lblMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMessage.Location = new System.Drawing.Point(16, 373);
             this.lblMessage.Name = "lblMessage";
             this.lblMessage.Size = new System.Drawing.Size(847, 18);
@@ -359,9 +343,9 @@
             // 
             // btnExport
             // 
-            this.btnExport.Location = new System.Drawing.Point(604, 196);
+            this.btnExport.Location = new System.Drawing.Point(326, 40);
             this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(78, 23);
+            this.btnExport.Size = new System.Drawing.Size(78, 24);
             this.btnExport.TabIndex = 32;
             this.btnExport.Text = "Export";
             this.btnExport.UseVisualStyleBackColor = true;
@@ -369,35 +353,29 @@
             // 
             // gbDataFilters
             // 
-            this.gbDataFilters.Controls.Add(this.btnFilter);
+            this.gbDataFilters.Controls.Add(this.btnExport);
+            this.gbDataFilters.Controls.Add(this.btnView);
             this.gbDataFilters.Controls.Add(this.lblFilterStart);
             this.gbDataFilters.Controls.Add(this.lblFilterEnd);
             this.gbDataFilters.Controls.Add(this.dtpFilterStart);
             this.gbDataFilters.Controls.Add(this.dtpFilterEnd);
+            this.gbDataFilters.Controls.Add(this.btnClose);
             this.gbDataFilters.Location = new System.Drawing.Point(16, 623);
             this.gbDataFilters.Name = "gbDataFilters";
-            this.gbDataFilters.Size = new System.Drawing.Size(847, 81);
+            this.gbDataFilters.Size = new System.Drawing.Size(847, 75);
             this.gbDataFilters.TabIndex = 34;
             this.gbDataFilters.TabStop = false;
             this.gbDataFilters.Text = "Filter Data View";
             // 
-            // dtpFilterStart
+            // btnView
             // 
-            this.dtpFilterStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dtpFilterStart.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpFilterStart.Location = new System.Drawing.Point(11, 40);
-            this.dtpFilterStart.Name = "dtpFilterStart";
-            this.dtpFilterStart.Size = new System.Drawing.Size(111, 24);
-            this.dtpFilterStart.TabIndex = 36;
-            // 
-            // dtpFilterEnd
-            // 
-            this.dtpFilterEnd.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dtpFilterEnd.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpFilterEnd.Location = new System.Drawing.Point(128, 40);
-            this.dtpFilterEnd.Name = "dtpFilterEnd";
-            this.dtpFilterEnd.Size = new System.Drawing.Size(111, 24);
-            this.dtpFilterEnd.TabIndex = 37;
+            this.btnView.Location = new System.Drawing.Point(245, 40);
+            this.btnView.Name = "btnView";
+            this.btnView.Size = new System.Drawing.Size(75, 24);
+            this.btnView.TabIndex = 40;
+            this.btnView.Text = "View";
+            this.btnView.UseVisualStyleBackColor = true;
+            this.btnView.Click += new System.EventHandler(this.BtnView_Click);
             // 
             // lblFilterStart
             // 
@@ -417,74 +395,55 @@
             this.lblFilterEnd.TabIndex = 39;
             this.lblFilterEnd.Text = "End Date";
             // 
-            // btnFilter
+            // dtpFilterStart
             // 
-            this.btnFilter.Location = new System.Drawing.Point(245, 40);
-            this.btnFilter.Name = "btnFilter";
-            this.btnFilter.Size = new System.Drawing.Size(75, 24);
-            this.btnFilter.TabIndex = 40;
-            this.btnFilter.Text = "Filter";
-            this.btnFilter.UseVisualStyleBackColor = true;
-            this.btnFilter.Click += new System.EventHandler(this.BtnFilter_Click);
+            this.dtpFilterStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dtpFilterStart.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpFilterStart.Location = new System.Drawing.Point(11, 40);
+            this.dtpFilterStart.Name = "dtpFilterStart";
+            this.dtpFilterStart.Size = new System.Drawing.Size(111, 24);
+            this.dtpFilterStart.TabIndex = 36;
             // 
-            // menuStrip1
+            // dtpFilterEnd
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.dtpFilterEnd.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dtpFilterEnd.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpFilterEnd.Location = new System.Drawing.Point(128, 40);
+            this.dtpFilterEnd.Name = "dtpFilterEnd";
+            this.dtpFilterEnd.Size = new System.Drawing.Size(111, 24);
+            this.dtpFilterEnd.TabIndex = 37;
+            // 
+            // menuStrip
+            // 
+            this.menuStrip.BackColor = System.Drawing.SystemColors.MenuBar;
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuFile});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(882, 24);
-            this.menuStrip1.TabIndex = 35;
-            this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(882, 24);
+            this.menuStrip.TabIndex = 35;
+            this.menuStrip.Text = "menuStrip1";
             // 
             // menuFile
             // 
             this.menuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.addSelectionToolStripMenuItem});
+            this.toolStripManageCat});
             this.menuFile.Name = "menuFile";
-            this.menuFile.Size = new System.Drawing.Size(37, 19);
+            this.menuFile.Size = new System.Drawing.Size(37, 20);
             this.menuFile.Text = "File";
             // 
-            // addSelectionToolStripMenuItem
+            // toolStripManageCat
             // 
-            this.addSelectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.clientToolStripMenuItem,
-            this.professionalServiceToolStripMenuItem,
-            this.taskToolStripMenuItem,
-            this.itemToolStripMenuItem});
-            this.addSelectionToolStripMenuItem.Name = "addSelectionToolStripMenuItem";
-            this.addSelectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.addSelectionToolStripMenuItem.Text = "Add Selection";
-            // 
-            // clientToolStripMenuItem
-            // 
-            this.clientToolStripMenuItem.Name = "clientToolStripMenuItem";
-            this.clientToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.clientToolStripMenuItem.Text = "Client";
-            // 
-            // professionalServiceToolStripMenuItem
-            // 
-            this.professionalServiceToolStripMenuItem.Name = "professionalServiceToolStripMenuItem";
-            this.professionalServiceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.professionalServiceToolStripMenuItem.Text = "Professional Service";
-            // 
-            // taskToolStripMenuItem
-            // 
-            this.taskToolStripMenuItem.Name = "taskToolStripMenuItem";
-            this.taskToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.taskToolStripMenuItem.Text = "Task";
-            // 
-            // itemToolStripMenuItem
-            // 
-            this.itemToolStripMenuItem.Name = "itemToolStripMenuItem";
-            this.itemToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.itemToolStripMenuItem.Text = "Item";
+            this.toolStripManageCat.Name = "toolStripManageCat";
+            this.toolStripManageCat.Size = new System.Drawing.Size(180, 22);
+            this.toolStripManageCat.Text = "Manage Categories";
+            this.toolStripManageCat.Click += new System.EventHandler(this.ToolStripManageCat_Click);
             // 
             // WorkLog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(882, 732);
+            this.ClientSize = new System.Drawing.Size(882, 718);
             this.Controls.Add(this.gbDataFilters);
             this.Controls.Add(this.lblMessage);
             this.Controls.Add(this.dgvRecords);
@@ -492,15 +451,14 @@
             this.Controls.Add(this.lblItem);
             this.Controls.Add(this.cbItem);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.btnClear);
             this.Controls.Add(this.lblTask);
             this.Controls.Add(this.cbTask);
             this.Controls.Add(this.lblProService);
             this.Controls.Add(this.cbProService);
             this.Controls.Add(this.lblClient);
             this.Controls.Add(this.cbClient);
-            this.Controls.Add(this.menuStrip1);
-            this.MainMenuStrip = this.menuStrip1;
+            this.Controls.Add(this.menuStrip);
+            this.MainMenuStrip = this.menuStrip;
             this.Name = "WorkLog";
             this.Text = "Work Log";
             this.groupBox1.ResumeLayout(false);
@@ -508,8 +466,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).EndInit();
             this.gbDataFilters.ResumeLayout(false);
             this.gbDataFilters.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -542,23 +500,18 @@
         private System.Windows.Forms.Button btnTest;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnSubmit;
-        private System.Windows.Forms.Button btnView;
         private System.Windows.Forms.DataGridView dgvRecords;
         private System.Windows.Forms.Label lblMessage;
         private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.GroupBox gbDataFilters;
         private System.Windows.Forms.DateTimePicker dtpFilterStart;
         private System.Windows.Forms.DateTimePicker dtpFilterEnd;
-        private System.Windows.Forms.Button btnFilter;
+        private System.Windows.Forms.Button btnView;
         private System.Windows.Forms.Label lblFilterStart;
         private System.Windows.Forms.Label lblFilterEnd;
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem menuFile;
-        private System.Windows.Forms.ToolStripMenuItem addSelectionToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem clientToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem professionalServiceToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem taskToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem itemToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripManageCat;
     }
 }
 

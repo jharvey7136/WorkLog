@@ -17,7 +17,8 @@ namespace WorkLog
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new WorkLog());
+            //Application.Run(new WorkLog());
+            Application.Run(new CategoryForm());
         }
     }
 }

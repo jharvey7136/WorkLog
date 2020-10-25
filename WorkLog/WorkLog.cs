@@ -225,15 +225,12 @@ namespace WorkLog
                 }
                 catch (Exception ex)
                 {
+                    lblMessage.ForeColor = Color.Red;
+                    lblMessage.Text = "Error submitting record, verify selections and try again";
                     MessageBox.Show(ex.ToString());
                 }
             }
-        }
-
-        private void BtnView_Click(object sender, EventArgs e)
-        {
-            FillDataGridOnSubmit();
-        }
+        }        
 
         private void FillDataGridOnSubmit()
         {
@@ -272,8 +269,21 @@ namespace WorkLog
                 }
                 else if (!Regex.IsMatch(txtReimburseCost.Text.Trim().Replace(",",""), @"^\d+(\.\d{1,2})?$"))
                 {
-                    MessageBox.Show("Reimbursable cost must be valid numeric form");
+                    MessageBox.Show("Reimbursable cost must be in valid numeric form, e.g., 30, 56.23, 80.4 ");
                     txtReimburseCost.Focus();
+                    return false;
+                }
+            }
+            else
+            {
+                if (dtpStartTime.Value > dtpEndTime.Value)
+                {
+                    MessageBox.Show("Start Time cannot be greater than End Time");
+                    return false;
+                }
+                else if (lblHours.Text == "0")
+                {
+                    MessageBox.Show("Start Time cannot equal End Time");
                     return false;
                 }
             }
@@ -299,7 +309,7 @@ namespace WorkLog
             }
         }
 
-        private void BtnFilter_Click(object sender, EventArgs e)
+        private void BtnView_Click(object sender, EventArgs e)
         {
             try
             {
@@ -315,6 +325,12 @@ namespace WorkLog
             {
                 MessageBox.Show(ex.ToString());
             }
+        }
+
+        private void ToolStripManageCat_Click(object sender, EventArgs e)
+        {
+            CategoryForm formCategories = new CategoryForm();
+            formCategories.Show();
         }
     }
 }
