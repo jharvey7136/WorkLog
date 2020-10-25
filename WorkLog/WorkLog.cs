@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SQLite;
 using System.Configuration;
+using System.Text.RegularExpressions;
 
 namespace WorkLog
 {
@@ -151,7 +152,7 @@ namespace WorkLog
 
             dtpEndTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hr + rnd.Next(1, 11), m + rnd.Next(1, 29), 0);
 
-            txtDescription.Text = "The quick brown fox jumped over the lazy brown dog";
+            txtDescription.Text = "The quick brown fox jumps over the lazy dog";
 
             int r = rnd.Next(1, 30);
             r *= 10;
@@ -188,7 +189,11 @@ namespace WorkLog
             dtpEndTime.Value = DateTime.Now;
 
             txtDescription.Text = "";
+            txtReimburseCost.Text = "0";
             lblMessage.Text = "";
+            lblMessage.ForeColor = SystemColors.ControlText;
+
+            dgvRecords.DataSource = null;
         }
 
         private void BtnSubmit_Click(object sender, EventArgs e)
@@ -198,14 +203,25 @@ namespace WorkLog
                 try
                 {
                     Record myRecord = NewRecord();
-                    bool isReimburse = false;
-
                     if (cbProService.Text == "Reimbursable")
-                        isReimburse = true;
-
-                    oDAL.InsertRecord(myRecord, isReimburse);
-                    FillDataGrid();
-                    lblMessage.Text = "Record submitted successfully!";
+                    {
+                        if (txtReimburseCost.Text == "0")
+                        {
+                            DialogResult result = MessageBox.Show("Reimbursable cost is 0, continue?", "Confirmation", MessageBoxButtons.YesNo);
+                            if (result == DialogResult.Yes)                            
+                                oDAL.InsertRecord(myRecord, true); 
+                            else
+                                return;
+                        }
+                        else
+                            oDAL.InsertRecord(myRecord, true);
+                    }
+                    else                    
+                        oDAL.InsertRecord(myRecord, false);
+                                        
+                    FillDataGridOnSubmit();
+                    lblMessage.ForeColor = Color.Green;
+                    lblMessage.Text = "Record submitted successfully! Last 30 entries displayed";
                 }
                 catch (Exception ex)
                 {
@@ -216,13 +232,13 @@ namespace WorkLog
 
         private void BtnView_Click(object sender, EventArgs e)
         {
-            FillDataGrid();
+            FillDataGridOnSubmit();
         }
 
-        private void FillDataGrid()
+        private void FillDataGridOnSubmit()
         {
             string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
-                "FROM Record ORDER BY CreateDate DESC";
+                "FROM Record ORDER BY RowID DESC LIMIT 30";
             oDAL.FillDataGrid(cmd, dgvRecords);
         }
 
@@ -245,6 +261,22 @@ namespace WorkLog
                 MessageBox.Show("Select a Task");
                 return false;
             }
+
+            if (cbProService.Text == "Reimbursable")
+            {
+                if (txtReimburseCost.Text == "")
+                {
+                    MessageBox.Show("Reimbursable cost cannot be blank");
+                    txtReimburseCost.Focus();
+                    return false;
+                }
+                else if (!Regex.IsMatch(txtReimburseCost.Text.Trim().Replace(",",""), @"^\d+(\.\d{1,2})?$"))
+                {
+                    MessageBox.Show("Reimbursable cost must be valid numeric form");
+                    txtReimburseCost.Focus();
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -265,7 +297,6 @@ namespace WorkLog
             {
                 MessageBox.Show(ex.ToString());
             }
-            
         }
 
         private void BtnFilter_Click(object sender, EventArgs e)
@@ -284,7 +315,6 @@ namespace WorkLog
             {
                 MessageBox.Show(ex.ToString());
             }
-            
         }
     }
 }

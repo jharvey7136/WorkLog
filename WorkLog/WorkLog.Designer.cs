@@ -63,9 +63,17 @@
             this.lblFilterStart = new System.Windows.Forms.Label();
             this.lblFilterEnd = new System.Windows.Forms.Label();
             this.btnFilter = new System.Windows.Forms.Button();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.addSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clientToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.professionalServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.taskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.itemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.gbDataFilters.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbClient
@@ -368,7 +376,7 @@
             this.gbDataFilters.Controls.Add(this.dtpFilterEnd);
             this.gbDataFilters.Location = new System.Drawing.Point(16, 623);
             this.gbDataFilters.Name = "gbDataFilters";
-            this.gbDataFilters.Size = new System.Drawing.Size(847, 84);
+            this.gbDataFilters.Size = new System.Drawing.Size(847, 81);
             this.gbDataFilters.TabIndex = 34;
             this.gbDataFilters.TabStop = false;
             this.gbDataFilters.Text = "Filter Data View";
@@ -377,7 +385,7 @@
             // 
             this.dtpFilterStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpFilterStart.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpFilterStart.Location = new System.Drawing.Point(11, 44);
+            this.dtpFilterStart.Location = new System.Drawing.Point(11, 40);
             this.dtpFilterStart.Name = "dtpFilterStart";
             this.dtpFilterStart.Size = new System.Drawing.Size(111, 24);
             this.dtpFilterStart.TabIndex = 36;
@@ -386,7 +394,7 @@
             // 
             this.dtpFilterEnd.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpFilterEnd.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpFilterEnd.Location = new System.Drawing.Point(128, 44);
+            this.dtpFilterEnd.Location = new System.Drawing.Point(128, 40);
             this.dtpFilterEnd.Name = "dtpFilterEnd";
             this.dtpFilterEnd.Size = new System.Drawing.Size(111, 24);
             this.dtpFilterEnd.TabIndex = 37;
@@ -394,7 +402,7 @@
             // lblFilterStart
             // 
             this.lblFilterStart.AutoSize = true;
-            this.lblFilterStart.Location = new System.Drawing.Point(8, 27);
+            this.lblFilterStart.Location = new System.Drawing.Point(8, 23);
             this.lblFilterStart.Name = "lblFilterStart";
             this.lblFilterStart.Size = new System.Drawing.Size(55, 13);
             this.lblFilterStart.TabIndex = 38;
@@ -403,7 +411,7 @@
             // lblFilterEnd
             // 
             this.lblFilterEnd.AutoSize = true;
-            this.lblFilterEnd.Location = new System.Drawing.Point(125, 27);
+            this.lblFilterEnd.Location = new System.Drawing.Point(125, 23);
             this.lblFilterEnd.Name = "lblFilterEnd";
             this.lblFilterEnd.Size = new System.Drawing.Size(52, 13);
             this.lblFilterEnd.TabIndex = 39;
@@ -411,13 +419,66 @@
             // 
             // btnFilter
             // 
-            this.btnFilter.Location = new System.Drawing.Point(245, 44);
+            this.btnFilter.Location = new System.Drawing.Point(245, 40);
             this.btnFilter.Name = "btnFilter";
-            this.btnFilter.Size = new System.Drawing.Size(75, 23);
+            this.btnFilter.Size = new System.Drawing.Size(75, 24);
             this.btnFilter.TabIndex = 40;
             this.btnFilter.Text = "Filter";
             this.btnFilter.UseVisualStyleBackColor = true;
             this.btnFilter.Click += new System.EventHandler(this.BtnFilter_Click);
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuFile});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(882, 24);
+            this.menuStrip1.TabIndex = 35;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // menuFile
+            // 
+            this.menuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addSelectionToolStripMenuItem});
+            this.menuFile.Name = "menuFile";
+            this.menuFile.Size = new System.Drawing.Size(37, 19);
+            this.menuFile.Text = "File";
+            // 
+            // addSelectionToolStripMenuItem
+            // 
+            this.addSelectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.clientToolStripMenuItem,
+            this.professionalServiceToolStripMenuItem,
+            this.taskToolStripMenuItem,
+            this.itemToolStripMenuItem});
+            this.addSelectionToolStripMenuItem.Name = "addSelectionToolStripMenuItem";
+            this.addSelectionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addSelectionToolStripMenuItem.Text = "Add Selection";
+            // 
+            // clientToolStripMenuItem
+            // 
+            this.clientToolStripMenuItem.Name = "clientToolStripMenuItem";
+            this.clientToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.clientToolStripMenuItem.Text = "Client";
+            // 
+            // professionalServiceToolStripMenuItem
+            // 
+            this.professionalServiceToolStripMenuItem.Name = "professionalServiceToolStripMenuItem";
+            this.professionalServiceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.professionalServiceToolStripMenuItem.Text = "Professional Service";
+            // 
+            // taskToolStripMenuItem
+            // 
+            this.taskToolStripMenuItem.Name = "taskToolStripMenuItem";
+            this.taskToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.taskToolStripMenuItem.Text = "Task";
+            // 
+            // itemToolStripMenuItem
+            // 
+            this.itemToolStripMenuItem.Name = "itemToolStripMenuItem";
+            this.itemToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.itemToolStripMenuItem.Text = "Item";
             // 
             // WorkLog
             // 
@@ -438,6 +499,8 @@
             this.Controls.Add(this.cbProService);
             this.Controls.Add(this.lblClient);
             this.Controls.Add(this.cbClient);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "WorkLog";
             this.Text = "Work Log";
             this.groupBox1.ResumeLayout(false);
@@ -445,6 +508,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).EndInit();
             this.gbDataFilters.ResumeLayout(false);
             this.gbDataFilters.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -487,6 +552,13 @@
         private System.Windows.Forms.Button btnFilter;
         private System.Windows.Forms.Label lblFilterStart;
         private System.Windows.Forms.Label lblFilterEnd;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem menuFile;
+        private System.Windows.Forms.ToolStripMenuItem addSelectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clientToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem professionalServiceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem taskToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem itemToolStripMenuItem;
     }
 }
 

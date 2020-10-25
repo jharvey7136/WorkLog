@@ -47,17 +47,6 @@ namespace WorkLog
         public void FillDataGrid(string cmd, DataGridView dgv)
         {
             dgv.DataSource = CreateDataTable(cmd);
-            //using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
-            //{
-            //    using (SQLiteDataAdapter sda = new SQLiteDataAdapter(cmd, con))
-            //    {
-            //        //Fill the DataTable with records from Table.
-            //        DataTable dt = new DataTable();
-            //        sda.Fill(dt);
-
-            //        dgv.DataSource = dt;
-            //    }
-            //}
         }
 
         public static DataTable CreateDataTable(string cmd)
@@ -73,10 +62,6 @@ namespace WorkLog
                 }
             }
         }
-
-
-
-
 
         public void InsertRecord(Record record, bool isReimburse)
         {
@@ -124,9 +109,7 @@ namespace WorkLog
             {
                 throw new Exception(ex.Message);
             }
-
         }
-
     }
 
     public static class CSVUtility
@@ -134,7 +117,7 @@ namespace WorkLog
         public static void ToCSV(this DataTable dtDataTable, string strFilePath)
         {
             StreamWriter sw = new StreamWriter(strFilePath, false);
-            
+
             for (int i = 0; i < dtDataTable.Columns.Count; i++)
             {
                 sw.Write(dtDataTable.Columns[i]);
