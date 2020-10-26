@@ -94,11 +94,6 @@ namespace WorkLog
                 fi.Delete();
         }
 
-        //private bool CheckIfDataChanged(DataGridViewRow row)
-        //{
-        //    return false;
-        //}
-
         public void InsertRecord(Record record, bool isReimburse)
         {
             try
@@ -136,7 +131,7 @@ namespace WorkLog
                     }
 
                     cmd.Parameters.Add("@Description", DbType.String).Value = record.Description;
-                    cmd.Parameters.Add("@CreateDate", DbType.String).Value = DateTime.Now.ToString();
+                    cmd.Parameters.Add("@CreateDate", DbType.String).Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
                     cmd.ExecuteNonQuery();
                 }

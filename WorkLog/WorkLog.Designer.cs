@@ -458,6 +458,7 @@
             this.Controls.Add(this.lblClient);
             this.Controls.Add(this.cbClient);
             this.Controls.Add(this.menuStrip);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip;
             this.Name = "WorkLog";
             this.Text = "Work Log";

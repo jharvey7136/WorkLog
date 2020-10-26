@@ -121,7 +121,6 @@ namespace WorkLog
         private void BtnTest_Click(object sender, EventArgs e)
         {
             Random rnd = new Random();
-
             int i = rnd.Next(1, 16);
             cbClient.SelectedValue = i;
 
@@ -147,17 +146,11 @@ namespace WorkLog
             int d = rnd.Next(1, 30);
 
             dtpDate.Value = DateTime.Now.AddDays(d * -1);
-
             dtpStartTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hr, m, 0);
-
             dtpEndTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hr + rnd.Next(1, 11), m + rnd.Next(1, 29), 0);
-
-            txtDescription.Text = "The quick brown fox jumps over the lazy dog";
-
+            txtDescription.Text = "";
             int r = rnd.Next(1, 30);
             r *= 10;
-
-            //if (cbProService.SelectedText == "Reimbursable")
             txtReimburseCost.Text = r.ToString();
         }
 
@@ -208,17 +201,17 @@ namespace WorkLog
                         if (txtReimburseCost.Text == "0")
                         {
                             DialogResult result = MessageBox.Show("Reimbursable cost is 0, continue?", "Confirmation", MessageBoxButtons.YesNo);
-                            if (result == DialogResult.Yes)                            
-                                oDAL.InsertRecord(myRecord, true); 
+                            if (result == DialogResult.Yes)
+                                oDAL.InsertRecord(myRecord, true);
                             else
                                 return;
                         }
                         else
                             oDAL.InsertRecord(myRecord, true);
                     }
-                    else                    
+                    else
                         oDAL.InsertRecord(myRecord, false);
-                                        
+
                     FillDataGridOnSubmit();
                     lblMessage.ForeColor = Color.Green;
                     lblMessage.Text = "Record submitted successfully! Last 30 entries displayed";
@@ -230,7 +223,7 @@ namespace WorkLog
                     MessageBox.Show(ex.ToString());
                 }
             }
-        }        
+        }
 
         private void FillDataGridOnSubmit()
         {
@@ -267,7 +260,7 @@ namespace WorkLog
                     txtReimburseCost.Focus();
                     return false;
                 }
-                else if (!Regex.IsMatch(txtReimburseCost.Text.Trim().Replace(",",""), @"^\d+(\.\d{1,2})?$"))
+                else if (!Regex.IsMatch(txtReimburseCost.Text.Trim().Replace(",", ""), @"^\d+(\.\d{1,2})?$"))
                 {
                     MessageBox.Show("Reimbursable cost must be in valid numeric form, e.g., 30, 56.23, 80.4 ");
                     txtReimburseCost.Focus();
@@ -302,7 +295,8 @@ namespace WorkLog
                 sfd.Title = "Export Records to CSV";
                 sfd.ShowDialog();
                 dt.ToCSV(sfd.FileName);
-                lblMessage.Text = "Data exported successfully!";                
+                lblMessage.ForeColor = Color.Green;
+                lblMessage.Text = "Data exported successfully!";
             }
             catch (Exception ex)
             {
@@ -331,7 +325,7 @@ namespace WorkLog
         private void ToolStripManageCat_Click(object sender, EventArgs e)
         {
             CategoryForm formCategories = new CategoryForm();
-            formCategories.Show();
+            formCategories.ShowDialog();
         }
     }
 }

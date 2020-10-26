@@ -21,8 +21,6 @@ namespace WorkLog
             InitializeDefaults();
         }
 
-
-
         private void InitializeDefaults()
         {
             ResetMessageTop();
