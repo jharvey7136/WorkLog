@@ -26,6 +26,9 @@ namespace WorkLog
             ResetMessageTop();
             GetDataClient();
             GetDataProService();
+
+            oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService", cbProService, "ProServiceName", "ProServiceID");
+            oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService", cbProServiceItem, "ProServiceName", "ProServiceID");
         }
 
         /************************************** Client *************************************/
@@ -115,6 +118,28 @@ namespace WorkLog
             lblMessageTopPS.ForeColor = SystemColors.ControlText;
         }
 
-        
+        private void CbProService_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string cmd = "";
+            if (cbProService.SelectedValue.ToString() != "System.Data.DataRowView" && cbProService.SelectedValue != null)
+                cmd = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = " + cbProService.SelectedValue;
+            else
+                cmd = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = 1";
+
+            oDAL.FillDataGrid(cmd, dgvTask);
+            dgvTask.Columns[0].ReadOnly = true;
+        }
+
+        private void CbProServiceItem_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string cmd = "";
+            if (cbProServiceItem.SelectedValue.ToString() != "System.Data.DataRowView" && cbProServiceItem.SelectedValue != null)
+                cmd = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = " + cbProServiceItem.SelectedValue;
+            else
+                cmd = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = 1";
+
+            oDAL.FillDataGrid(cmd, dgvItem);
+            dgvItem.Columns[0].ReadOnly = true;
+        }
     }
 }

@@ -30,28 +30,42 @@
         {
             this.tabCategories = new System.Windows.Forms.TabControl();
             this.tabPageClient = new System.Windows.Forms.TabPage();
+            this.btnClose = new System.Windows.Forms.Button();
             this.lblMessageTop = new System.Windows.Forms.Label();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnUpdateClient = new System.Windows.Forms.Button();
             this.dgvClient = new System.Windows.Forms.DataGridView();
             this.tabPageProService = new System.Windows.Forms.TabPage();
-            this.btnClose = new System.Windows.Forms.Button();
             this.btnClosePS = new System.Windows.Forms.Button();
             this.lblMessageTopPS = new System.Windows.Forms.Label();
             this.btnRefreshPS = new System.Windows.Forms.Button();
             this.btnUpdatePS = new System.Windows.Forms.Button();
             this.dgvProService = new System.Windows.Forms.DataGridView();
+            this.tabPageTask = new System.Windows.Forms.TabPage();
+            this.tabPageItem = new System.Windows.Forms.TabPage();
+            this.lblProService = new System.Windows.Forms.Label();
+            this.cbProService = new System.Windows.Forms.ComboBox();
+            this.dgvTask = new System.Windows.Forms.DataGridView();
+            this.dgvItem = new System.Windows.Forms.DataGridView();
+            this.lblProServiceItem = new System.Windows.Forms.Label();
+            this.cbProServiceItem = new System.Windows.Forms.ComboBox();
             this.tabCategories.SuspendLayout();
             this.tabPageClient.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvClient)).BeginInit();
             this.tabPageProService.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProService)).BeginInit();
+            this.tabPageTask.SuspendLayout();
+            this.tabPageItem.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvTask)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvItem)).BeginInit();
             this.SuspendLayout();
             // 
             // tabCategories
             // 
             this.tabCategories.Controls.Add(this.tabPageClient);
             this.tabCategories.Controls.Add(this.tabPageProService);
+            this.tabCategories.Controls.Add(this.tabPageTask);
+            this.tabCategories.Controls.Add(this.tabPageItem);
             this.tabCategories.Location = new System.Drawing.Point(12, 12);
             this.tabCategories.Name = "tabCategories";
             this.tabCategories.SelectedIndex = 0;
@@ -72,6 +86,16 @@
             this.tabPageClient.TabIndex = 0;
             this.tabPageClient.Text = "Client";
             this.tabPageClient.UseVisualStyleBackColor = true;
+            // 
+            // btnClose
+            // 
+            this.btnClose.Location = new System.Drawing.Point(625, 275);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(101, 32);
+            this.btnClose.TabIndex = 1;
+            this.btnClose.Text = "Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // lblMessageTop
             // 
@@ -126,16 +150,6 @@
             this.tabPageProService.Text = "Professional Service";
             this.tabPageProService.UseVisualStyleBackColor = true;
             // 
-            // btnClose
-            // 
-            this.btnClose.Location = new System.Drawing.Point(625, 275);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(101, 32);
-            this.btnClose.TabIndex = 1;
-            this.btnClose.Text = "Close";
-            this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
-            // 
             // btnClosePS
             // 
             this.btnClosePS.Location = new System.Drawing.Point(625, 272);
@@ -184,6 +198,90 @@
             this.dgvProService.Size = new System.Drawing.Size(720, 230);
             this.dgvProService.TabIndex = 4;
             // 
+            // tabPageTask
+            // 
+            this.tabPageTask.Controls.Add(this.dgvTask);
+            this.tabPageTask.Controls.Add(this.lblProService);
+            this.tabPageTask.Controls.Add(this.cbProService);
+            this.tabPageTask.Location = new System.Drawing.Point(4, 22);
+            this.tabPageTask.Name = "tabPageTask";
+            this.tabPageTask.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageTask.Size = new System.Drawing.Size(732, 315);
+            this.tabPageTask.TabIndex = 2;
+            this.tabPageTask.Text = "Task";
+            this.tabPageTask.UseVisualStyleBackColor = true;
+            // 
+            // tabPageItem
+            // 
+            this.tabPageItem.Controls.Add(this.dgvItem);
+            this.tabPageItem.Controls.Add(this.lblProServiceItem);
+            this.tabPageItem.Controls.Add(this.cbProServiceItem);
+            this.tabPageItem.Location = new System.Drawing.Point(4, 22);
+            this.tabPageItem.Name = "tabPageItem";
+            this.tabPageItem.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageItem.Size = new System.Drawing.Size(732, 315);
+            this.tabPageItem.TabIndex = 3;
+            this.tabPageItem.Text = "Item";
+            this.tabPageItem.UseVisualStyleBackColor = true;
+            // 
+            // lblProService
+            // 
+            this.lblProService.AutoSize = true;
+            this.lblProService.Location = new System.Drawing.Point(6, 25);
+            this.lblProService.Name = "lblProService";
+            this.lblProService.Size = new System.Drawing.Size(103, 13);
+            this.lblProService.TabIndex = 17;
+            this.lblProService.Text = "Professional Service";
+            // 
+            // cbProService
+            // 
+            this.cbProService.CausesValidation = false;
+            this.cbProService.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbProService.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbProService.FormattingEnabled = true;
+            this.cbProService.Location = new System.Drawing.Point(9, 41);
+            this.cbProService.Name = "cbProService";
+            this.cbProService.Size = new System.Drawing.Size(215, 24);
+            this.cbProService.TabIndex = 16;
+            this.cbProService.SelectedIndexChanged += new System.EventHandler(this.CbProService_SelectedIndexChanged);
+            // 
+            // dgvTask
+            // 
+            this.dgvTask.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTask.Location = new System.Drawing.Point(9, 86);
+            this.dgvTask.Name = "dgvTask";
+            this.dgvTask.Size = new System.Drawing.Size(524, 150);
+            this.dgvTask.TabIndex = 18;
+            // 
+            // dgvItem
+            // 
+            this.dgvItem.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvItem.Location = new System.Drawing.Point(9, 84);
+            this.dgvItem.Name = "dgvItem";
+            this.dgvItem.Size = new System.Drawing.Size(524, 150);
+            this.dgvItem.TabIndex = 21;
+            // 
+            // lblProServiceItem
+            // 
+            this.lblProServiceItem.AutoSize = true;
+            this.lblProServiceItem.Location = new System.Drawing.Point(6, 23);
+            this.lblProServiceItem.Name = "lblProServiceItem";
+            this.lblProServiceItem.Size = new System.Drawing.Size(103, 13);
+            this.lblProServiceItem.TabIndex = 20;
+            this.lblProServiceItem.Text = "Professional Service";
+            // 
+            // cbProServiceItem
+            // 
+            this.cbProServiceItem.CausesValidation = false;
+            this.cbProServiceItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbProServiceItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbProServiceItem.FormattingEnabled = true;
+            this.cbProServiceItem.Location = new System.Drawing.Point(9, 39);
+            this.cbProServiceItem.Name = "cbProServiceItem";
+            this.cbProServiceItem.Size = new System.Drawing.Size(215, 24);
+            this.cbProServiceItem.TabIndex = 19;
+            this.cbProServiceItem.SelectedIndexChanged += new System.EventHandler(this.CbProServiceItem_SelectedIndexChanged);
+            // 
             // CategoryForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -199,6 +297,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvClient)).EndInit();
             this.tabPageProService.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvProService)).EndInit();
+            this.tabPageTask.ResumeLayout(false);
+            this.tabPageTask.PerformLayout();
+            this.tabPageItem.ResumeLayout(false);
+            this.tabPageItem.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvTask)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvItem)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -218,5 +322,13 @@
         private System.Windows.Forms.Button btnRefreshPS;
         private System.Windows.Forms.Button btnUpdatePS;
         private System.Windows.Forms.DataGridView dgvProService;
+        private System.Windows.Forms.TabPage tabPageTask;
+        private System.Windows.Forms.TabPage tabPageItem;
+        private System.Windows.Forms.DataGridView dgvTask;
+        private System.Windows.Forms.Label lblProService;
+        private System.Windows.Forms.ComboBox cbProService;
+        private System.Windows.Forms.DataGridView dgvItem;
+        private System.Windows.Forms.Label lblProServiceItem;
+        private System.Windows.Forms.ComboBox cbProServiceItem;
     }
 }
