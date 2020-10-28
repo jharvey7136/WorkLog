@@ -143,7 +143,7 @@ namespace WorkLog
 
             int hr = rnd.Next(1, 12);
             int m = rnd.Next(1, 29);
-            int d = rnd.Next(1, 30);
+            int d = rnd.Next(1, 200);
 
             dtpDate.Value = DateTime.Now.AddDays(d * -1);
             dtpStartTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hr, m, 0);
@@ -327,5 +327,34 @@ namespace WorkLog
             CategoryForm formCategories = new CategoryForm();
             formCategories.ShowDialog();
         }
+
+        private void BtnLastMonth_Click(object sender, EventArgs e)
+        {
+            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+                         "FROM Record WHERE date >= date('now', 'start of month', '-1 month') AND date<date('now','start of month') ORDER BY Date";
+            oDAL.FillDataGrid(cmd, dgvRecords);
+        }
+
+        private void BtnLast30_Click(object sender, EventArgs e)
+        {
+            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+                         "FROM Record WHERE date >= date('now','-30 days') ORDER BY Date";
+            oDAL.FillDataGrid(cmd, dgvRecords);
+        }
+
+        private void BtnYTD_Click(object sender, EventArgs e)
+        {
+            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+                         "FROM Record WHERE date >= date('now', 'start of year') AND date<date('now','start of year', '+1 year')";
+            oDAL.FillDataGrid(cmd, dgvRecords);
+        }
+
+        private void GetRecordAggregates()
+        {
+
+        }
+
+
+
     }
 }

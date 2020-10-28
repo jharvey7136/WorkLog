@@ -65,6 +65,9 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripManageCat = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnLastMonth = new System.Windows.Forms.Button();
+            this.btnLast30 = new System.Windows.Forms.Button();
+            this.btnYTD = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.gbDataFilters.SuspendLayout();
@@ -343,7 +346,7 @@
             // 
             // btnExport
             // 
-            this.btnExport.Location = new System.Drawing.Point(326, 40);
+            this.btnExport.Location = new System.Drawing.Point(679, 40);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(78, 24);
             this.btnExport.TabIndex = 32;
@@ -353,6 +356,9 @@
             // 
             // gbDataFilters
             // 
+            this.gbDataFilters.Controls.Add(this.btnYTD);
+            this.gbDataFilters.Controls.Add(this.btnLast30);
+            this.gbDataFilters.Controls.Add(this.btnLastMonth);
             this.gbDataFilters.Controls.Add(this.btnExport);
             this.gbDataFilters.Controls.Add(this.btnView);
             this.gbDataFilters.Controls.Add(this.lblFilterStart);
@@ -362,7 +368,7 @@
             this.gbDataFilters.Controls.Add(this.btnClose);
             this.gbDataFilters.Location = new System.Drawing.Point(16, 623);
             this.gbDataFilters.Name = "gbDataFilters";
-            this.gbDataFilters.Size = new System.Drawing.Size(847, 75);
+            this.gbDataFilters.Size = new System.Drawing.Size(847, 108);
             this.gbDataFilters.TabIndex = 34;
             this.gbDataFilters.TabStop = false;
             this.gbDataFilters.Text = "Filter Data View";
@@ -435,15 +441,45 @@
             // toolStripManageCat
             // 
             this.toolStripManageCat.Name = "toolStripManageCat";
-            this.toolStripManageCat.Size = new System.Drawing.Size(180, 22);
+            this.toolStripManageCat.Size = new System.Drawing.Size(176, 22);
             this.toolStripManageCat.Text = "Manage Categories";
             this.toolStripManageCat.Click += new System.EventHandler(this.ToolStripManageCat_Click);
+            // 
+            // btnLastMonth
+            // 
+            this.btnLastMonth.Location = new System.Drawing.Point(11, 70);
+            this.btnLastMonth.Name = "btnLastMonth";
+            this.btnLastMonth.Size = new System.Drawing.Size(85, 23);
+            this.btnLastMonth.TabIndex = 36;
+            this.btnLastMonth.Text = "Last Month";
+            this.btnLastMonth.UseVisualStyleBackColor = true;
+            this.btnLastMonth.Click += new System.EventHandler(this.BtnLastMonth_Click);
+            // 
+            // btnLast30
+            // 
+            this.btnLast30.Location = new System.Drawing.Point(102, 70);
+            this.btnLast30.Name = "btnLast30";
+            this.btnLast30.Size = new System.Drawing.Size(85, 23);
+            this.btnLast30.TabIndex = 41;
+            this.btnLast30.Text = "Last 30 Days";
+            this.btnLast30.UseVisualStyleBackColor = true;
+            this.btnLast30.Click += new System.EventHandler(this.BtnLast30_Click);
+            // 
+            // btnYTD
+            // 
+            this.btnYTD.Location = new System.Drawing.Point(193, 70);
+            this.btnYTD.Name = "btnYTD";
+            this.btnYTD.Size = new System.Drawing.Size(85, 23);
+            this.btnYTD.TabIndex = 42;
+            this.btnYTD.Text = "YTD";
+            this.btnYTD.UseVisualStyleBackColor = true;
+            this.btnYTD.Click += new System.EventHandler(this.BtnYTD_Click);
             // 
             // WorkLog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(882, 718);
+            this.ClientSize = new System.Drawing.Size(882, 784);
             this.Controls.Add(this.gbDataFilters);
             this.Controls.Add(this.lblMessage);
             this.Controls.Add(this.dgvRecords);
@@ -513,6 +549,9 @@
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem menuFile;
         private System.Windows.Forms.ToolStripMenuItem toolStripManageCat;
+        private System.Windows.Forms.Button btnLast30;
+        private System.Windows.Forms.Button btnLastMonth;
+        private System.Windows.Forms.Button btnYTD;
     }
 }
 
