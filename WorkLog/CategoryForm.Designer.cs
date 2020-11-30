@@ -42,21 +42,29 @@
             this.btnUpdatePS = new System.Windows.Forms.Button();
             this.dgvProService = new System.Windows.Forms.DataGridView();
             this.tabPageTask = new System.Windows.Forms.TabPage();
-            this.tabPageItem = new System.Windows.Forms.TabPage();
+            this.dgvTask = new System.Windows.Forms.DataGridView();
             this.lblProService = new System.Windows.Forms.Label();
             this.cbProService = new System.Windows.Forms.ComboBox();
-            this.dgvTask = new System.Windows.Forms.DataGridView();
+            this.tabPageItem = new System.Windows.Forms.TabPage();
             this.dgvItem = new System.Windows.Forms.DataGridView();
             this.lblProServiceItem = new System.Windows.Forms.Label();
             this.cbProServiceItem = new System.Windows.Forms.ComboBox();
+            this.btnCloseTask = new System.Windows.Forms.Button();
+            this.btnRefreshTask = new System.Windows.Forms.Button();
+            this.btnUpdateTask = new System.Windows.Forms.Button();
+            this.btnCloseItem = new System.Windows.Forms.Button();
+            this.btnRefreshItem = new System.Windows.Forms.Button();
+            this.btnUpdateItem = new System.Windows.Forms.Button();
+            this.lblMessageTopTask = new System.Windows.Forms.Label();
+            this.lblMessageTopItem = new System.Windows.Forms.Label();
             this.tabCategories.SuspendLayout();
             this.tabPageClient.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvClient)).BeginInit();
             this.tabPageProService.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvProService)).BeginInit();
             this.tabPageTask.SuspendLayout();
-            this.tabPageItem.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTask)).BeginInit();
+            this.tabPageItem.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvItem)).BeginInit();
             this.SuspendLayout();
             // 
@@ -200,6 +208,10 @@
             // 
             // tabPageTask
             // 
+            this.tabPageTask.Controls.Add(this.lblMessageTopTask);
+            this.tabPageTask.Controls.Add(this.btnCloseTask);
+            this.tabPageTask.Controls.Add(this.btnRefreshTask);
+            this.tabPageTask.Controls.Add(this.btnUpdateTask);
             this.tabPageTask.Controls.Add(this.dgvTask);
             this.tabPageTask.Controls.Add(this.lblProService);
             this.tabPageTask.Controls.Add(this.cbProService);
@@ -211,18 +223,13 @@
             this.tabPageTask.Text = "Task";
             this.tabPageTask.UseVisualStyleBackColor = true;
             // 
-            // tabPageItem
+            // dgvTask
             // 
-            this.tabPageItem.Controls.Add(this.dgvItem);
-            this.tabPageItem.Controls.Add(this.lblProServiceItem);
-            this.tabPageItem.Controls.Add(this.cbProServiceItem);
-            this.tabPageItem.Location = new System.Drawing.Point(4, 22);
-            this.tabPageItem.Name = "tabPageItem";
-            this.tabPageItem.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageItem.Size = new System.Drawing.Size(732, 315);
-            this.tabPageItem.TabIndex = 3;
-            this.tabPageItem.Text = "Item";
-            this.tabPageItem.UseVisualStyleBackColor = true;
+            this.dgvTask.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvTask.Location = new System.Drawing.Point(9, 100);
+            this.dgvTask.Name = "dgvTask";
+            this.dgvTask.Size = new System.Drawing.Size(717, 171);
+            this.dgvTask.TabIndex = 18;
             // 
             // lblProService
             // 
@@ -245,20 +252,29 @@
             this.cbProService.TabIndex = 16;
             this.cbProService.SelectedIndexChanged += new System.EventHandler(this.CbProService_SelectedIndexChanged);
             // 
-            // dgvTask
+            // tabPageItem
             // 
-            this.dgvTask.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvTask.Location = new System.Drawing.Point(9, 86);
-            this.dgvTask.Name = "dgvTask";
-            this.dgvTask.Size = new System.Drawing.Size(524, 150);
-            this.dgvTask.TabIndex = 18;
+            this.tabPageItem.Controls.Add(this.lblMessageTopItem);
+            this.tabPageItem.Controls.Add(this.btnCloseItem);
+            this.tabPageItem.Controls.Add(this.btnRefreshItem);
+            this.tabPageItem.Controls.Add(this.btnUpdateItem);
+            this.tabPageItem.Controls.Add(this.dgvItem);
+            this.tabPageItem.Controls.Add(this.lblProServiceItem);
+            this.tabPageItem.Controls.Add(this.cbProServiceItem);
+            this.tabPageItem.Location = new System.Drawing.Point(4, 22);
+            this.tabPageItem.Name = "tabPageItem";
+            this.tabPageItem.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageItem.Size = new System.Drawing.Size(732, 315);
+            this.tabPageItem.TabIndex = 3;
+            this.tabPageItem.Text = "Item";
+            this.tabPageItem.UseVisualStyleBackColor = true;
             // 
             // dgvItem
             // 
             this.dgvItem.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvItem.Location = new System.Drawing.Point(9, 84);
+            this.dgvItem.Location = new System.Drawing.Point(9, 101);
             this.dgvItem.Name = "dgvItem";
-            this.dgvItem.Size = new System.Drawing.Size(524, 150);
+            this.dgvItem.Size = new System.Drawing.Size(717, 170);
             this.dgvItem.TabIndex = 21;
             // 
             // lblProServiceItem
@@ -282,6 +298,86 @@
             this.cbProServiceItem.TabIndex = 19;
             this.cbProServiceItem.SelectedIndexChanged += new System.EventHandler(this.CbProServiceItem_SelectedIndexChanged);
             // 
+            // btnCloseTask
+            // 
+            this.btnCloseTask.Location = new System.Drawing.Point(625, 277);
+            this.btnCloseTask.Name = "btnCloseTask";
+            this.btnCloseTask.Size = new System.Drawing.Size(101, 32);
+            this.btnCloseTask.TabIndex = 19;
+            this.btnCloseTask.Text = "Close";
+            this.btnCloseTask.UseVisualStyleBackColor = true;
+            this.btnCloseTask.Click += new System.EventHandler(this.BtnCloseTask_Click);
+            // 
+            // btnRefreshTask
+            // 
+            this.btnRefreshTask.Location = new System.Drawing.Point(113, 277);
+            this.btnRefreshTask.Name = "btnRefreshTask";
+            this.btnRefreshTask.Size = new System.Drawing.Size(101, 32);
+            this.btnRefreshTask.TabIndex = 21;
+            this.btnRefreshTask.Text = "Refresh";
+            this.btnRefreshTask.UseVisualStyleBackColor = true;
+            this.btnRefreshTask.Click += new System.EventHandler(this.BtnRefreshTask_Click);
+            // 
+            // btnUpdateTask
+            // 
+            this.btnUpdateTask.Location = new System.Drawing.Point(6, 277);
+            this.btnUpdateTask.Name = "btnUpdateTask";
+            this.btnUpdateTask.Size = new System.Drawing.Size(101, 32);
+            this.btnUpdateTask.TabIndex = 20;
+            this.btnUpdateTask.Text = "Update";
+            this.btnUpdateTask.UseVisualStyleBackColor = true;
+            this.btnUpdateTask.Click += new System.EventHandler(this.BtnUpdateTask_Click);
+            // 
+            // btnCloseItem
+            // 
+            this.btnCloseItem.Location = new System.Drawing.Point(625, 277);
+            this.btnCloseItem.Name = "btnCloseItem";
+            this.btnCloseItem.Size = new System.Drawing.Size(101, 32);
+            this.btnCloseItem.TabIndex = 22;
+            this.btnCloseItem.Text = "Close";
+            this.btnCloseItem.UseVisualStyleBackColor = true;
+            this.btnCloseItem.Click += new System.EventHandler(this.BtnCloseItem_Click);
+            // 
+            // btnRefreshItem
+            // 
+            this.btnRefreshItem.Location = new System.Drawing.Point(113, 277);
+            this.btnRefreshItem.Name = "btnRefreshItem";
+            this.btnRefreshItem.Size = new System.Drawing.Size(101, 32);
+            this.btnRefreshItem.TabIndex = 24;
+            this.btnRefreshItem.Text = "Refresh";
+            this.btnRefreshItem.UseVisualStyleBackColor = true;
+            this.btnRefreshItem.Click += new System.EventHandler(this.BtnRefreshItem_Click);
+            // 
+            // btnUpdateItem
+            // 
+            this.btnUpdateItem.Location = new System.Drawing.Point(6, 277);
+            this.btnUpdateItem.Name = "btnUpdateItem";
+            this.btnUpdateItem.Size = new System.Drawing.Size(101, 32);
+            this.btnUpdateItem.TabIndex = 23;
+            this.btnUpdateItem.Text = "Update";
+            this.btnUpdateItem.UseVisualStyleBackColor = true;
+            this.btnUpdateItem.Click += new System.EventHandler(this.BtnUpdateItem_Click);
+            // 
+            // lblMessageTopTask
+            // 
+            this.lblMessageTopTask.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMessageTopTask.Location = new System.Drawing.Point(6, 71);
+            this.lblMessageTopTask.Name = "lblMessageTopTask";
+            this.lblMessageTopTask.Size = new System.Drawing.Size(720, 22);
+            this.lblMessageTopTask.TabIndex = 22;
+            this.lblMessageTopTask.Text = "lblMessageTopTask";
+            this.lblMessageTopTask.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // lblMessageTopItem
+            // 
+            this.lblMessageTopItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMessageTopItem.Location = new System.Drawing.Point(9, 70);
+            this.lblMessageTopItem.Name = "lblMessageTopItem";
+            this.lblMessageTopItem.Size = new System.Drawing.Size(720, 22);
+            this.lblMessageTopItem.TabIndex = 25;
+            this.lblMessageTopItem.Text = "lblMessageTopItem";
+            this.lblMessageTopItem.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // CategoryForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -299,9 +395,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvProService)).EndInit();
             this.tabPageTask.ResumeLayout(false);
             this.tabPageTask.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvTask)).EndInit();
             this.tabPageItem.ResumeLayout(false);
             this.tabPageItem.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvTask)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvItem)).EndInit();
             this.ResumeLayout(false);
 
@@ -330,5 +426,13 @@
         private System.Windows.Forms.DataGridView dgvItem;
         private System.Windows.Forms.Label lblProServiceItem;
         private System.Windows.Forms.ComboBox cbProServiceItem;
+        private System.Windows.Forms.Button btnCloseTask;
+        private System.Windows.Forms.Button btnRefreshTask;
+        private System.Windows.Forms.Button btnUpdateTask;
+        private System.Windows.Forms.Button btnCloseItem;
+        private System.Windows.Forms.Button btnRefreshItem;
+        private System.Windows.Forms.Button btnUpdateItem;
+        private System.Windows.Forms.Label lblMessageTopTask;
+        private System.Windows.Forms.Label lblMessageTopItem;
     }
 }

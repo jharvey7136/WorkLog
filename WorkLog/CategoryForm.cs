@@ -19,6 +19,10 @@ namespace WorkLog
         {
             InitializeComponent();
             InitializeDefaults();
+            dgvClient.RowsAdded += (s, a) => OnRowNumberChanged(dgvClient);
+            dgvProService.RowsAdded += (s, a) => OnRowNumberChanged(dgvProService);
+            dgvTask.RowsAdded += (s, a) => OnRowNumberChanged(dgvTask);
+            dgvItem.RowsAdded += (s, a) => OnRowNumberChanged(dgvItem);
         }
 
         private void InitializeDefaults()
@@ -109,6 +113,85 @@ namespace WorkLog
             dgvProService.Columns[0].ReadOnly = true;
         }
 
+        /************************************** Task *************************************/
+        private void BtnUpdateTask_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DialogResult result = MessageBox.Show("Data will be updated. Continue?", "Confirmation", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    oDAL.UpdateTask(dgvTask, cbProService);
+                    lblMessageTopTask.ForeColor = Color.Green;
+                    lblMessageTopTask.Text = "Update Successful!";
+                }
+                else
+                    return;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private void BtnRefreshTask_Click(object sender, EventArgs e)
+        {
+            GetDataTask();
+            ResetMessageTop();            
+        }
+
+        private void GetDataTask()
+        {
+            string cmd = "SELECT DISTINCT TaskID, TaskName FROM Task WHERE ProServiceID = " + cbProService.SelectedValue;
+            oDAL.FillDataGrid(cmd, dgvTask);
+            dgvTask.Columns[0].ReadOnly = true;
+        }
+
+        private void BtnCloseTask_Click(object sender, EventArgs e)
+        {
+            Dispose();
+        }
+
+
+        /************************************** Item *************************************/
+        private void BtnUpdateItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DialogResult result = MessageBox.Show("Data will be updated. Continue?", "Confirmation", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    oDAL.UpdateItem(dgvItem, cbProServiceItem);
+                    lblMessageTopItem.ForeColor = Color.Green;
+                    lblMessageTopItem.Text = "Update Successful!";
+                }
+                else
+                    return;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        private void BtnRefreshItem_Click(object sender, EventArgs e)
+        {
+            GetDataItem();
+            ResetMessageTop();
+        }
+
+        private void BtnCloseItem_Click(object sender, EventArgs e)
+        {
+            Dispose();
+        }
+
+        private void GetDataItem()
+        {
+            string cmd = "SELECT DISTINCT ItemID, ItemName FROM Item WHERE ProServiceID = " + cbProServiceItem.SelectedValue;
+            oDAL.FillDataGrid(cmd, dgvItem);
+            dgvItem.Columns[0].ReadOnly = true;
+        }
+
         /************************************** Helpers *************************************/
         private void ResetMessageTop()
         {
@@ -116,6 +199,10 @@ namespace WorkLog
             lblMessageTop.ForeColor = SystemColors.ControlText;
             lblMessageTopPS.Text = "";
             lblMessageTopPS.ForeColor = SystemColors.ControlText;
+            lblMessageTopTask.Text = "";
+            lblMessageTopTask.ForeColor = SystemColors.ControlText;
+            lblMessageTopItem.Text = "";
+            lblMessageTopItem.ForeColor = SystemColors.ControlText;
         }
 
         private void CbProService_SelectedIndexChanged(object sender, EventArgs e)
@@ -141,5 +228,13 @@ namespace WorkLog
             oDAL.FillDataGrid(cmd, dgvItem);
             dgvItem.Columns[0].ReadOnly = true;
         }
+
+        private void OnRowNumberChanged(DataGridView dgv)
+        {
+            //lblRecordCount.Text = dgvRecords.Rows.Count.ToString();
+            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+        }
+
+        
     }
 }

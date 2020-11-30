@@ -48,15 +48,20 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txtReimburseCost = new System.Windows.Forms.TextBox();
             this.btnSubmit = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.btnTest = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.lblItem = new System.Windows.Forms.Label();
             this.cbItem = new System.Windows.Forms.ComboBox();
-            this.btnTest = new System.Windows.Forms.Button();
             this.dgvRecords = new System.Windows.Forms.DataGridView();
             this.lblMessage = new System.Windows.Forms.Label();
             this.btnExport = new System.Windows.Forms.Button();
             this.gbDataFilters = new System.Windows.Forms.GroupBox();
+            this.btnAll = new System.Windows.Forms.Button();
+            this.btnMTD = new System.Windows.Forms.Button();
+            this.btnYTD = new System.Windows.Forms.Button();
+            this.btnLast30 = new System.Windows.Forms.Button();
+            this.btnLastMonth = new System.Windows.Forms.Button();
             this.btnView = new System.Windows.Forms.Button();
             this.lblFilterStart = new System.Windows.Forms.Label();
             this.lblFilterEnd = new System.Windows.Forms.Label();
@@ -65,9 +70,7 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripManageCat = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnLastMonth = new System.Windows.Forms.Button();
-            this.btnLast30 = new System.Windows.Forms.Button();
-            this.btnYTD = new System.Windows.Forms.Button();
+            this.lblRecordCount = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.gbDataFilters.SuspendLayout();
@@ -80,7 +83,7 @@
             this.cbClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbClient.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbClient.FormattingEnabled = true;
-            this.cbClient.Location = new System.Drawing.Point(16, 56);
+            this.cbClient.Location = new System.Drawing.Point(365, 40);
             this.cbClient.Name = "cbClient";
             this.cbClient.Size = new System.Drawing.Size(215, 24);
             this.cbClient.TabIndex = 0;
@@ -88,7 +91,7 @@
             // lblClient
             // 
             this.lblClient.AutoSize = true;
-            this.lblClient.Location = new System.Drawing.Point(16, 40);
+            this.lblClient.Location = new System.Drawing.Point(365, 24);
             this.lblClient.Name = "lblClient";
             this.lblClient.Size = new System.Drawing.Size(33, 13);
             this.lblClient.TabIndex = 1;
@@ -98,16 +101,16 @@
             // 
             this.dtpStartTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpStartTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpStartTime.Location = new System.Drawing.Point(8, 98);
+            this.dtpStartTime.Location = new System.Drawing.Point(69, 46);
             this.dtpStartTime.Name = "dtpStartTime";
             this.dtpStartTime.ShowUpDown = true;
-            this.dtpStartTime.Size = new System.Drawing.Size(111, 24);
+            this.dtpStartTime.Size = new System.Drawing.Size(209, 24);
             this.dtpStartTime.TabIndex = 2;
             // 
             // lblStartTime
             // 
             this.lblStartTime.AutoSize = true;
-            this.lblStartTime.Location = new System.Drawing.Point(8, 82);
+            this.lblStartTime.Location = new System.Drawing.Point(8, 51);
             this.lblStartTime.Name = "lblStartTime";
             this.lblStartTime.Size = new System.Drawing.Size(55, 13);
             this.lblStartTime.TabIndex = 5;
@@ -116,7 +119,7 @@
             // lblEndTime
             // 
             this.lblEndTime.AutoSize = true;
-            this.lblEndTime.Location = new System.Drawing.Point(133, 82);
+            this.lblEndTime.Location = new System.Drawing.Point(11, 87);
             this.lblEndTime.Name = "lblEndTime";
             this.lblEndTime.Size = new System.Drawing.Size(52, 13);
             this.lblEndTime.TabIndex = 7;
@@ -126,15 +129,15 @@
             // 
             this.dtpEndTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpEndTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpEndTime.Location = new System.Drawing.Point(136, 98);
+            this.dtpEndTime.Location = new System.Drawing.Point(69, 79);
             this.dtpEndTime.Name = "dtpEndTime";
             this.dtpEndTime.ShowUpDown = true;
-            this.dtpEndTime.Size = new System.Drawing.Size(111, 24);
+            this.dtpEndTime.Size = new System.Drawing.Size(209, 24);
             this.dtpEndTime.TabIndex = 6;
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(763, 40);
+            this.btnClose.Location = new System.Drawing.Point(754, 40);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(78, 24);
             this.btnClose.TabIndex = 8;
@@ -146,7 +149,7 @@
             // 
             this.lblHours.AutoSize = true;
             this.lblHours.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHours.Location = new System.Drawing.Point(263, 103);
+            this.lblHours.Location = new System.Drawing.Point(79, 110);
             this.lblHours.Name = "lblHours";
             this.lblHours.Size = new System.Drawing.Size(63, 18);
             this.lblHours.TabIndex = 9;
@@ -155,7 +158,7 @@
             // lblTotalHours
             // 
             this.lblTotalHours.AutoSize = true;
-            this.lblTotalHours.Location = new System.Drawing.Point(263, 82);
+            this.lblTotalHours.Location = new System.Drawing.Point(11, 114);
             this.lblTotalHours.Name = "lblTotalHours";
             this.lblTotalHours.Size = new System.Drawing.Size(62, 13);
             this.lblTotalHours.TabIndex = 11;
@@ -164,7 +167,7 @@
             // lblProService
             // 
             this.lblProService.AutoSize = true;
-            this.lblProService.Location = new System.Drawing.Point(234, 40);
+            this.lblProService.Location = new System.Drawing.Point(593, 24);
             this.lblProService.Name = "lblProService";
             this.lblProService.Size = new System.Drawing.Size(103, 13);
             this.lblProService.TabIndex = 13;
@@ -176,7 +179,7 @@
             this.cbProService.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbProService.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbProService.FormattingEnabled = true;
-            this.cbProService.Location = new System.Drawing.Point(237, 56);
+            this.cbProService.Location = new System.Drawing.Point(596, 40);
             this.cbProService.Name = "cbProService";
             this.cbProService.Size = new System.Drawing.Size(215, 24);
             this.cbProService.TabIndex = 12;
@@ -185,7 +188,7 @@
             // lblTask
             // 
             this.lblTask.AutoSize = true;
-            this.lblTask.Location = new System.Drawing.Point(13, 97);
+            this.lblTask.Location = new System.Drawing.Point(362, 81);
             this.lblTask.Name = "lblTask";
             this.lblTask.Size = new System.Drawing.Size(31, 13);
             this.lblTask.TabIndex = 15;
@@ -197,7 +200,7 @@
             this.cbTask.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTask.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbTask.FormattingEnabled = true;
-            this.cbTask.Location = new System.Drawing.Point(16, 113);
+            this.cbTask.Location = new System.Drawing.Point(365, 97);
             this.cbTask.Name = "cbTask";
             this.cbTask.Size = new System.Drawing.Size(215, 24);
             this.cbTask.TabIndex = 14;
@@ -205,15 +208,15 @@
             // 
             // txtDescription
             // 
-            this.txtDescription.Location = new System.Drawing.Point(8, 198);
+            this.txtDescription.Location = new System.Drawing.Point(253, 151);
             this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(391, 20);
+            this.txtDescription.Size = new System.Drawing.Size(318, 20);
             this.txtDescription.TabIndex = 16;
             // 
             // lblComments
             // 
             this.lblComments.AutoSize = true;
-            this.lblComments.Location = new System.Drawing.Point(5, 182);
+            this.lblComments.Location = new System.Drawing.Point(187, 154);
             this.lblComments.Name = "lblComments";
             this.lblComments.Size = new System.Drawing.Size(60, 13);
             this.lblComments.TabIndex = 17;
@@ -221,7 +224,7 @@
             // 
             // dtpDate
             // 
-            this.dtpDate.Location = new System.Drawing.Point(8, 40);
+            this.dtpDate.Location = new System.Drawing.Point(69, 17);
             this.dtpDate.Name = "dtpDate";
             this.dtpDate.Size = new System.Drawing.Size(200, 20);
             this.dtpDate.TabIndex = 18;
@@ -229,7 +232,7 @@
             // lblDate
             // 
             this.lblDate.AutoSize = true;
-            this.lblDate.Location = new System.Drawing.Point(8, 24);
+            this.lblDate.Location = new System.Drawing.Point(33, 23);
             this.lblDate.Name = "lblDate";
             this.lblDate.Size = new System.Drawing.Size(30, 13);
             this.lblDate.TabIndex = 19;
@@ -240,20 +243,29 @@
             this.groupBox1.Controls.Add(this.txtReimburseCost);
             this.groupBox1.Controls.Add(this.btnSubmit);
             this.groupBox1.Controls.Add(this.txtDescription);
+            this.groupBox1.Controls.Add(this.btnTest);
             this.groupBox1.Controls.Add(this.lblComments);
+            this.groupBox1.Controls.Add(this.btnClear);
             this.groupBox1.Controls.Add(this.lblDate);
             this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.lblItem);
             this.groupBox1.Controls.Add(this.dtpDate);
-            this.groupBox1.Controls.Add(this.btnClear);
             this.groupBox1.Controls.Add(this.dtpStartTime);
+            this.groupBox1.Controls.Add(this.cbItem);
             this.groupBox1.Controls.Add(this.lblStartTime);
             this.groupBox1.Controls.Add(this.dtpEndTime);
+            this.groupBox1.Controls.Add(this.lblTask);
             this.groupBox1.Controls.Add(this.lblEndTime);
+            this.groupBox1.Controls.Add(this.cbTask);
             this.groupBox1.Controls.Add(this.lblTotalHours);
+            this.groupBox1.Controls.Add(this.lblProService);
             this.groupBox1.Controls.Add(this.lblHours);
-            this.groupBox1.Location = new System.Drawing.Point(16, 143);
+            this.groupBox1.Controls.Add(this.cbProService);
+            this.groupBox1.Controls.Add(this.lblClient);
+            this.groupBox1.Controls.Add(this.cbClient);
+            this.groupBox1.Location = new System.Drawing.Point(24, 27);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(847, 227);
+            this.groupBox1.Size = new System.Drawing.Size(839, 195);
             this.groupBox1.TabIndex = 20;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Options";
@@ -261,15 +273,15 @@
             // txtReimburseCost
             // 
             this.txtReimburseCost.Enabled = false;
-            this.txtReimburseCost.Location = new System.Drawing.Point(99, 148);
+            this.txtReimburseCost.Location = new System.Drawing.Point(99, 151);
             this.txtReimburseCost.Name = "txtReimburseCost";
-            this.txtReimburseCost.Size = new System.Drawing.Size(100, 20);
+            this.txtReimburseCost.Size = new System.Drawing.Size(62, 20);
             this.txtReimburseCost.TabIndex = 18;
             this.txtReimburseCost.Text = "0";
             // 
             // btnSubmit
             // 
-            this.btnSubmit.Location = new System.Drawing.Point(406, 196);
+            this.btnSubmit.Location = new System.Drawing.Point(577, 148);
             this.btnSubmit.Name = "btnSubmit";
             this.btnSubmit.Size = new System.Drawing.Size(78, 24);
             this.btnSubmit.TabIndex = 28;
@@ -277,18 +289,19 @@
             this.btnSubmit.UseVisualStyleBackColor = true;
             this.btnSubmit.Click += new System.EventHandler(this.BtnSubmit_Click);
             // 
-            // label1
+            // btnTest
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(5, 151);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Reimbursable Cost";
+            this.btnTest.Location = new System.Drawing.Point(745, 148);
+            this.btnTest.Name = "btnTest";
+            this.btnTest.Size = new System.Drawing.Size(78, 24);
+            this.btnTest.TabIndex = 26;
+            this.btnTest.Text = "Test";
+            this.btnTest.UseVisualStyleBackColor = true;
+            this.btnTest.Click += new System.EventHandler(this.BtnTest_Click);
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(490, 196);
+            this.btnClear.Location = new System.Drawing.Point(661, 148);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(78, 24);
             this.btnClear.TabIndex = 27;
@@ -296,10 +309,19 @@
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.BtnClear_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(5, 154);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(95, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Reimbursable Cost";
+            // 
             // lblItem
             // 
             this.lblItem.AutoSize = true;
-            this.lblItem.Location = new System.Drawing.Point(234, 97);
+            this.lblItem.Location = new System.Drawing.Point(593, 81);
             this.lblItem.Name = "lblItem";
             this.lblItem.Size = new System.Drawing.Size(27, 13);
             this.lblItem.TabIndex = 22;
@@ -311,42 +333,32 @@
             this.cbItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbItem.FormattingEnabled = true;
-            this.cbItem.Location = new System.Drawing.Point(237, 113);
+            this.cbItem.Location = new System.Drawing.Point(596, 97);
             this.cbItem.Name = "cbItem";
             this.cbItem.Size = new System.Drawing.Size(215, 24);
             this.cbItem.TabIndex = 21;
             // 
-            // btnTest
-            // 
-            this.btnTest.Location = new System.Drawing.Point(458, 113);
-            this.btnTest.Name = "btnTest";
-            this.btnTest.Size = new System.Drawing.Size(78, 24);
-            this.btnTest.TabIndex = 26;
-            this.btnTest.Text = "Test";
-            this.btnTest.UseVisualStyleBackColor = true;
-            this.btnTest.Click += new System.EventHandler(this.BtnTest_Click);
-            // 
             // dgvRecords
             // 
             this.dgvRecords.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvRecords.Location = new System.Drawing.Point(16, 394);
+            this.dgvRecords.Location = new System.Drawing.Point(24, 249);
             this.dgvRecords.Name = "dgvRecords";
-            this.dgvRecords.Size = new System.Drawing.Size(847, 223);
+            this.dgvRecords.Size = new System.Drawing.Size(839, 223);
             this.dgvRecords.TabIndex = 32;
             // 
             // lblMessage
             // 
             this.lblMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMessage.Location = new System.Drawing.Point(16, 373);
+            this.lblMessage.Location = new System.Drawing.Point(24, 228);
             this.lblMessage.Name = "lblMessage";
-            this.lblMessage.Size = new System.Drawing.Size(847, 18);
+            this.lblMessage.Size = new System.Drawing.Size(839, 18);
             this.lblMessage.TabIndex = 33;
             this.lblMessage.Text = "lblMessage";
             this.lblMessage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnExport
             // 
-            this.btnExport.Location = new System.Drawing.Point(679, 40);
+            this.btnExport.Location = new System.Drawing.Point(670, 40);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(78, 24);
             this.btnExport.TabIndex = 32;
@@ -356,6 +368,8 @@
             // 
             // gbDataFilters
             // 
+            this.gbDataFilters.Controls.Add(this.btnAll);
+            this.gbDataFilters.Controls.Add(this.btnMTD);
             this.gbDataFilters.Controls.Add(this.btnYTD);
             this.gbDataFilters.Controls.Add(this.btnLast30);
             this.gbDataFilters.Controls.Add(this.btnLastMonth);
@@ -366,12 +380,62 @@
             this.gbDataFilters.Controls.Add(this.dtpFilterStart);
             this.gbDataFilters.Controls.Add(this.dtpFilterEnd);
             this.gbDataFilters.Controls.Add(this.btnClose);
-            this.gbDataFilters.Location = new System.Drawing.Point(16, 623);
+            this.gbDataFilters.Location = new System.Drawing.Point(24, 500);
             this.gbDataFilters.Name = "gbDataFilters";
-            this.gbDataFilters.Size = new System.Drawing.Size(847, 108);
+            this.gbDataFilters.Size = new System.Drawing.Size(839, 108);
             this.gbDataFilters.TabIndex = 34;
             this.gbDataFilters.TabStop = false;
             this.gbDataFilters.Text = "Filter Data View";
+            // 
+            // btnAll
+            // 
+            this.btnAll.Location = new System.Drawing.Point(375, 70);
+            this.btnAll.Name = "btnAll";
+            this.btnAll.Size = new System.Drawing.Size(85, 23);
+            this.btnAll.TabIndex = 44;
+            this.btnAll.Text = "All";
+            this.btnAll.UseVisualStyleBackColor = true;
+            this.btnAll.Click += new System.EventHandler(this.BtnAll_Click);
+            // 
+            // btnMTD
+            // 
+            this.btnMTD.Location = new System.Drawing.Point(193, 70);
+            this.btnMTD.Name = "btnMTD";
+            this.btnMTD.Size = new System.Drawing.Size(85, 23);
+            this.btnMTD.TabIndex = 43;
+            this.btnMTD.Text = "MTD";
+            this.btnMTD.UseVisualStyleBackColor = true;
+            this.btnMTD.Click += new System.EventHandler(this.BtnMTD_Click);
+            // 
+            // btnYTD
+            // 
+            this.btnYTD.Location = new System.Drawing.Point(284, 70);
+            this.btnYTD.Name = "btnYTD";
+            this.btnYTD.Size = new System.Drawing.Size(85, 23);
+            this.btnYTD.TabIndex = 42;
+            this.btnYTD.Text = "YTD";
+            this.btnYTD.UseVisualStyleBackColor = true;
+            this.btnYTD.Click += new System.EventHandler(this.BtnYTD_Click);
+            // 
+            // btnLast30
+            // 
+            this.btnLast30.Location = new System.Drawing.Point(102, 70);
+            this.btnLast30.Name = "btnLast30";
+            this.btnLast30.Size = new System.Drawing.Size(85, 23);
+            this.btnLast30.TabIndex = 41;
+            this.btnLast30.Text = "Last 30 Days";
+            this.btnLast30.UseVisualStyleBackColor = true;
+            this.btnLast30.Click += new System.EventHandler(this.BtnLast30_Click);
+            // 
+            // btnLastMonth
+            // 
+            this.btnLastMonth.Location = new System.Drawing.Point(11, 70);
+            this.btnLastMonth.Name = "btnLastMonth";
+            this.btnLastMonth.Size = new System.Drawing.Size(85, 23);
+            this.btnLastMonth.TabIndex = 36;
+            this.btnLastMonth.Text = "Last Month";
+            this.btnLastMonth.UseVisualStyleBackColor = true;
+            this.btnLastMonth.Click += new System.EventHandler(this.BtnLastMonth_Click);
             // 
             // btnView
             // 
@@ -445,56 +509,28 @@
             this.toolStripManageCat.Text = "Manage Categories";
             this.toolStripManageCat.Click += new System.EventHandler(this.ToolStripManageCat_Click);
             // 
-            // btnLastMonth
+            // lblRecordCount
             // 
-            this.btnLastMonth.Location = new System.Drawing.Point(11, 70);
-            this.btnLastMonth.Name = "btnLastMonth";
-            this.btnLastMonth.Size = new System.Drawing.Size(85, 23);
-            this.btnLastMonth.TabIndex = 36;
-            this.btnLastMonth.Text = "Last Month";
-            this.btnLastMonth.UseVisualStyleBackColor = true;
-            this.btnLastMonth.Click += new System.EventHandler(this.BtnLastMonth_Click);
-            // 
-            // btnLast30
-            // 
-            this.btnLast30.Location = new System.Drawing.Point(102, 70);
-            this.btnLast30.Name = "btnLast30";
-            this.btnLast30.Size = new System.Drawing.Size(85, 23);
-            this.btnLast30.TabIndex = 41;
-            this.btnLast30.Text = "Last 30 Days";
-            this.btnLast30.UseVisualStyleBackColor = true;
-            this.btnLast30.Click += new System.EventHandler(this.BtnLast30_Click);
-            // 
-            // btnYTD
-            // 
-            this.btnYTD.Location = new System.Drawing.Point(193, 70);
-            this.btnYTD.Name = "btnYTD";
-            this.btnYTD.Size = new System.Drawing.Size(85, 23);
-            this.btnYTD.TabIndex = 42;
-            this.btnYTD.Text = "YTD";
-            this.btnYTD.UseVisualStyleBackColor = true;
-            this.btnYTD.Click += new System.EventHandler(this.BtnYTD_Click);
+            this.lblRecordCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRecordCount.ForeColor = System.Drawing.Color.Green;
+            this.lblRecordCount.Location = new System.Drawing.Point(731, 475);
+            this.lblRecordCount.Name = "lblRecordCount";
+            this.lblRecordCount.Size = new System.Drawing.Size(132, 22);
+            this.lblRecordCount.TabIndex = 43;
+            this.lblRecordCount.Text = "lblRecordCount";
+            this.lblRecordCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // WorkLog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(882, 784);
+            this.ClientSize = new System.Drawing.Size(882, 651);
+            this.Controls.Add(this.lblRecordCount);
             this.Controls.Add(this.gbDataFilters);
             this.Controls.Add(this.lblMessage);
             this.Controls.Add(this.dgvRecords);
-            this.Controls.Add(this.btnTest);
-            this.Controls.Add(this.lblItem);
-            this.Controls.Add(this.cbItem);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.lblTask);
-            this.Controls.Add(this.cbTask);
-            this.Controls.Add(this.lblProService);
-            this.Controls.Add(this.cbProService);
-            this.Controls.Add(this.lblClient);
-            this.Controls.Add(this.cbClient);
             this.Controls.Add(this.menuStrip);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip;
             this.Name = "WorkLog";
             this.Text = "Work Log";
@@ -552,6 +588,9 @@
         private System.Windows.Forms.Button btnLast30;
         private System.Windows.Forms.Button btnLastMonth;
         private System.Windows.Forms.Button btnYTD;
+        private System.Windows.Forms.Label lblRecordCount;
+        private System.Windows.Forms.Button btnMTD;
+        private System.Windows.Forms.Button btnAll;
     }
 }
 

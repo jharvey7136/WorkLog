@@ -246,7 +246,112 @@ namespace WorkLog
             }
         }
 
+        public void UpdateTask(DataGridView dgv, ComboBox cbProServ)
+        {
+            try
+            {
+                if (BackupDB())
+                {
+                    foreach (DataGridViewRow row in dgv.Rows)
+                    {
+                        if (row.Cells["TaskID"].Value != null)
+                        {
+                            if (row.Cells["TaskID"].Value.ToString() == "")
+                            {
+                                string sqlInsert = "INSERT INTO Task(ProServiceID, TaskName) VALUES(" + cbProServ.SelectedValue + ", @taskname)";
+                                using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                                {
+                                    using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
+                                    {
+                                        cmd.Parameters.Add("@taskname", DbType.String).Value = row.Cells["TaskName"].Value;
+                                        con.Open();
+                                        cmd.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                string sql = "UPDATE Task SET TaskName = @taskname WHERE TaskID = @ID";
+                                using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                                {
+                                    using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
+                                    {
+                                        cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["TaskID"].Value;
+                                        cmd.Parameters.Add("@taskname", DbType.String).Value = row.Cells["TaskName"].Value;
+                                        con.Open();
+                                        cmd.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
 
+        public void UpdateItem(DataGridView dgv, ComboBox cbProServ)
+        {
+            try
+            {
+                if (BackupDB())
+                {
+                    foreach (DataGridViewRow row in dgv.Rows)
+                    {
+                        if (row.Cells["ItemID"].Value != null)
+                        {
+                            if (row.Cells["ItemID"].Value.ToString() == "")
+                            {
+                                string sqlInsert = "INSERT INTO Item(ProServiceID, ItemName) VALUES(" + cbProServ.SelectedValue + ", @itemname)";
+                                using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                                {
+                                    using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
+                                    {
+                                        cmd.Parameters.Add("@itemname", DbType.String).Value = row.Cells["ItemName"].Value;
+                                        con.Open();
+                                        cmd.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                string sql = "UPDATE Item SET ItemName = @itemname WHERE ItemID = @ID";
+                                using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                                {
+                                    using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
+                                    {
+                                        cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["ItemID"].Value;
+                                        cmd.Parameters.Add("@itemname", DbType.String).Value = row.Cells["ItemName"].Value;
+                                        con.Open();
+                                        cmd.ExecuteNonQuery();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+        }
+
+        public string ReadString(string txtQuery)
+        {
+            using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+            {
+                using (SQLiteCommand cmd = new SQLiteCommand(txtQuery, con))
+                {
+                    con.Open();
+                    object result = cmd.ExecuteScalar();
+                    return (result == null ? "" : result.ToString());
+                }
+            }
+        }
 
     }
 
@@ -292,4 +397,6 @@ namespace WorkLog
             sw.Close();
         }
     }
+
+    
 }
