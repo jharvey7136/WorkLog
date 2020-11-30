@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Data.SQLite;
 using System.Configuration;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace WorkLog
 {
@@ -42,6 +43,9 @@ namespace WorkLog
 
             oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client", cbClient, "ClientName", "ClientID");
             oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService", cbProService, "ProServiceName", "ProServiceID");
+
+            dtpFilterStart.CustomFormat = "M/dd/yyyy";
+            dtpFilterEnd.CustomFormat = "M/dd/yyyy";
         }
 
         private void dtpStartTime_ValueChanged(object sender, EventArgs e)
@@ -57,8 +61,8 @@ namespace WorkLog
         private string GetTotalHours()
         {
             string ret = Math.Round(CalculateTimespan().TotalHours, 2).ToString();
-            //if (Math.Round(CalculateTimespan().TotalHours, 2) < 0)
-            //    ret = "0";
+            if (Math.Round(CalculateTimespan().TotalHours, 2) < 0)
+                ret = "0";
             return ret;
         }
 
@@ -70,7 +74,7 @@ namespace WorkLog
 
         private void BtnClose_Click(object sender, EventArgs e)
         {
-            oDAL.BackupDB();
+            //oDAL.BackupDB();
             Environment.Exit(0);
         }
 
@@ -290,16 +294,20 @@ namespace WorkLog
         {
             try
             {
-                string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
-                                "FROM Record ORDER BY RowID DESC";
-                DataTable dt = DAL.CreateDataTable(cmd);
+                //string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+                //                "FROM Record ORDER BY RowID DESC";
+                //DataTable dt = DAL.CreateDataTable(cmd);
+                
+                DataTable dt = (DataTable)dgvRecords.DataSource;
                 SaveFileDialog sfd = new SaveFileDialog();
                 sfd.Filter = "csv|*.csv";
                 sfd.Title = "Export Records to CSV";
                 sfd.ShowDialog();
-                dt.ToCSV(sfd.FileName);
+                string fn = sfd.FileName;
+                dt.ToCSV(fn);
                 lblMessage.ForeColor = Color.Green;
                 lblMessage.Text = "Data exported successfully!";
+                Process.Start("explorer.exe", fn);
             }
             catch (Exception ex)
             {
@@ -331,6 +339,12 @@ namespace WorkLog
             formCategories.ShowDialog();
         }
 
+        private void OnRowNumberChanged()
+        {
+            lblRecordCount.Text = dgvRecords.Rows.Count.ToString();
+            dgvRecords.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+        }
+
         private void BtnLastMonth_Click(object sender, EventArgs e)
         {
             string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
@@ -355,6 +369,8 @@ namespace WorkLog
             cmd = "SELECT date('now','-30 days')";
             string startDate = oDAL.ReadString(cmd);
             dtpFilterStart.Value = DateTime.Parse(startDate);
+
+            dtpFilterEnd.Value = DateTime.Now;
         }
 
         private void BtnYTD_Click(object sender, EventArgs e)
@@ -366,27 +382,36 @@ namespace WorkLog
             cmd = "SELECT date('now', 'start of year')";
             string startDate = oDAL.ReadString(cmd);
             dtpFilterStart.Value = DateTime.Parse(startDate);
-        }
 
-        private void GetRecordAggregates()
-        {
-
-        }
-
-        private void OnRowNumberChanged()
-        {
-            lblRecordCount.Text = dgvRecords.Rows.Count.ToString();
-            dgvRecords.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-        }
+            dtpFilterEnd.Value = DateTime.Now;
+        }        
 
         private void BtnMTD_Click(object sender, EventArgs e)
         {
+            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+                         "FROM Record WHERE date >= date('now', 'start of month') AND date < date('now','start of month', '+1 month')";
+            oDAL.FillDataGrid(cmd, dgvRecords);
 
+            cmd = "SELECT date('now', 'start of month')";
+            string startDate = oDAL.ReadString(cmd);
+            dtpFilterStart.Value = DateTime.Parse(startDate);
+
+            dtpFilterEnd.Value = DateTime.Now;
         }
 
         private void BtnAll_Click(object sender, EventArgs e)
         {
+            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+                         "FROM Record";
+            oDAL.FillDataGrid(cmd, dgvRecords);
 
+            cmd = "SELECT MIN(date) FROM Record";
+            string startDate = oDAL.ReadString(cmd);
+            dtpFilterStart.Value = DateTime.Parse(startDate);
+
+            cmd = "SELECT MAX(date) FROM Record";
+            string endDate = oDAL.ReadString(cmd);
+            dtpFilterEnd.Value = DateTime.Parse(endDate);
         }
 
     }

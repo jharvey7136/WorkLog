@@ -83,56 +83,56 @@
             this.cbClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbClient.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbClient.FormattingEnabled = true;
-            this.cbClient.Location = new System.Drawing.Point(365, 40);
+            this.cbClient.Location = new System.Drawing.Point(305, 40);
             this.cbClient.Name = "cbClient";
-            this.cbClient.Size = new System.Drawing.Size(215, 24);
+            this.cbClient.Size = new System.Drawing.Size(250, 24);
             this.cbClient.TabIndex = 0;
             // 
             // lblClient
             // 
-            this.lblClient.AutoSize = true;
-            this.lblClient.Location = new System.Drawing.Point(365, 24);
+            this.lblClient.Location = new System.Drawing.Point(305, 24);
             this.lblClient.Name = "lblClient";
-            this.lblClient.Size = new System.Drawing.Size(33, 13);
+            this.lblClient.Size = new System.Drawing.Size(68, 13);
             this.lblClient.TabIndex = 1;
             this.lblClient.Text = "Client";
+            this.lblClient.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // dtpStartTime
             // 
-            this.dtpStartTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dtpStartTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpStartTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpStartTime.Location = new System.Drawing.Point(69, 46);
+            this.dtpStartTime.Location = new System.Drawing.Point(82, 50);
             this.dtpStartTime.Name = "dtpStartTime";
             this.dtpStartTime.ShowUpDown = true;
-            this.dtpStartTime.Size = new System.Drawing.Size(209, 24);
+            this.dtpStartTime.Size = new System.Drawing.Size(174, 22);
             this.dtpStartTime.TabIndex = 2;
             // 
             // lblStartTime
             // 
-            this.lblStartTime.AutoSize = true;
-            this.lblStartTime.Location = new System.Drawing.Point(8, 51);
+            this.lblStartTime.Location = new System.Drawing.Point(6, 57);
             this.lblStartTime.Name = "lblStartTime";
-            this.lblStartTime.Size = new System.Drawing.Size(55, 13);
+            this.lblStartTime.Size = new System.Drawing.Size(70, 13);
             this.lblStartTime.TabIndex = 5;
             this.lblStartTime.Text = "Start Time";
+            this.lblStartTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblEndTime
             // 
-            this.lblEndTime.AutoSize = true;
-            this.lblEndTime.Location = new System.Drawing.Point(11, 87);
+            this.lblEndTime.Location = new System.Drawing.Point(6, 90);
             this.lblEndTime.Name = "lblEndTime";
-            this.lblEndTime.Size = new System.Drawing.Size(52, 13);
+            this.lblEndTime.Size = new System.Drawing.Size(70, 13);
             this.lblEndTime.TabIndex = 7;
             this.lblEndTime.Text = "End Time";
+            this.lblEndTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // dtpEndTime
             // 
-            this.dtpEndTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dtpEndTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpEndTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpEndTime.Location = new System.Drawing.Point(69, 79);
+            this.dtpEndTime.Location = new System.Drawing.Point(82, 83);
             this.dtpEndTime.Name = "dtpEndTime";
             this.dtpEndTime.ShowUpDown = true;
-            this.dtpEndTime.Size = new System.Drawing.Size(209, 24);
+            this.dtpEndTime.Size = new System.Drawing.Size(174, 22);
             this.dtpEndTime.TabIndex = 6;
             // 
             // btnClose
@@ -149,7 +149,7 @@
             // 
             this.lblHours.AutoSize = true;
             this.lblHours.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHours.Location = new System.Drawing.Point(79, 110);
+            this.lblHours.Location = new System.Drawing.Point(79, 114);
             this.lblHours.Name = "lblHours";
             this.lblHours.Size = new System.Drawing.Size(63, 18);
             this.lblHours.TabIndex = 9;
@@ -157,21 +157,21 @@
             // 
             // lblTotalHours
             // 
-            this.lblTotalHours.AutoSize = true;
-            this.lblTotalHours.Location = new System.Drawing.Point(11, 114);
+            this.lblTotalHours.Location = new System.Drawing.Point(6, 118);
             this.lblTotalHours.Name = "lblTotalHours";
-            this.lblTotalHours.Size = new System.Drawing.Size(62, 13);
+            this.lblTotalHours.Size = new System.Drawing.Size(70, 13);
             this.lblTotalHours.TabIndex = 11;
             this.lblTotalHours.Text = "Total Hours";
+            this.lblTotalHours.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblProService
             // 
-            this.lblProService.AutoSize = true;
-            this.lblProService.Location = new System.Drawing.Point(593, 24);
+            this.lblProService.Location = new System.Drawing.Point(574, 24);
             this.lblProService.Name = "lblProService";
-            this.lblProService.Size = new System.Drawing.Size(103, 13);
+            this.lblProService.Size = new System.Drawing.Size(100, 13);
             this.lblProService.TabIndex = 13;
             this.lblProService.Text = "Professional Service";
+            this.lblProService.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // cbProService
             // 
@@ -179,20 +179,20 @@
             this.cbProService.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbProService.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbProService.FormattingEnabled = true;
-            this.cbProService.Location = new System.Drawing.Point(596, 40);
+            this.cbProService.Location = new System.Drawing.Point(577, 40);
             this.cbProService.Name = "cbProService";
-            this.cbProService.Size = new System.Drawing.Size(215, 24);
+            this.cbProService.Size = new System.Drawing.Size(250, 24);
             this.cbProService.TabIndex = 12;
             this.cbProService.SelectedIndexChanged += new System.EventHandler(this.CbProService_SelectedIndexChanged);
             // 
             // lblTask
             // 
-            this.lblTask.AutoSize = true;
-            this.lblTask.Location = new System.Drawing.Point(362, 81);
+            this.lblTask.Location = new System.Drawing.Point(305, 81);
             this.lblTask.Name = "lblTask";
-            this.lblTask.Size = new System.Drawing.Size(31, 13);
+            this.lblTask.Size = new System.Drawing.Size(63, 13);
             this.lblTask.TabIndex = 15;
             this.lblTask.Text = "Task";
+            this.lblTask.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // cbTask
             // 
@@ -200,9 +200,9 @@
             this.cbTask.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTask.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbTask.FormattingEnabled = true;
-            this.cbTask.Location = new System.Drawing.Point(365, 97);
+            this.cbTask.Location = new System.Drawing.Point(305, 97);
             this.cbTask.Name = "cbTask";
-            this.cbTask.Size = new System.Drawing.Size(215, 24);
+            this.cbTask.Size = new System.Drawing.Size(250, 24);
             this.cbTask.TabIndex = 14;
             this.cbTask.SelectedIndexChanged += new System.EventHandler(this.CbTask_SelectedIndexChanged);
             // 
@@ -224,19 +224,19 @@
             // 
             // dtpDate
             // 
-            this.dtpDate.Location = new System.Drawing.Point(69, 17);
+            this.dtpDate.Location = new System.Drawing.Point(82, 21);
             this.dtpDate.Name = "dtpDate";
-            this.dtpDate.Size = new System.Drawing.Size(200, 20);
+            this.dtpDate.Size = new System.Drawing.Size(202, 20);
             this.dtpDate.TabIndex = 18;
             // 
             // lblDate
             // 
-            this.lblDate.AutoSize = true;
-            this.lblDate.Location = new System.Drawing.Point(33, 23);
+            this.lblDate.Location = new System.Drawing.Point(6, 24);
             this.lblDate.Name = "lblDate";
-            this.lblDate.Size = new System.Drawing.Size(30, 13);
+            this.lblDate.Size = new System.Drawing.Size(70, 13);
             this.lblDate.TabIndex = 19;
             this.lblDate.Text = "Date";
+            this.lblDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // groupBox1
             // 
@@ -320,12 +320,12 @@
             // 
             // lblItem
             // 
-            this.lblItem.AutoSize = true;
-            this.lblItem.Location = new System.Drawing.Point(593, 81);
+            this.lblItem.Location = new System.Drawing.Point(577, 81);
             this.lblItem.Name = "lblItem";
-            this.lblItem.Size = new System.Drawing.Size(27, 13);
+            this.lblItem.Size = new System.Drawing.Size(51, 13);
             this.lblItem.TabIndex = 22;
             this.lblItem.Text = "Item";
+            this.lblItem.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // cbItem
             // 
@@ -333,9 +333,9 @@
             this.cbItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbItem.FormattingEnabled = true;
-            this.cbItem.Location = new System.Drawing.Point(596, 97);
+            this.cbItem.Location = new System.Drawing.Point(577, 97);
             this.cbItem.Name = "cbItem";
-            this.cbItem.Size = new System.Drawing.Size(215, 24);
+            this.cbItem.Size = new System.Drawing.Size(250, 24);
             this.cbItem.TabIndex = 21;
             // 
             // dgvRecords
