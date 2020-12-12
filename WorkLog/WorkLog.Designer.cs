@@ -71,6 +71,8 @@
             this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripManageCat = new System.Windows.Forms.ToolStripMenuItem();
             this.lblRecordCount = new System.Windows.Forms.Label();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnUpdate = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.gbDataFilters.SuspendLayout();
@@ -83,14 +85,14 @@
             this.cbClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbClient.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbClient.FormattingEnabled = true;
-            this.cbClient.Location = new System.Drawing.Point(305, 40);
+            this.cbClient.Location = new System.Drawing.Point(426, 40);
             this.cbClient.Name = "cbClient";
             this.cbClient.Size = new System.Drawing.Size(250, 24);
             this.cbClient.TabIndex = 0;
             // 
             // lblClient
             // 
-            this.lblClient.Location = new System.Drawing.Point(305, 24);
+            this.lblClient.Location = new System.Drawing.Point(426, 24);
             this.lblClient.Name = "lblClient";
             this.lblClient.Size = new System.Drawing.Size(68, 13);
             this.lblClient.TabIndex = 1;
@@ -101,7 +103,7 @@
             // 
             this.dtpStartTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpStartTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpStartTime.Location = new System.Drawing.Point(82, 50);
+            this.dtpStartTime.Location = new System.Drawing.Point(137, 50);
             this.dtpStartTime.Name = "dtpStartTime";
             this.dtpStartTime.ShowUpDown = true;
             this.dtpStartTime.Size = new System.Drawing.Size(174, 22);
@@ -109,7 +111,7 @@
             // 
             // lblStartTime
             // 
-            this.lblStartTime.Location = new System.Drawing.Point(6, 57);
+            this.lblStartTime.Location = new System.Drawing.Point(61, 57);
             this.lblStartTime.Name = "lblStartTime";
             this.lblStartTime.Size = new System.Drawing.Size(70, 13);
             this.lblStartTime.TabIndex = 5;
@@ -118,7 +120,7 @@
             // 
             // lblEndTime
             // 
-            this.lblEndTime.Location = new System.Drawing.Point(6, 90);
+            this.lblEndTime.Location = new System.Drawing.Point(61, 90);
             this.lblEndTime.Name = "lblEndTime";
             this.lblEndTime.Size = new System.Drawing.Size(70, 13);
             this.lblEndTime.TabIndex = 7;
@@ -129,7 +131,7 @@
             // 
             this.dtpEndTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dtpEndTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpEndTime.Location = new System.Drawing.Point(82, 83);
+            this.dtpEndTime.Location = new System.Drawing.Point(137, 83);
             this.dtpEndTime.Name = "dtpEndTime";
             this.dtpEndTime.ShowUpDown = true;
             this.dtpEndTime.Size = new System.Drawing.Size(174, 22);
@@ -137,7 +139,7 @@
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(754, 40);
+            this.btnClose.Location = new System.Drawing.Point(939, 40);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(78, 24);
             this.btnClose.TabIndex = 8;
@@ -149,7 +151,7 @@
             // 
             this.lblHours.AutoSize = true;
             this.lblHours.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHours.Location = new System.Drawing.Point(79, 114);
+            this.lblHours.Location = new System.Drawing.Point(134, 114);
             this.lblHours.Name = "lblHours";
             this.lblHours.Size = new System.Drawing.Size(63, 18);
             this.lblHours.TabIndex = 9;
@@ -157,7 +159,7 @@
             // 
             // lblTotalHours
             // 
-            this.lblTotalHours.Location = new System.Drawing.Point(6, 118);
+            this.lblTotalHours.Location = new System.Drawing.Point(61, 118);
             this.lblTotalHours.Name = "lblTotalHours";
             this.lblTotalHours.Size = new System.Drawing.Size(70, 13);
             this.lblTotalHours.TabIndex = 11;
@@ -166,7 +168,7 @@
             // 
             // lblProService
             // 
-            this.lblProService.Location = new System.Drawing.Point(574, 24);
+            this.lblProService.Location = new System.Drawing.Point(695, 24);
             this.lblProService.Name = "lblProService";
             this.lblProService.Size = new System.Drawing.Size(100, 13);
             this.lblProService.TabIndex = 13;
@@ -179,7 +181,7 @@
             this.cbProService.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbProService.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbProService.FormattingEnabled = true;
-            this.cbProService.Location = new System.Drawing.Point(577, 40);
+            this.cbProService.Location = new System.Drawing.Point(698, 40);
             this.cbProService.Name = "cbProService";
             this.cbProService.Size = new System.Drawing.Size(250, 24);
             this.cbProService.TabIndex = 12;
@@ -187,7 +189,7 @@
             // 
             // lblTask
             // 
-            this.lblTask.Location = new System.Drawing.Point(305, 81);
+            this.lblTask.Location = new System.Drawing.Point(426, 81);
             this.lblTask.Name = "lblTask";
             this.lblTask.Size = new System.Drawing.Size(63, 13);
             this.lblTask.TabIndex = 15;
@@ -200,7 +202,7 @@
             this.cbTask.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTask.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbTask.FormattingEnabled = true;
-            this.cbTask.Location = new System.Drawing.Point(305, 97);
+            this.cbTask.Location = new System.Drawing.Point(426, 97);
             this.cbTask.Name = "cbTask";
             this.cbTask.Size = new System.Drawing.Size(250, 24);
             this.cbTask.TabIndex = 14;
@@ -208,7 +210,7 @@
             // 
             // txtDescription
             // 
-            this.txtDescription.Location = new System.Drawing.Point(253, 151);
+            this.txtDescription.Location = new System.Drawing.Point(372, 151);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(318, 20);
             this.txtDescription.TabIndex = 16;
@@ -216,7 +218,7 @@
             // lblComments
             // 
             this.lblComments.AutoSize = true;
-            this.lblComments.Location = new System.Drawing.Point(187, 154);
+            this.lblComments.Location = new System.Drawing.Point(306, 154);
             this.lblComments.Name = "lblComments";
             this.lblComments.Size = new System.Drawing.Size(60, 13);
             this.lblComments.TabIndex = 17;
@@ -224,14 +226,14 @@
             // 
             // dtpDate
             // 
-            this.dtpDate.Location = new System.Drawing.Point(82, 21);
+            this.dtpDate.Location = new System.Drawing.Point(137, 21);
             this.dtpDate.Name = "dtpDate";
             this.dtpDate.Size = new System.Drawing.Size(202, 20);
             this.dtpDate.TabIndex = 18;
             // 
             // lblDate
             // 
-            this.lblDate.Location = new System.Drawing.Point(6, 24);
+            this.lblDate.Location = new System.Drawing.Point(61, 24);
             this.lblDate.Name = "lblDate";
             this.lblDate.Size = new System.Drawing.Size(70, 13);
             this.lblDate.TabIndex = 19;
@@ -265,7 +267,7 @@
             this.groupBox1.Controls.Add(this.cbClient);
             this.groupBox1.Location = new System.Drawing.Point(24, 27);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(839, 195);
+            this.groupBox1.Size = new System.Drawing.Size(1023, 195);
             this.groupBox1.TabIndex = 20;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Options";
@@ -273,7 +275,7 @@
             // txtReimburseCost
             // 
             this.txtReimburseCost.Enabled = false;
-            this.txtReimburseCost.Location = new System.Drawing.Point(99, 151);
+            this.txtReimburseCost.Location = new System.Drawing.Point(154, 151);
             this.txtReimburseCost.Name = "txtReimburseCost";
             this.txtReimburseCost.Size = new System.Drawing.Size(62, 20);
             this.txtReimburseCost.TabIndex = 18;
@@ -281,7 +283,7 @@
             // 
             // btnSubmit
             // 
-            this.btnSubmit.Location = new System.Drawing.Point(577, 148);
+            this.btnSubmit.Location = new System.Drawing.Point(696, 148);
             this.btnSubmit.Name = "btnSubmit";
             this.btnSubmit.Size = new System.Drawing.Size(78, 24);
             this.btnSubmit.TabIndex = 28;
@@ -291,7 +293,7 @@
             // 
             // btnTest
             // 
-            this.btnTest.Location = new System.Drawing.Point(745, 148);
+            this.btnTest.Location = new System.Drawing.Point(864, 148);
             this.btnTest.Name = "btnTest";
             this.btnTest.Size = new System.Drawing.Size(78, 24);
             this.btnTest.TabIndex = 26;
@@ -301,7 +303,7 @@
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(661, 148);
+            this.btnClear.Location = new System.Drawing.Point(780, 148);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(78, 24);
             this.btnClear.TabIndex = 27;
@@ -312,7 +314,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(5, 154);
+            this.label1.Location = new System.Drawing.Point(60, 154);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(95, 13);
             this.label1.TabIndex = 1;
@@ -320,7 +322,7 @@
             // 
             // lblItem
             // 
-            this.lblItem.Location = new System.Drawing.Point(577, 81);
+            this.lblItem.Location = new System.Drawing.Point(698, 81);
             this.lblItem.Name = "lblItem";
             this.lblItem.Size = new System.Drawing.Size(51, 13);
             this.lblItem.TabIndex = 22;
@@ -333,17 +335,16 @@
             this.cbItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbItem.FormattingEnabled = true;
-            this.cbItem.Location = new System.Drawing.Point(577, 97);
+            this.cbItem.Location = new System.Drawing.Point(698, 97);
             this.cbItem.Name = "cbItem";
             this.cbItem.Size = new System.Drawing.Size(250, 24);
             this.cbItem.TabIndex = 21;
             // 
             // dgvRecords
             // 
-            this.dgvRecords.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvRecords.Location = new System.Drawing.Point(24, 249);
             this.dgvRecords.Name = "dgvRecords";
-            this.dgvRecords.Size = new System.Drawing.Size(839, 223);
+            this.dgvRecords.Size = new System.Drawing.Size(1023, 223);
             this.dgvRecords.TabIndex = 32;
             // 
             // lblMessage
@@ -351,14 +352,14 @@
             this.lblMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMessage.Location = new System.Drawing.Point(24, 228);
             this.lblMessage.Name = "lblMessage";
-            this.lblMessage.Size = new System.Drawing.Size(839, 18);
+            this.lblMessage.Size = new System.Drawing.Size(1023, 18);
             this.lblMessage.TabIndex = 33;
             this.lblMessage.Text = "lblMessage";
             this.lblMessage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnExport
             // 
-            this.btnExport.Location = new System.Drawing.Point(670, 40);
+            this.btnExport.Location = new System.Drawing.Point(855, 40);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(78, 24);
             this.btnExport.TabIndex = 32;
@@ -380,9 +381,9 @@
             this.gbDataFilters.Controls.Add(this.dtpFilterStart);
             this.gbDataFilters.Controls.Add(this.dtpFilterEnd);
             this.gbDataFilters.Controls.Add(this.btnClose);
-            this.gbDataFilters.Location = new System.Drawing.Point(24, 500);
+            this.gbDataFilters.Location = new System.Drawing.Point(24, 516);
             this.gbDataFilters.Name = "gbDataFilters";
-            this.gbDataFilters.Size = new System.Drawing.Size(839, 108);
+            this.gbDataFilters.Size = new System.Drawing.Size(1023, 108);
             this.gbDataFilters.TabIndex = 34;
             this.gbDataFilters.TabStop = false;
             this.gbDataFilters.Text = "Filter Data View";
@@ -490,7 +491,7 @@
             this.menuFile});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(882, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1071, 24);
             this.menuStrip.TabIndex = 35;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -513,18 +514,39 @@
             // 
             this.lblRecordCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblRecordCount.ForeColor = System.Drawing.Color.Green;
-            this.lblRecordCount.Location = new System.Drawing.Point(731, 475);
+            this.lblRecordCount.Location = new System.Drawing.Point(822, 475);
             this.lblRecordCount.Name = "lblRecordCount";
-            this.lblRecordCount.Size = new System.Drawing.Size(132, 22);
+            this.lblRecordCount.Size = new System.Drawing.Size(225, 22);
             this.lblRecordCount.TabIndex = 43;
             this.lblRecordCount.Text = "lblRecordCount";
             this.lblRecordCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Location = new System.Drawing.Point(24, 478);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(85, 23);
+            this.btnDelete.TabIndex = 45;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
+            // 
+            // btnUpdate
+            // 
+            this.btnUpdate.Location = new System.Drawing.Point(115, 478);
+            this.btnUpdate.Name = "btnUpdate";
+            this.btnUpdate.Size = new System.Drawing.Size(85, 23);
+            this.btnUpdate.TabIndex = 46;
+            this.btnUpdate.Text = "Update";
+            this.btnUpdate.UseVisualStyleBackColor = true;
             // 
             // WorkLog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(882, 651);
+            this.ClientSize = new System.Drawing.Size(1071, 651);
+            this.Controls.Add(this.btnUpdate);
+            this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.lblRecordCount);
             this.Controls.Add(this.gbDataFilters);
             this.Controls.Add(this.lblMessage);
@@ -591,6 +613,8 @@
         private System.Windows.Forms.Label lblRecordCount;
         private System.Windows.Forms.Button btnMTD;
         private System.Windows.Forms.Button btnAll;
+        private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.Button btnUpdate;
     }
 }
 

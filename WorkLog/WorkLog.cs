@@ -17,11 +17,14 @@ namespace WorkLog
     public partial class WorkLog : Form
     {
         DAL oDAL = new DAL();
+        int iCount;
 
         public WorkLog()
         {
             InitializeComponent();
             InitializeDefaults();
+
+            oDAL.BackupDB();
 
             dtpStartTime.ValueChanged += new EventHandler(dtpStartTime_ValueChanged);
             dtpEndTime.ValueChanged += new EventHandler(dtpEndTime_ValueChanged);
@@ -201,7 +204,7 @@ namespace WorkLog
             if (Validation() == true)
             {
                 try
-                {
+                {                    
                     Record myRecord = NewRecord();
                     if (cbProService.Text == "Reimbursable")
                     {
@@ -219,9 +222,11 @@ namespace WorkLog
                     else
                         oDAL.InsertRecord(myRecord, false);
 
-                    FillDataGridOnSubmit();
-                    lblMessage.ForeColor = Color.Green;
-                    lblMessage.Text = "Record submitted successfully!";
+                    iCount++;
+
+                    FillDataGridOnSubmit(iCount);
+                    //lblMessage.ForeColor = Color.Green;
+                    //lblMessage.Text = "Record submitted successfully!";
                 }
                 catch (Exception ex)
                 {
@@ -232,10 +237,10 @@ namespace WorkLog
             }
         }
 
-        private void FillDataGridOnSubmit()
+        private void FillDataGridOnSubmit(int iCount)
         {
-            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
-                "FROM Record ORDER BY RowID DESC LIMIT 30";
+            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
+                "FROM Record ORDER BY RowID DESC LIMIT " + iCount.ToString();
             oDAL.FillDataGrid(cmd, dgvRecords);
         }
 
@@ -293,11 +298,7 @@ namespace WorkLog
         private void BtnExport_Click(object sender, EventArgs e)
         {
             try
-            {
-                //string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
-                //                "FROM Record ORDER BY RowID DESC";
-                //DataTable dt = DAL.CreateDataTable(cmd);
-                
+            {   
                 DataTable dt = (DataTable)dgvRecords.DataSource;
                 SaveFileDialog sfd = new SaveFileDialog();
                 sfd.Filter = "csv|*.csv";
@@ -321,7 +322,7 @@ namespace WorkLog
             {
                 string start = dtpFilterStart.Value.ToString("yyyy-MM-dd");
                 string end = dtpFilterEnd.Value.ToString("yyyy-MM-dd");
-                string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+                string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
                              "FROM Record " +
                              "WHERE Date BETWEEN '" + start + "' AND '" + end + "' " +
                              "ORDER BY Date";
@@ -347,7 +348,7 @@ namespace WorkLog
 
         private void BtnLastMonth_Click(object sender, EventArgs e)
         {
-            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
                          "FROM Record WHERE date >= date('now', 'start of month', '-1 month') AND date < date('now','start of month') ORDER BY Date";
             oDAL.FillDataGrid(cmd, dgvRecords);
 
@@ -362,7 +363,7 @@ namespace WorkLog
 
         private void BtnLast30_Click(object sender, EventArgs e)
         {
-            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
                          "FROM Record WHERE date >= date('now','-30 days') ORDER BY Date";
             oDAL.FillDataGrid(cmd, dgvRecords);
 
@@ -375,7 +376,7 @@ namespace WorkLog
 
         private void BtnYTD_Click(object sender, EventArgs e)
         {
-            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
                          "FROM Record WHERE date >= date('now', 'start of year') AND date < date('now','start of year', '+1 year')";
             oDAL.FillDataGrid(cmd, dgvRecords);
 
@@ -388,7 +389,7 @@ namespace WorkLog
 
         private void BtnMTD_Click(object sender, EventArgs e)
         {
-            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
                          "FROM Record WHERE date >= date('now', 'start of month') AND date < date('now','start of month', '+1 month')";
             oDAL.FillDataGrid(cmd, dgvRecords);
 
@@ -401,7 +402,7 @@ namespace WorkLog
 
         private void BtnAll_Click(object sender, EventArgs e)
         {
-            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description " +
+            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
                          "FROM Record";
             oDAL.FillDataGrid(cmd, dgvRecords);
 
@@ -414,5 +415,32 @@ namespace WorkLog
             dtpFilterEnd.Value = DateTime.Parse(endDate);
         }
 
+        private void BtnDelete_Click(object sender, EventArgs e)
+        {
+            oDAL.BackupDB();
+
+            if (dgvRecords.SelectedRows.Count > 0)
+            {
+                DialogResult result = MessageBox.Show("Selected rows will be deleted. Continue?", "Confirmation", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    foreach (DataGridViewRow dr in dgvRecords.SelectedRows)
+                    {
+                        oDAL.DeleteRecord(dr.Cells["RowID"].Value.ToString());
+                        dgvRecords.Rows.RemoveAt(dr.Index);
+                        iCount--;
+                    }
+                    //lblMessage.Text = "Update Successful!";
+                }
+                else
+                    return;                
+            }
+            else
+            {
+                MessageBox.Show("No rows selected. Select one or more rows by clicking the black arrow in the left-most cell");
+            }
+
+            
+        }
     }
 }
