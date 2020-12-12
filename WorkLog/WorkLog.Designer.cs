@@ -73,6 +73,7 @@
             this.lblRecordCount = new System.Windows.Forms.Label();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnUpdate = new System.Windows.Forms.Button();
+            this.btnBackup = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.gbDataFilters.SuspendLayout();
@@ -242,6 +243,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnBackup);
             this.groupBox1.Controls.Add(this.txtReimburseCost);
             this.groupBox1.Controls.Add(this.btnSubmit);
             this.groupBox1.Controls.Add(this.txtDescription);
@@ -540,6 +542,16 @@
             this.btnUpdate.Text = "Update";
             this.btnUpdate.UseVisualStyleBackColor = true;
             // 
+            // btnBackup
+            // 
+            this.btnBackup.Location = new System.Drawing.Point(948, 148);
+            this.btnBackup.Name = "btnBackup";
+            this.btnBackup.Size = new System.Drawing.Size(69, 24);
+            this.btnBackup.TabIndex = 29;
+            this.btnBackup.Text = "Backup";
+            this.btnBackup.UseVisualStyleBackColor = true;
+            this.btnBackup.Click += new System.EventHandler(this.BtnBackup_Click);
+            // 
             // WorkLog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -615,6 +627,7 @@
         private System.Windows.Forms.Button btnAll;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnUpdate;
+        private System.Windows.Forms.Button btnBackup;
     }
 }
 

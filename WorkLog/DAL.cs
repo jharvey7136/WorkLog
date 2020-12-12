@@ -9,11 +9,13 @@ using System.Data;
 using System.Configuration;
 using System.Windows.Forms;
 using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace WorkLog
 {
     public class DAL
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private static string LoadConnectionString(string id = "Default")
         {
             return ConfigurationManager.ConnectionStrings[id].ConnectionString;
@@ -89,8 +91,8 @@ namespace WorkLog
 
                     if (FileCompare(fullPathNew, fullPathCurr))
                     {
-
-                        //MessageBox.Show(fullPathNew + " same as " + fullPathCurr);
+                        fi.Delete();
+                        logger.Info("Backup database deleted: {0}", fi.FullName);                        
                     }
                         
                 }
@@ -100,7 +102,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                logger.Error(ex, ex.Source);
                 return false;
             }
         }
@@ -150,12 +152,12 @@ namespace WorkLog
                     cmd.Parameters.Add("@Description", DbType.String).Value = record.Description;
                     cmd.Parameters.Add("@CreateDate", DbType.String).Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-                    cmd.ExecuteNonQuery();
+                    cmd.ExecuteNonQuery();                    
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                logger.Error(ex, ex.Source);
             }
         }
 
@@ -173,7 +175,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                logger.Error(ex, ex.Source);
             }
         }
 
@@ -230,7 +232,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                logger.Error(ex, ex.Source);
             }
         }
 
@@ -277,7 +279,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                logger.Error(ex, ex.Source);
             }
         }
 
@@ -324,7 +326,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                logger.Error(ex, ex.Source);
             }
         }
 
@@ -371,7 +373,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                logger.Error(ex, ex.Source);
             }
         }
 

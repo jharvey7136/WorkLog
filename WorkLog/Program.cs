@@ -4,6 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SQLite;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using System.IO;
 
 namespace WorkLog
 {
@@ -15,10 +20,39 @@ namespace WorkLog
         [STAThread]
         static void Main()
         {
+            string log = Path.GetFullPath(@"..\..\nlog.config");
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new WorkLog());
-            //Application.Run(new CategoryForm());
+
+            var builder = new HostBuilder()
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.AddScoped<WorkLog>();                    
+                    services.AddLogging(option =>
+                    {
+                        option.SetMinimumLevel(LogLevel.Trace);
+                        option.AddNLog(log);
+                    });
+                });
+
+            var host = builder.Build();
+
+            using (var serviceScope = host.Services.CreateScope())
+            {
+                var services = serviceScope.ServiceProvider;
+                try
+                {
+                    
+                    var workLog = services.GetRequiredService<WorkLog>();                    
+                    Application.Run(workLog);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }
         }
+        
     }
 }

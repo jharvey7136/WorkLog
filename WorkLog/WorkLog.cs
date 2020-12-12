@@ -11,16 +11,20 @@ using System.Data.SQLite;
 using System.Configuration;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace WorkLog
 {
     public partial class WorkLog : Form
     {
+        private readonly ILogger _logger;
         DAL oDAL = new DAL();
         int iCount;
 
-        public WorkLog()
+        public WorkLog(ILogger<WorkLog> logger)
         {
+            _logger = logger;
+
             InitializeComponent();
             InitializeDefaults();
 
@@ -29,7 +33,7 @@ namespace WorkLog
             dtpStartTime.ValueChanged += new EventHandler(dtpStartTime_ValueChanged);
             dtpEndTime.ValueChanged += new EventHandler(dtpEndTime_ValueChanged);
             txtReimburseCost.KeyPress += new KeyPressEventHandler(TxtReimburseCost_KeyPress);
-            dgvRecords.RowsAdded += (s, a) => OnRowNumberChanged();
+            dgvRecords.RowsAdded += (s, a) => OnRowNumberChanged();            
         }
         
         private void InitializeDefaults()
@@ -77,7 +81,7 @@ namespace WorkLog
 
         private void BtnClose_Click(object sender, EventArgs e)
         {
-            //oDAL.BackupDB();
+            oDAL.BackupDB();            
             Environment.Exit(0);
         }
 
@@ -212,7 +216,10 @@ namespace WorkLog
                         {
                             DialogResult result = MessageBox.Show("Reimbursable cost is 0, continue?", "Confirmation", MessageBoxButtons.YesNo);
                             if (result == DialogResult.Yes)
+                            {
                                 oDAL.InsertRecord(myRecord, true);
+                                
+                            }                                
                             else
                                 return;
                         }
@@ -223,16 +230,13 @@ namespace WorkLog
                         oDAL.InsertRecord(myRecord, false);
 
                     iCount++;
-
-                    FillDataGridOnSubmit(iCount);
-                    //lblMessage.ForeColor = Color.Green;
-                    //lblMessage.Text = "Record submitted successfully!";
+                    FillDataGridOnSubmit(iCount);                    
                 }
                 catch (Exception ex)
                 {
                     lblMessage.ForeColor = Color.Red;
                     lblMessage.Text = "Error submitting record, verify selections and try again";
-                    MessageBox.Show(ex.ToString());
+                    _logger.LogError(ex.Message);                    
                 }
             }
         }
@@ -312,7 +316,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                _logger.LogError(ex.Message);
             }
         }
 
@@ -330,7 +334,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                _logger.LogError(ex.Message);
             }
         }
 
@@ -418,29 +422,46 @@ namespace WorkLog
         private void BtnDelete_Click(object sender, EventArgs e)
         {
             oDAL.BackupDB();
-
-            if (dgvRecords.SelectedRows.Count > 0)
+            try
             {
-                DialogResult result = MessageBox.Show("Selected rows will be deleted. Continue?", "Confirmation", MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
+                if (dgvRecords.SelectedRows.Count > 0)
                 {
-                    foreach (DataGridViewRow dr in dgvRecords.SelectedRows)
+                    DialogResult result = MessageBox.Show("Selected rows will be deleted. Continue?", "Confirmation", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
                     {
-                        oDAL.DeleteRecord(dr.Cells["RowID"].Value.ToString());
-                        dgvRecords.Rows.RemoveAt(dr.Index);
-                        iCount--;
+                        foreach (DataGridViewRow dr in dgvRecords.SelectedRows)
+                        {
+                            oDAL.DeleteRecord(dr.Cells["RowID"].Value.ToString());
+                            dgvRecords.Rows.RemoveAt(dr.Index);
+                            iCount--;                            
+                        }                        
                     }
-                    //lblMessage.Text = "Update Successful!";
+                    else
+                        return;
                 }
                 else
-                    return;                
+                {
+                    MessageBox.Show("No rows selected. Select one or more rows by clicking the black arrow in the left-most cell");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("No rows selected. Select one or more rows by clicking the black arrow in the left-most cell");
-            }
+                _logger.LogError(ex.Message);
+            }          
 
             
+        }
+
+        private void BtnBackup_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                oDAL.BackupDB();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error backing up");
+            }
         }
     }
 }
