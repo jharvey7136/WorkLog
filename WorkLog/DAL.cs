@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Windows.Forms;
 using System.IO;
 using Microsoft.Extensions.Logging;
+using System.IO.Compression;
 
 namespace WorkLog
 {
@@ -71,7 +72,7 @@ namespace WorkLog
             try
             {
                 string now = DateTime.Now.ToString("yyyyMMddHHmmss");
-                string strFilename = "WorkLog_" + now + ".db";                
+                string strFilename = "WorkLog_" + now + ".db";
                 string backupConnection = @"DataSource=..\..\..\db\" + strFilename + ";Version=3;";
 
                 string fullPathNew = Path.GetFullPath(@"..\..\..\db\" + strFilename);
@@ -92,11 +93,11 @@ namespace WorkLog
                     if (FileCompare(fullPathNew, fullPathCurr))
                     {
                         fi.Delete();
-                        logger.Info("Backup database deleted: {0}", fi.FullName);                        
+                        logger.Info("Duplicate backup database deleted: {0}", fi.FullName);
                     }
-                        
+
                 }
-                
+
                 //DeleteOldestBackups();
                 return true;
             }
@@ -107,10 +108,34 @@ namespace WorkLog
             }
         }
 
-        private void DeleteOldestBackups()
+        public void ArchiveBackups(int daysOld)
         {
-            foreach (var fi in new DirectoryInfo(@"..\..\..\db").GetFiles().OrderByDescending(x => x.LastWriteTime).Skip(50))
-                fi.Delete();
+            string now = DateTime.Now.ToString("yyyyMMddmmss");
+            string strFilename = "WorkLog_" + now + ".zip";
+            string zipPath = Path.GetFullPath(@"..\..\..\db\Archive\" + strFilename);
+            int i = 0;
+
+            try
+            {
+                using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Create))
+                {
+                    foreach (var fi in new DirectoryInfo(@"..\..\..\db").GetFiles().OrderBy(x => x.LastWriteTime))
+                    {
+                        if (fi.LastWriteTime < DateTime.Now.AddDays(daysOld))
+                        {
+                            zip.CreateEntryFromFile(fi.FullName, fi.Name);
+                            fi.Delete();
+                            i++;
+                        }                        
+                    }
+                }
+                logger.Info("Database archive count: {0}, zip file: {1} ", i.ToString(), zipPath);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Source);
+            }
+
         }
 
         public void InsertRecord(Record record, bool isReimburse)
@@ -152,7 +177,7 @@ namespace WorkLog
                     cmd.Parameters.Add("@Description", DbType.String).Value = record.Description;
                     cmd.Parameters.Add("@CreateDate", DbType.String).Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-                    cmd.ExecuteNonQuery();                    
+                    cmd.ExecuteNonQuery();
                 }
             }
             catch (Exception ex)

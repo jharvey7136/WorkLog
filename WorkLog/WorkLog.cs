@@ -456,7 +456,8 @@ namespace WorkLog
         {
             try
             {
-                oDAL.BackupDB();
+                //oDAL.BackupDB();
+                oDAL.ArchiveBackups(-30);
             }
             catch (Exception ex)
             {
