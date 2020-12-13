@@ -12,6 +12,7 @@ using System.Configuration;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
+using System.IO;
 
 namespace WorkLog
 {
@@ -26,12 +27,14 @@ namespace WorkLog
             _logger = logger;
 
             InitializeComponent();
-            InitializeDefaults();
-
-            oDAL.BackupDB();
+            InitializeDefaults();            
 
             dtpStartTime.ValueChanged += new EventHandler(dtpStartTime_ValueChanged);
             dtpEndTime.ValueChanged += new EventHandler(dtpEndTime_ValueChanged);
+
+            dtpStartTime.MouseWheel += new MouseEventHandler(dtpStartTime_MouseWheel);
+            dtpEndTime.MouseWheel += new MouseEventHandler(dtpEndTime_MouseWheel);
+
             txtReimburseCost.KeyPress += new KeyPressEventHandler(TxtReimburseCost_KeyPress);
             dgvRecords.RowsAdded += (s, a) => OnRowNumberChanged();            
         }
@@ -48,8 +51,8 @@ namespace WorkLog
             lblRecordCount.Text = "";
             dgvRecords.AllowUserToAddRows = false;
 
-            oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client", cbClient, "ClientName", "ClientID");
-            oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService", cbProService, "ProServiceName", "ProServiceID");
+            oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
+            oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
 
             dtpFilterStart.CustomFormat = "M/dd/yyyy";
             dtpFilterEnd.CustomFormat = "M/dd/yyyy";
@@ -63,6 +66,30 @@ namespace WorkLog
         private void dtpEndTime_ValueChanged(object sender, EventArgs e)
         {
             lblHours.Text = GetTotalHours();
+        }
+
+        private void dtpStartTime_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                SendKeys.Send("{UP}");
+            }
+            else
+            {
+                SendKeys.Send("{DOWN}");
+            }
+        }
+
+        private void dtpEndTime_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                SendKeys.Send("{UP}");
+            }
+            else
+            {
+                SendKeys.Send("{DOWN}");
+            }
         }
 
         private string GetTotalHours()
@@ -80,8 +107,7 @@ namespace WorkLog
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
-        {
-            oDAL.BackupDB();            
+        {                       
             Environment.Exit(0);
         }
 
@@ -89,9 +115,9 @@ namespace WorkLog
         {
             string cmd = "";
             if (cbProService.SelectedValue.ToString() != "System.Data.DataRowView" && cbProService.SelectedValue != null)
-                cmd = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = " + cbProService.SelectedValue;
+                cmd = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = " + cbProService.SelectedValue + " AND Enabled = 1";
             else
-                cmd = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = 1";
+                cmd = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = 1 AND Enabled = 1";
 
             oDAL.FillComboBox(cmd, cbTask, "TaskName", "TaskID");
 
@@ -115,9 +141,9 @@ namespace WorkLog
         {
             string cmd = "";
             if (cbTask.SelectedValue.ToString() != "System.Data.DataRowView" && cbTask.SelectedValue != null)
-                cmd = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = " + cbProService.SelectedValue;
+                cmd = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = " + cbProService.SelectedValue + " AND Enabled = 1";
             else
-                cmd = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = 1";
+                cmd = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = 1 AND Enabled = 1";
 
             oDAL.FillComboBox(cmd, cbItem, "ItemName", "ItemID");
         }
@@ -157,14 +183,14 @@ namespace WorkLog
 
             int hr = rnd.Next(1, 12);
             int m = rnd.Next(1, 29);
-            int d = rnd.Next(1, 200);
+            int d = rnd.Next(13, 60);
 
             dtpDate.Value = DateTime.Now.AddDays(d * -1);
             dtpStartTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hr, m, 0);
             dtpEndTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hr + rnd.Next(1, 11), m + rnd.Next(1, 29), 0);
             txtDescription.Text = "";
-            int r = rnd.Next(1, 30);
-            r *= 10;
+            int r = rnd.Next(1, 73);
+            r *= 9;
             txtReimburseCost.Text = r.ToString();
         }
 
@@ -236,7 +262,7 @@ namespace WorkLog
                 {
                     lblMessage.ForeColor = Color.Red;
                     lblMessage.Text = "Error submitting record, verify selections and try again";
-                    _logger.LogError(ex.Message);                    
+                    _logger.LogError(ex, ex.Source);
                 }
             }
         }
@@ -316,7 +342,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, ex.Source);
             }
         }
 
@@ -334,7 +360,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, ex.Source);
             }
         }
 
@@ -420,8 +446,7 @@ namespace WorkLog
         }
 
         private void BtnDelete_Click(object sender, EventArgs e)
-        {
-            oDAL.BackupDB();
+        {            
             try
             {
                 if (dgvRecords.SelectedRows.Count > 0)
@@ -446,22 +471,34 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
-            }          
-
-            
+                _logger.LogError(ex, ex.Source);
+            }         
         }
 
-        private void BtnBackup_Click(object sender, EventArgs e)
+
+        private void BackupDatabaseToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
-                //oDAL.BackupDB();
-                oDAL.ArchiveBackups(-30);
+                oDAL.BackupDB();
+                MessageBox.Show("Backup successful!");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error backing up");
+                _logger.LogError(ex, ex.Source);
+            }
+        }
+
+        private void ArchiveBackupsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {                
+                oDAL.ArchiveBackups(-30);
+                MessageBox.Show("Archive successful!");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Source);
             }
         }
     }

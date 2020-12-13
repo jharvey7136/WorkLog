@@ -70,10 +70,10 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripManageCat = new System.Windows.Forms.ToolStripMenuItem();
+            this.backupDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.archiveBackupsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lblRecordCount = new System.Windows.Forms.Label();
             this.btnDelete = new System.Windows.Forms.Button();
-            this.btnUpdate = new System.Windows.Forms.Button();
-            this.btnBackup = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.gbDataFilters.SuspendLayout();
@@ -243,7 +243,6 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnBackup);
             this.groupBox1.Controls.Add(this.txtReimburseCost);
             this.groupBox1.Controls.Add(this.btnSubmit);
             this.groupBox1.Controls.Add(this.txtDescription);
@@ -500,7 +499,9 @@
             // menuFile
             // 
             this.menuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripManageCat});
+            this.toolStripManageCat,
+            this.backupDatabaseToolStripMenuItem,
+            this.archiveBackupsToolStripMenuItem});
             this.menuFile.Name = "menuFile";
             this.menuFile.Size = new System.Drawing.Size(37, 20);
             this.menuFile.Text = "File";
@@ -508,9 +509,23 @@
             // toolStripManageCat
             // 
             this.toolStripManageCat.Name = "toolStripManageCat";
-            this.toolStripManageCat.Size = new System.Drawing.Size(176, 22);
+            this.toolStripManageCat.Size = new System.Drawing.Size(180, 22);
             this.toolStripManageCat.Text = "Manage Categories";
             this.toolStripManageCat.Click += new System.EventHandler(this.ToolStripManageCat_Click);
+            // 
+            // backupDatabaseToolStripMenuItem
+            // 
+            this.backupDatabaseToolStripMenuItem.Name = "backupDatabaseToolStripMenuItem";
+            this.backupDatabaseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.backupDatabaseToolStripMenuItem.Text = "Backup Database";
+            this.backupDatabaseToolStripMenuItem.Click += new System.EventHandler(this.BackupDatabaseToolStripMenuItem_Click);
+            // 
+            // archiveBackupsToolStripMenuItem
+            // 
+            this.archiveBackupsToolStripMenuItem.Name = "archiveBackupsToolStripMenuItem";
+            this.archiveBackupsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.archiveBackupsToolStripMenuItem.Text = "Archive Backups";
+            this.archiveBackupsToolStripMenuItem.Click += new System.EventHandler(this.ArchiveBackupsToolStripMenuItem_Click);
             // 
             // lblRecordCount
             // 
@@ -533,31 +548,11 @@
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
-            // btnUpdate
-            // 
-            this.btnUpdate.Location = new System.Drawing.Point(115, 478);
-            this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Size = new System.Drawing.Size(85, 23);
-            this.btnUpdate.TabIndex = 46;
-            this.btnUpdate.Text = "Update";
-            this.btnUpdate.UseVisualStyleBackColor = true;
-            // 
-            // btnBackup
-            // 
-            this.btnBackup.Location = new System.Drawing.Point(948, 148);
-            this.btnBackup.Name = "btnBackup";
-            this.btnBackup.Size = new System.Drawing.Size(69, 24);
-            this.btnBackup.TabIndex = 29;
-            this.btnBackup.Text = "Backup";
-            this.btnBackup.UseVisualStyleBackColor = true;
-            this.btnBackup.Click += new System.EventHandler(this.BtnBackup_Click);
-            // 
             // WorkLog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1071, 651);
-            this.Controls.Add(this.btnUpdate);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.lblRecordCount);
             this.Controls.Add(this.gbDataFilters);
@@ -626,8 +621,8 @@
         private System.Windows.Forms.Button btnMTD;
         private System.Windows.Forms.Button btnAll;
         private System.Windows.Forms.Button btnDelete;
-        private System.Windows.Forms.Button btnUpdate;
-        private System.Windows.Forms.Button btnBackup;
+        private System.Windows.Forms.ToolStripMenuItem backupDatabaseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem archiveBackupsToolStripMenuItem;
     }
 }
 
