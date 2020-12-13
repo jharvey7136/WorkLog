@@ -205,45 +205,41 @@ namespace WorkLog
             {
                 foreach (DataGridViewRow row in dgv.Rows)
                 {
-                    if (row.Cells["ClientID"].Value != null)
+                    if (row.Cells["ClientID"].Value.ToString() == "" && !string.IsNullOrEmpty(row.Cells["ClientName"].Value.ToString()))
                     {
-                        if (row.Cells["ClientID"].Value.ToString() == "")
+                        string sqlInsert = "INSERT INTO Client(ClientName, AddressLine1, AddressLine2, City, State, Zip) VALUES(@name, @a1, @a2, @city, @state, @zip)";
+                        using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                         {
-                            string sqlInsert = "INSERT INTO Client(ClientName, AddressLine1, AddressLine2, City, State, Zip) VALUES(@name, @a1, @a2, @city, @state, @zip)";
-                            using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                            using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
                             {
-                                using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
-                                {
-                                    cmd.Parameters.Add("@name", DbType.String).Value = row.Cells["ClientName"].Value;
-                                    cmd.Parameters.Add("@a1", DbType.String).Value = row.Cells["AddressLine1"].Value;
-                                    cmd.Parameters.Add("@a2", DbType.String).Value = row.Cells["AddressLine2"].Value;
-                                    cmd.Parameters.Add("@city", DbType.String).Value = row.Cells["City"].Value;
-                                    cmd.Parameters.Add("@state", DbType.String).Value = row.Cells["State"].Value;
-                                    cmd.Parameters.Add("@zip", DbType.String).Value = row.Cells["Zip"].Value;
-                                    con.Open();
-                                    cmd.ExecuteNonQuery();
-                                }
+                                cmd.Parameters.Add("@name", DbType.String).Value = row.Cells["ClientName"].Value;
+                                cmd.Parameters.Add("@a1", DbType.String).Value = row.Cells["AddressLine1"].Value;
+                                cmd.Parameters.Add("@a2", DbType.String).Value = row.Cells["AddressLine2"].Value;
+                                cmd.Parameters.Add("@city", DbType.String).Value = row.Cells["City"].Value;
+                                cmd.Parameters.Add("@state", DbType.String).Value = row.Cells["State"].Value;
+                                cmd.Parameters.Add("@zip", DbType.String).Value = row.Cells["Zip"].Value;
+                                con.Open();
+                                cmd.ExecuteNonQuery();
                             }
                         }
-                        else
+                    }
+                    else if (!string.IsNullOrEmpty(row.Cells["ClientName"].Value.ToString()))
+                    {
+                        string sql = "UPDATE Client SET ClientName = @name, AddressLine1 = @a1, AddressLine2 = @a2, City = @city, State = @state, Zip = @zip, Enabled = @enabled WHERE ClientID = @ID";
+                        using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                         {
-
-                            string sql = "UPDATE Client SET ClientName = @name, AddressLine1 = @a1, AddressLine2 = @a2, City = @city, State = @state, Zip = @zip, Enabled = @enabled WHERE ClientID = @ID";
-                            using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                            using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
                             {
-                                using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
-                                {
-                                    cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["ClientID"].Value;
-                                    cmd.Parameters.Add("@name", DbType.String).Value = row.Cells["ClientName"].Value;
-                                    cmd.Parameters.Add("@a1", DbType.String).Value = row.Cells["AddressLine1"].Value;
-                                    cmd.Parameters.Add("@a2", DbType.String).Value = row.Cells["AddressLine2"].Value;
-                                    cmd.Parameters.Add("@city", DbType.String).Value = row.Cells["City"].Value;
-                                    cmd.Parameters.Add("@state", DbType.String).Value = row.Cells["State"].Value;
-                                    cmd.Parameters.Add("@zip", DbType.String).Value = row.Cells["Zip"].Value;
-                                    cmd.Parameters.Add("@enabled", DbType.String).Value = row.Cells["Enabled"].Value;
-                                    con.Open();
-                                    cmd.ExecuteNonQuery();
-                                }
+                                cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["ClientID"].Value;
+                                cmd.Parameters.Add("@name", DbType.String).Value = row.Cells["ClientName"].Value;
+                                cmd.Parameters.Add("@a1", DbType.String).Value = row.Cells["AddressLine1"].Value;
+                                cmd.Parameters.Add("@a2", DbType.String).Value = row.Cells["AddressLine2"].Value;
+                                cmd.Parameters.Add("@city", DbType.String).Value = row.Cells["City"].Value;
+                                cmd.Parameters.Add("@state", DbType.String).Value = row.Cells["State"].Value;
+                                cmd.Parameters.Add("@zip", DbType.String).Value = row.Cells["Zip"].Value;
+                                cmd.Parameters.Add("@enabled", DbType.String).Value = row.Cells["Enabled"].Value;
+                                con.Open();
+                                cmd.ExecuteNonQuery();
                             }
                         }
                     }
@@ -254,7 +250,7 @@ namespace WorkLog
                 logger.Error(ex, ex.Source);
             }
         }
-        
+
 
         public void UpdateProService(DataGridView dgv)
         {
@@ -262,37 +258,35 @@ namespace WorkLog
             {
                 foreach (DataGridViewRow row in dgv.Rows)
                 {
-                    if (row.Cells["ProServiceID"].Value != null)
+                    if (row.Cells["ProServiceID"].Value.ToString() == "" && !string.IsNullOrEmpty(row.Cells["ProServiceName"].Value.ToString()))
                     {
-                        if (row.Cells["ProServiceID"].Value.ToString() == "")
+                        string sqlInsert = "INSERT INTO ProfessionalService(ProServiceName) VALUES(@proservice)";
+                        using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                         {
-                            string sqlInsert = "INSERT INTO ProfessionalService(ProServiceName) VALUES(@proservice)";
-                            using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                            using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
                             {
-                                using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
-                                {
-                                    cmd.Parameters.Add("@proservice", DbType.String).Value = row.Cells["ProServiceName"].Value;
-                                    con.Open();
-                                    cmd.ExecuteNonQuery();
-                                }
-                            }
-                        }
-                        else
-                        {
-                            string sql = "UPDATE ProfessionalService SET ProServiceName = @proservice, Enabled = @enabled WHERE ProServiceID = @ID";
-                            using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
-                            {
-                                using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
-                                {
-                                    cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["ProServiceID"].Value;
-                                    cmd.Parameters.Add("@proservice", DbType.String).Value = row.Cells["ProServiceName"].Value;
-                                    cmd.Parameters.Add("@enabled", DbType.String).Value = row.Cells["Enabled"].Value;
-                                    con.Open();
-                                    cmd.ExecuteNonQuery();
-                                }
+                                cmd.Parameters.Add("@proservice", DbType.String).Value = row.Cells["ProServiceName"].Value;
+                                con.Open();
+                                cmd.ExecuteNonQuery();
                             }
                         }
                     }
+                    else if (!string.IsNullOrEmpty(row.Cells["ProServiceName"].Value.ToString()))
+                    {
+                        string sql = "UPDATE ProfessionalService SET ProServiceName = @proservice, Enabled = @enabled WHERE ProServiceID = @ID";
+                        using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                        {
+                            using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
+                            {
+                                cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["ProServiceID"].Value;
+                                cmd.Parameters.Add("@proservice", DbType.String).Value = row.Cells["ProServiceName"].Value;
+                                cmd.Parameters.Add("@enabled", DbType.String).Value = row.Cells["Enabled"].Value;
+                                con.Open();
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
                 }
 
             }
@@ -308,37 +302,36 @@ namespace WorkLog
             {
                 foreach (DataGridViewRow row in dgv.Rows)
                 {
-                    if (row.Cells["TaskID"].Value != null)
+
+                    if (row.Cells["TaskID"].Value.ToString() == "" && !string.IsNullOrEmpty(row.Cells["TaskName"].Value.ToString()))
                     {
-                        if (row.Cells["TaskID"].Value.ToString() == "")
+                        string sqlInsert = "INSERT INTO Task(ProServiceID, TaskName) VALUES(" + cbProServ.SelectedValue + ", @taskname)";
+                        using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                         {
-                            string sqlInsert = "INSERT INTO Task(ProServiceID, TaskName) VALUES(" + cbProServ.SelectedValue + ", @taskname)";
-                            using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                            using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
                             {
-                                using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
-                                {
-                                    cmd.Parameters.Add("@taskname", DbType.String).Value = row.Cells["TaskName"].Value;
-                                    con.Open();
-                                    cmd.ExecuteNonQuery();
-                                }
-                            }
-                        }
-                        else
-                        {
-                            string sql = "UPDATE Task SET TaskName = @taskname, Enabled = @enabled WHERE TaskID = @ID";
-                            using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
-                            {
-                                using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
-                                {
-                                    cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["TaskID"].Value;
-                                    cmd.Parameters.Add("@taskname", DbType.String).Value = row.Cells["TaskName"].Value;
-                                    cmd.Parameters.Add("@enabled", DbType.String).Value = row.Cells["Enabled"].Value;
-                                    con.Open();
-                                    cmd.ExecuteNonQuery();
-                                }
+                                cmd.Parameters.Add("@taskname", DbType.String).Value = row.Cells["TaskName"].Value;
+                                con.Open();
+                                cmd.ExecuteNonQuery();
                             }
                         }
                     }
+                    else if (!string.IsNullOrEmpty(row.Cells["TaskName"].Value.ToString()))
+                    {
+                        string sql = "UPDATE Task SET TaskName = @taskname, Enabled = @enabled WHERE TaskID = @ID";
+                        using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                        {
+                            using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
+                            {
+                                cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["TaskID"].Value;
+                                cmd.Parameters.Add("@taskname", DbType.String).Value = row.Cells["TaskName"].Value;
+                                cmd.Parameters.Add("@enabled", DbType.String).Value = row.Cells["Enabled"].Value;
+                                con.Open();
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
                 }
             }
             catch (Exception ex)
@@ -353,39 +346,35 @@ namespace WorkLog
             {
                 foreach (DataGridViewRow row in dgv.Rows)
                 {
-                    if (row.Cells["ItemID"].Value != null)
+                    if (row.Cells["ItemID"].Value.ToString() == "" && !string.IsNullOrEmpty(row.Cells["ItemName"].Value.ToString()))
                     {
-                        if (row.Cells["ItemID"].Value.ToString() == "")
+                        string sqlInsert = "INSERT INTO Item(ProServiceID, ItemName) VALUES(" + cbProServ.SelectedValue + ", @itemname)";
+                        using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                         {
-                            string sqlInsert = "INSERT INTO Item(ProServiceID, ItemName) VALUES(" + cbProServ.SelectedValue + ", @itemname)";
-                            using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                            using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
                             {
-                                using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
-                                {
-                                    cmd.Parameters.Add("@itemname", DbType.String).Value = row.Cells["ItemName"].Value;
-                                    con.Open();
-                                    cmd.ExecuteNonQuery();
-                                }
+                                cmd.Parameters.Add("@itemname", DbType.String).Value = row.Cells["ItemName"].Value;
+                                con.Open();
+                                cmd.ExecuteNonQuery();
                             }
                         }
-                        else
+                    }
+                    else if (!string.IsNullOrEmpty(row.Cells["ItemName"].Value.ToString()))
+                    {
+                        string sql = "UPDATE Item SET ItemName = @itemname, Enabled = @enabled WHERE ItemID = @ID";
+                        using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                         {
-                            string sql = "UPDATE Item SET ItemName = @itemname, Enabled = @enabled WHERE ItemID = @ID";
-                            using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                            using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
                             {
-                                using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
-                                {
-                                    cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["ItemID"].Value;
-                                    cmd.Parameters.Add("@itemname", DbType.String).Value = row.Cells["ItemName"].Value;
-                                    cmd.Parameters.Add("@enabled", DbType.String).Value = row.Cells["Enabled"].Value;
-                                    con.Open();
-                                    cmd.ExecuteNonQuery();
-                                }
+                                cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["ItemID"].Value;
+                                cmd.Parameters.Add("@itemname", DbType.String).Value = row.Cells["ItemName"].Value;
+                                cmd.Parameters.Add("@enabled", DbType.String).Value = row.Cells["Enabled"].Value;
+                                con.Open();
+                                cmd.ExecuteNonQuery();
                             }
                         }
                     }
                 }
-
             }
             catch (Exception ex)
             {

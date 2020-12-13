@@ -61,7 +61,7 @@ namespace WorkLog
             }
         }
 
-        
+
 
 
         /************************************** Client *************************************/
@@ -69,14 +69,12 @@ namespace WorkLog
         {
             try
             {
-
-
                 DialogResult result = MessageBox.Show("Data will be updated. Continue?", "Confirmation", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
                     oDAL.UpdateClient(dgvClient);
                     lblMessageTop.ForeColor = Color.Green;
-                    lblMessageTop.Text = "Update Successful!";
+                    lblMessageTop.Text = "Update Successful!";                    
                 }
                 else
                     return;
@@ -150,7 +148,7 @@ namespace WorkLog
             {
                 string cmd = "SELECT DISTINCT ProServiceID, ProServiceName, Enabled FROM ProfessionalService ORDER BY ProServiceID";
                 oDAL.FillDataGrid(cmd, dgvProService);
-                dgvProService.Columns["ProServiceID"].ReadOnly = true;                
+                dgvProService.Columns["ProServiceID"].ReadOnly = true;
             }
             catch (Exception ex)
             {
@@ -191,7 +189,7 @@ namespace WorkLog
             {
                 string cmd = "SELECT DISTINCT TaskID, TaskName, Enabled FROM Task WHERE ProServiceID = " + cbProService.SelectedValue;
                 oDAL.FillDataGrid(cmd, dgvTask);
-                dgvTask.Columns["TaskID"].ReadOnly = true;                
+                dgvTask.Columns["TaskID"].ReadOnly = true;
             }
             catch (Exception ex)
             {
@@ -244,7 +242,7 @@ namespace WorkLog
             {
                 string cmd = "SELECT DISTINCT ItemID, ItemName, Enabled FROM Item WHERE ProServiceID = " + cbProServiceItem.SelectedValue;
                 oDAL.FillDataGrid(cmd, dgvItem);
-                dgvItem.Columns["ItemID"].ReadOnly = true;                
+                dgvItem.Columns["ItemID"].ReadOnly = true;
             }
             catch (Exception ex)
             {
@@ -318,6 +316,7 @@ namespace WorkLog
             string headerText = dgvClient.Columns[e.ColumnIndex].HeaderText;
 
             if (!headerText.Equals("Enabled")) return;
+            if (dgvClient.Rows[e.RowIndex].IsNewRow) return;
 
             if (e.FormattedValue.ToString() == "0" || e.FormattedValue.ToString() == "1")
                 return;
@@ -339,6 +338,7 @@ namespace WorkLog
             string headerText = dgvProService.Columns[e.ColumnIndex].HeaderText;
 
             if (!headerText.Equals("Enabled")) return;
+            if (dgvProService.Rows[e.RowIndex].IsNewRow) return;
 
             if (e.FormattedValue.ToString() == "0" || e.FormattedValue.ToString() == "1")
                 return;
@@ -360,7 +360,7 @@ namespace WorkLog
             string headerText = dgvTask.Columns[e.ColumnIndex].HeaderText;
 
             if (!headerText.Equals("Enabled")) return;
-            if (dgvTask.Rows[e.RowIndex].IsNewRow) return; 
+            if (dgvTask.Rows[e.RowIndex].IsNewRow) return;
 
             if (e.FormattedValue.ToString() == "0" || e.FormattedValue.ToString() == "1")
                 return;
@@ -382,6 +382,7 @@ namespace WorkLog
             string headerText = dgvItem.Columns[e.ColumnIndex].HeaderText;
 
             if (!headerText.Equals("Enabled")) return;
+            if (dgvItem.Rows[e.RowIndex].IsNewRow) return;
 
             if (e.FormattedValue.ToString() == "0" || e.FormattedValue.ToString() == "1")
                 return;

@@ -51,8 +51,7 @@ namespace WorkLog
             lblRecordCount.Text = "";
             dgvRecords.AllowUserToAddRows = false;
 
-            oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
-            oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
+            RefreshComboBox();
 
             dtpFilterStart.CustomFormat = "M/dd/yyyy";
             dtpFilterEnd.CustomFormat = "M/dd/yyyy";
@@ -61,6 +60,12 @@ namespace WorkLog
         private void dtpStartTime_ValueChanged(object sender, EventArgs e)
         {
             lblHours.Text = GetTotalHours();
+        }
+
+        private void RefreshComboBox()
+        {
+            oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
+            oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
         }
 
         private void dtpEndTime_ValueChanged(object sender, EventArgs e)
@@ -330,15 +335,28 @@ namespace WorkLog
             try
             {   
                 DataTable dt = (DataTable)dgvRecords.DataSource;
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Filter = "csv|*.csv";
-                sfd.Title = "Export Records to CSV";
-                sfd.ShowDialog();
-                string fn = sfd.FileName;
-                dt.ToCSV(fn);
-                lblMessage.ForeColor = Color.Green;
-                lblMessage.Text = "Data exported successfully!";
-                Process.Start("explorer.exe", fn);
+                if (dt == null)
+                {
+                    MessageBox.Show("No data selected");
+                    return;
+                }
+                else
+                {
+                    SaveFileDialog sfd = new SaveFileDialog();
+                    sfd.Filter = "CSV (Comma delimited)|*.csv";
+                    sfd.Title = "Export Records to CSV";
+                    sfd.FileName = "WorkLog_" + DateTime.Now.ToString("yyyyMMddmmss");
+                    sfd.ShowDialog();
+                    string fn = sfd.FileName;
+
+                    if (string.IsNullOrWhiteSpace(fn))
+                        return;
+                    else
+                    {
+                        dt.ToCSV(fn);                        
+                        Process.Start("explorer.exe", fn);
+                    }
+                }                
             }
             catch (Exception ex)
             {
@@ -368,6 +386,8 @@ namespace WorkLog
         {
             CategoryForm formCategories = new CategoryForm();
             formCategories.ShowDialog();
+
+            RefreshComboBox();
         }
 
         private void OnRowNumberChanged()
