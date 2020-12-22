@@ -181,6 +181,32 @@ namespace WorkLog
             }
         }
 
+        public void UpdateRecord(DataGridView dgv)
+        {
+            try
+            {
+                foreach (DataGridViewRow row in dgv.Rows)
+                {
+                    string sql = "UPDATE Record SET Description = @Description WHERE RowID = @ID";
+                    using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+                    {
+                        using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
+                        {                            
+                            cmd.Parameters.Add("@Description", DbType.String).Value = row.Cells["Description"].Value;
+                            cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["RowID"].Value;
+                            con.Open();
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Source);
+            }
+        }
+               
         public void DeleteRecord(string strRowID)
         {
             try

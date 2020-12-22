@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using System.IO;
+using System.Globalization;
 
 namespace WorkLog
 {
@@ -55,6 +56,8 @@ namespace WorkLog
 
             dtpFilterStart.CustomFormat = "M/dd/yyyy";
             dtpFilterEnd.CustomFormat = "M/dd/yyyy";
+
+            
         }
 
         private void dtpStartTime_ValueChanged(object sender, EventArgs e)
@@ -188,7 +191,7 @@ namespace WorkLog
 
             int hr = rnd.Next(1, 12);
             int m = rnd.Next(1, 29);
-            int d = rnd.Next(13, 60);
+            int d = rnd.Next(1, 30);
 
             dtpDate.Value = DateTime.Now.AddDays(d * -1);
             dtpStartTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hr, m, 0);
@@ -231,6 +234,7 @@ namespace WorkLog
             lblMessage.Text = "";
             lblMessage.ForeColor = SystemColors.ControlText;
 
+            lblRecordCount.Text = "0";
             dgvRecords.DataSource = null;
         }
 
@@ -276,7 +280,7 @@ namespace WorkLog
         {
             string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
                 "FROM Record ORDER BY RowID DESC LIMIT " + iCount.ToString();
-            oDAL.FillDataGrid(cmd, dgvRecords);
+            oDAL.FillDataGrid(cmd, dgvRecords);            
         }
 
         private bool Validation()
@@ -323,8 +327,11 @@ namespace WorkLog
                 }
                 else if (lblHours.Text == "0")
                 {
-                    MessageBox.Show("Start Time cannot equal End Time");
-                    return false;
+                    DialogResult result = MessageBox.Show("Start Time is equal to End Time (0 hours). Continue?", "Confirmation", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
+                        return true;
+                    else
+                        return false;
                 }
             }
             return true;
@@ -393,7 +400,9 @@ namespace WorkLog
         private void OnRowNumberChanged()
         {
             lblRecordCount.Text = dgvRecords.Rows.Count.ToString();
-            dgvRecords.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dgvRecords.Columns["RowID"].ReadOnly = true;
+            dgvRecords.Columns["CreateDate"].ReadOnly = true;
+            dgvRecords.AutoResizeColumns();                      
         }
 
         private void BtnLastMonth_Click(object sender, EventArgs e)
@@ -515,6 +524,49 @@ namespace WorkLog
             {                
                 oDAL.ArchiveBackups(-30);
                 MessageBox.Show("Archive successful!");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Source);
+            }
+        }
+
+        private void BtnLoad_Click(object sender, EventArgs e)
+        {            
+            try
+            {
+                if (dgvRecords.SelectedCells.Count < 1)
+                    MessageBox.Show("Select a cell or row to load from");
+
+                else
+                {
+                    DataGridViewRow dr = dgvRecords.SelectedCells[0].OwningRow;
+                    cbClient.SelectedIndex = cbClient.FindStringExact(dr.Cells["Client"].Value.ToString());
+                    cbProService.SelectedIndex = cbProService.FindStringExact(dr.Cells["ProService"].Value.ToString());
+                    cbTask.SelectedIndex = cbTask.FindStringExact(dr.Cells["Task"].Value.ToString());
+                    cbItem.SelectedIndex = cbItem.FindStringExact(dr.Cells["Item"].Value.ToString());                    
+                    dtpDate.Value = DateTime.ParseExact(dr.Cells["Date"].Value.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    txtReimburseCost.Text = dr.Cells["ReimbursableCost"].Value.ToString();
+                    txtDescription.Text = dr.Cells["Description"].Value.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Source);
+            }
+        }
+
+        private void BtnUpdateRecord_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DialogResult result = MessageBox.Show("Description field will be updated for all records in the view. Continue?", "Apply Changes Confirmation", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    oDAL.UpdateRecord(dgvRecords);                    
+                }
+                else
+                    return;
             }
             catch (Exception ex)
             {
