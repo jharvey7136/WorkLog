@@ -76,6 +76,7 @@
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnUpdateRecord = new System.Windows.Forms.Button();
             this.btnLoad = new System.Windows.Forms.Button();
+            this.btnReset = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.gbDataFilters.SuspendLayout();
@@ -373,6 +374,7 @@
             // 
             // gbDataFilters
             // 
+            this.gbDataFilters.Controls.Add(this.btnReset);
             this.gbDataFilters.Controls.Add(this.btnAll);
             this.gbDataFilters.Controls.Add(this.btnMTD);
             this.gbDataFilters.Controls.Add(this.btnYTD);
@@ -506,8 +508,8 @@
             this.backupDatabaseToolStripMenuItem,
             this.archiveBackupsToolStripMenuItem});
             this.menuFile.Name = "menuFile";
-            this.menuFile.Size = new System.Drawing.Size(37, 20);
-            this.menuFile.Text = "File";
+            this.menuFile.Size = new System.Drawing.Size(46, 20);
+            this.menuFile.Text = "Tools";
             // 
             // toolStripManageCat
             // 
@@ -570,6 +572,16 @@
             this.btnLoad.Text = "Load Selection";
             this.btnLoad.UseVisualStyleBackColor = true;
             this.btnLoad.Click += new System.EventHandler(this.BtnLoad_Click);
+            // 
+            // btnReset
+            // 
+            this.btnReset.Location = new System.Drawing.Point(326, 40);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(75, 24);
+            this.btnReset.TabIndex = 45;
+            this.btnReset.Text = "Reset";
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.BtnReset_Click);
             // 
             // WorkLog
             // 
@@ -650,6 +662,7 @@
         private System.Windows.Forms.ToolStripMenuItem archiveBackupsToolStripMenuItem;
         private System.Windows.Forms.Button btnUpdateRecord;
         private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.Button btnReset;
     }
 }
 

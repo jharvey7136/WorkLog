@@ -77,7 +77,7 @@
             this.tabCategories.Location = new System.Drawing.Point(12, 12);
             this.tabCategories.Name = "tabCategories";
             this.tabCategories.SelectedIndex = 0;
-            this.tabCategories.Size = new System.Drawing.Size(740, 341);
+            this.tabCategories.Size = new System.Drawing.Size(836, 341);
             this.tabCategories.TabIndex = 0;
             // 
             // tabPageClient
@@ -90,14 +90,14 @@
             this.tabPageClient.Location = new System.Drawing.Point(4, 22);
             this.tabPageClient.Name = "tabPageClient";
             this.tabPageClient.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageClient.Size = new System.Drawing.Size(732, 315);
+            this.tabPageClient.Size = new System.Drawing.Size(828, 315);
             this.tabPageClient.TabIndex = 0;
             this.tabPageClient.Text = "Client";
             this.tabPageClient.UseVisualStyleBackColor = true;
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(625, 275);
+            this.btnClose.Location = new System.Drawing.Point(721, 275);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(101, 32);
             this.btnClose.TabIndex = 1;
@@ -110,7 +110,7 @@
             this.lblMessageTop.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMessageTop.Location = new System.Drawing.Point(6, 14);
             this.lblMessageTop.Name = "lblMessageTop";
-            this.lblMessageTop.Size = new System.Drawing.Size(720, 22);
+            this.lblMessageTop.Size = new System.Drawing.Size(816, 22);
             this.lblMessageTop.TabIndex = 3;
             this.lblMessageTop.Text = "lblMessageTop";
             this.lblMessageTop.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -131,16 +131,15 @@
             this.btnUpdateClient.Name = "btnUpdateClient";
             this.btnUpdateClient.Size = new System.Drawing.Size(101, 32);
             this.btnUpdateClient.TabIndex = 1;
-            this.btnUpdateClient.Text = "Update";
+            this.btnUpdateClient.Text = "Apply";
             this.btnUpdateClient.UseVisualStyleBackColor = true;
             this.btnUpdateClient.Click += new System.EventHandler(this.BtnUpdateClient_Click);
             // 
             // dgvClient
             // 
-            this.dgvClient.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvClient.Location = new System.Drawing.Point(6, 39);
             this.dgvClient.Name = "dgvClient";
-            this.dgvClient.Size = new System.Drawing.Size(720, 230);
+            this.dgvClient.Size = new System.Drawing.Size(816, 230);
             this.dgvClient.TabIndex = 0;
             // 
             // tabPageProService
@@ -153,14 +152,14 @@
             this.tabPageProService.Location = new System.Drawing.Point(4, 22);
             this.tabPageProService.Name = "tabPageProService";
             this.tabPageProService.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageProService.Size = new System.Drawing.Size(732, 315);
+            this.tabPageProService.Size = new System.Drawing.Size(828, 315);
             this.tabPageProService.TabIndex = 1;
             this.tabPageProService.Text = "Professional Service";
             this.tabPageProService.UseVisualStyleBackColor = true;
             // 
             // btnClosePS
             // 
-            this.btnClosePS.Location = new System.Drawing.Point(625, 272);
+            this.btnClosePS.Location = new System.Drawing.Point(721, 272);
             this.btnClosePS.Name = "btnClosePS";
             this.btnClosePS.Size = new System.Drawing.Size(101, 32);
             this.btnClosePS.TabIndex = 5;
@@ -173,7 +172,7 @@
             this.lblMessageTopPS.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMessageTopPS.Location = new System.Drawing.Point(6, 11);
             this.lblMessageTopPS.Name = "lblMessageTopPS";
-            this.lblMessageTopPS.Size = new System.Drawing.Size(720, 22);
+            this.lblMessageTopPS.Size = new System.Drawing.Size(816, 22);
             this.lblMessageTopPS.TabIndex = 8;
             this.lblMessageTopPS.Text = "lblMessageTopPS";
             this.lblMessageTopPS.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -194,16 +193,15 @@
             this.btnUpdatePS.Name = "btnUpdatePS";
             this.btnUpdatePS.Size = new System.Drawing.Size(101, 32);
             this.btnUpdatePS.TabIndex = 6;
-            this.btnUpdatePS.Text = "Update";
+            this.btnUpdatePS.Text = "Apply";
             this.btnUpdatePS.UseVisualStyleBackColor = true;
             this.btnUpdatePS.Click += new System.EventHandler(this.BtnUpdatePS_Click);
             // 
             // dgvProService
             // 
-            this.dgvProService.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvProService.Location = new System.Drawing.Point(6, 36);
             this.dgvProService.Name = "dgvProService";
-            this.dgvProService.Size = new System.Drawing.Size(720, 230);
+            this.dgvProService.Size = new System.Drawing.Size(816, 230);
             this.dgvProService.TabIndex = 4;
             // 
             // tabPageTask
@@ -218,7 +216,7 @@
             this.tabPageTask.Location = new System.Drawing.Point(4, 22);
             this.tabPageTask.Name = "tabPageTask";
             this.tabPageTask.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageTask.Size = new System.Drawing.Size(732, 315);
+            this.tabPageTask.Size = new System.Drawing.Size(828, 315);
             this.tabPageTask.TabIndex = 2;
             this.tabPageTask.Text = "Task";
             this.tabPageTask.UseVisualStyleBackColor = true;
@@ -228,14 +226,14 @@
             this.lblMessageTopTask.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMessageTopTask.Location = new System.Drawing.Point(6, 71);
             this.lblMessageTopTask.Name = "lblMessageTopTask";
-            this.lblMessageTopTask.Size = new System.Drawing.Size(720, 22);
+            this.lblMessageTopTask.Size = new System.Drawing.Size(816, 22);
             this.lblMessageTopTask.TabIndex = 22;
             this.lblMessageTopTask.Text = "lblMessageTopTask";
             this.lblMessageTopTask.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnCloseTask
             // 
-            this.btnCloseTask.Location = new System.Drawing.Point(625, 277);
+            this.btnCloseTask.Location = new System.Drawing.Point(721, 277);
             this.btnCloseTask.Name = "btnCloseTask";
             this.btnCloseTask.Size = new System.Drawing.Size(101, 32);
             this.btnCloseTask.TabIndex = 19;
@@ -259,16 +257,15 @@
             this.btnUpdateTask.Name = "btnUpdateTask";
             this.btnUpdateTask.Size = new System.Drawing.Size(101, 32);
             this.btnUpdateTask.TabIndex = 20;
-            this.btnUpdateTask.Text = "Update";
+            this.btnUpdateTask.Text = "Apply";
             this.btnUpdateTask.UseVisualStyleBackColor = true;
             this.btnUpdateTask.Click += new System.EventHandler(this.BtnUpdateTask_Click);
             // 
             // dgvTask
             // 
-            this.dgvTask.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvTask.Location = new System.Drawing.Point(9, 100);
             this.dgvTask.Name = "dgvTask";
-            this.dgvTask.Size = new System.Drawing.Size(717, 171);
+            this.dgvTask.Size = new System.Drawing.Size(813, 171);
             this.dgvTask.TabIndex = 18;
             // 
             // lblProService
@@ -304,7 +301,7 @@
             this.tabPageItem.Location = new System.Drawing.Point(4, 22);
             this.tabPageItem.Name = "tabPageItem";
             this.tabPageItem.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageItem.Size = new System.Drawing.Size(732, 315);
+            this.tabPageItem.Size = new System.Drawing.Size(828, 315);
             this.tabPageItem.TabIndex = 3;
             this.tabPageItem.Text = "Item";
             this.tabPageItem.UseVisualStyleBackColor = true;
@@ -314,14 +311,14 @@
             this.lblMessageTopItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMessageTopItem.Location = new System.Drawing.Point(9, 70);
             this.lblMessageTopItem.Name = "lblMessageTopItem";
-            this.lblMessageTopItem.Size = new System.Drawing.Size(720, 22);
+            this.lblMessageTopItem.Size = new System.Drawing.Size(813, 22);
             this.lblMessageTopItem.TabIndex = 25;
             this.lblMessageTopItem.Text = "lblMessageTopItem";
             this.lblMessageTopItem.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnCloseItem
             // 
-            this.btnCloseItem.Location = new System.Drawing.Point(625, 277);
+            this.btnCloseItem.Location = new System.Drawing.Point(721, 277);
             this.btnCloseItem.Name = "btnCloseItem";
             this.btnCloseItem.Size = new System.Drawing.Size(101, 32);
             this.btnCloseItem.TabIndex = 22;
@@ -345,16 +342,15 @@
             this.btnUpdateItem.Name = "btnUpdateItem";
             this.btnUpdateItem.Size = new System.Drawing.Size(101, 32);
             this.btnUpdateItem.TabIndex = 23;
-            this.btnUpdateItem.Text = "Update";
+            this.btnUpdateItem.Text = "Apply";
             this.btnUpdateItem.UseVisualStyleBackColor = true;
             this.btnUpdateItem.Click += new System.EventHandler(this.BtnUpdateItem_Click);
             // 
             // dgvItem
             // 
-            this.dgvItem.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvItem.Location = new System.Drawing.Point(9, 101);
             this.dgvItem.Name = "dgvItem";
-            this.dgvItem.Size = new System.Drawing.Size(717, 170);
+            this.dgvItem.Size = new System.Drawing.Size(813, 170);
             this.dgvItem.TabIndex = 21;
             // 
             // lblProServiceItem
@@ -383,7 +379,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(760, 361);
+            this.ClientSize = new System.Drawing.Size(860, 361);
             this.Controls.Add(this.tabCategories);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "CategoryForm";

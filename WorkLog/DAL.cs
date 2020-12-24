@@ -226,14 +226,17 @@ namespace WorkLog
         }
 
         public void UpdateClient(DataGridView dgv)
-        {
+        {            
             try
             {
                 foreach (DataGridViewRow row in dgv.Rows)
                 {
-                    if (row.Cells["ClientID"].Value.ToString() == "" && !string.IsNullOrEmpty(row.Cells["ClientName"].Value.ToString()))
+                    if (IsRowEmpty(row))
+                        break;
+
+                    if (row.Cells["ClientID"].Value == null && !string.IsNullOrEmpty(row.Cells["ClientName"].Value.ToString()))
                     {
-                        string sqlInsert = "INSERT INTO Client(ClientName, AddressLine1, AddressLine2, City, State, Zip) VALUES(@name, @a1, @a2, @city, @state, @zip)";
+                        string sqlInsert = "INSERT INTO Client(ClientName, AddressLine1, AddressLine2, City, State, Zip, Rate) VALUES(@name, @a1, @a2, @city, @state, @zip, @rate)";
                         using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                         {
                             using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
@@ -243,7 +246,8 @@ namespace WorkLog
                                 cmd.Parameters.Add("@a2", DbType.String).Value = row.Cells["AddressLine2"].Value;
                                 cmd.Parameters.Add("@city", DbType.String).Value = row.Cells["City"].Value;
                                 cmd.Parameters.Add("@state", DbType.String).Value = row.Cells["State"].Value;
-                                cmd.Parameters.Add("@zip", DbType.String).Value = row.Cells["Zip"].Value;
+                                cmd.Parameters.Add("@zip", DbType.String).Value = row.Cells["Zip"].Value; 
+                                cmd.Parameters.Add("@rate", DbType.String).Value = row.Cells["Rate"].Value;
                                 con.Open();
                                 cmd.ExecuteNonQuery();
                             }
@@ -251,7 +255,7 @@ namespace WorkLog
                     }
                     else if (!string.IsNullOrEmpty(row.Cells["ClientName"].Value.ToString()))
                     {
-                        string sql = "UPDATE Client SET ClientName = @name, AddressLine1 = @a1, AddressLine2 = @a2, City = @city, State = @state, Zip = @zip, Enabled = @enabled WHERE ClientID = @ID";
+                        string sql = "UPDATE Client SET ClientName = @name, AddressLine1 = @a1, AddressLine2 = @a2, City = @city, State = @state, Zip = @zip, Enabled = @enabled, Rate = @rate WHERE ClientID = @ID";
                         using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                         {
                             using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
@@ -264,8 +268,9 @@ namespace WorkLog
                                 cmd.Parameters.Add("@state", DbType.String).Value = row.Cells["State"].Value;
                                 cmd.Parameters.Add("@zip", DbType.String).Value = row.Cells["Zip"].Value;
                                 cmd.Parameters.Add("@enabled", DbType.String).Value = row.Cells["Enabled"].Value;
+                                cmd.Parameters.Add("@rate", DbType.String).Value = row.Cells["Rate"].Value;
                                 con.Open();
-                                cmd.ExecuteNonQuery();
+                                cmd.ExecuteNonQuery();                                
                             }
                         }
                     }
@@ -284,7 +289,10 @@ namespace WorkLog
             {
                 foreach (DataGridViewRow row in dgv.Rows)
                 {
-                    if (row.Cells["ProServiceID"].Value.ToString() == "" && !string.IsNullOrEmpty(row.Cells["ProServiceName"].Value.ToString()))
+                    if (IsRowEmpty(row))
+                        break;
+
+                    if (row.Cells["ProServiceID"].Value == null && !string.IsNullOrEmpty(row.Cells["ProServiceName"].Value.ToString()))
                     {
                         string sqlInsert = "INSERT INTO ProfessionalService(ProServiceName) VALUES(@proservice)";
                         using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
@@ -312,9 +320,7 @@ namespace WorkLog
                             }
                         }
                     }
-
                 }
-
             }
             catch (Exception ex)
             {
@@ -328,8 +334,10 @@ namespace WorkLog
             {
                 foreach (DataGridViewRow row in dgv.Rows)
                 {
+                    if (IsRowEmpty(row))
+                        break;
 
-                    if (row.Cells["TaskID"].Value.ToString() == "" && !string.IsNullOrEmpty(row.Cells["TaskName"].Value.ToString()))
+                    if (row.Cells["TaskID"].Value == null && !string.IsNullOrEmpty(row.Cells["TaskName"].Value.ToString()))
                     {
                         string sqlInsert = "INSERT INTO Task(ProServiceID, TaskName) VALUES(" + cbProServ.SelectedValue + ", @taskname)";
                         using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
@@ -372,7 +380,10 @@ namespace WorkLog
             {
                 foreach (DataGridViewRow row in dgv.Rows)
                 {
-                    if (row.Cells["ItemID"].Value.ToString() == "" && !string.IsNullOrEmpty(row.Cells["ItemName"].Value.ToString()))
+                    if (IsRowEmpty(row))
+                        break;
+
+                    if (row.Cells["ItemID"].Value == null && !string.IsNullOrEmpty(row.Cells["ItemName"].Value.ToString()))
                     {
                         string sqlInsert = "INSERT INTO Item(ProServiceID, ItemName) VALUES(" + cbProServ.SelectedValue + ", @itemname)";
                         using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
@@ -461,7 +472,18 @@ namespace WorkLog
                 logger.Error(ex, ex.Source);
                 return false;
             }
+        }
 
+        private bool IsRowEmpty(DataGridViewRow row)
+        {
+            for (int i = 0; i < row.Cells.Count; i++)
+            {
+                if (row.Cells[i].Value != null)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 

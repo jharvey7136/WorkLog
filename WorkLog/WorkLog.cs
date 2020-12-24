@@ -55,9 +55,8 @@ namespace WorkLog
             RefreshComboBox();
 
             dtpFilterStart.CustomFormat = "M/dd/yyyy";
-            dtpFilterEnd.CustomFormat = "M/dd/yyyy";
-
-            
+            dtpFilterEnd.CustomFormat = "M/dd/yyyy";           
+            //dgvRecords.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private void dtpStartTime_ValueChanged(object sender, EventArgs e)
@@ -197,8 +196,8 @@ namespace WorkLog
             dtpStartTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hr, m, 0);
             dtpEndTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hr + rnd.Next(1, 11), m + rnd.Next(1, 29), 0);
             txtDescription.Text = "";
-            int r = rnd.Next(1, 73);
-            r *= 9;
+            int r = rnd.Next(1, 15);
+            r *= 10;
             txtReimburseCost.Text = r.ToString();
         }
 
@@ -268,9 +267,8 @@ namespace WorkLog
                     FillDataGridOnSubmit(iCount);                    
                 }
                 catch (Exception ex)
-                {
-                    lblMessage.ForeColor = Color.Red;
-                    lblMessage.Text = "Error submitting record, verify selections and try again";
+                {                    
+                    DisplayError("An unexpected error has occured");
                     _logger.LogError(ex, ex.Source);
                 }
             }
@@ -278,9 +276,20 @@ namespace WorkLog
 
         private void FillDataGridOnSubmit(int iCount)
         {
-            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
-                "FROM Record ORDER BY RowID DESC LIMIT " + iCount.ToString();
-            oDAL.FillDataGrid(cmd, dgvRecords);            
+            try
+            {
+                string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTime, R.EndTime, R.Hours, " +
+                    "C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost)  Billable, R.Description, R.RowID " +
+                    "FROM Record R " +
+                    "INNER JOIN Client C ON R.Client = C.ClientName " +
+                    "ORDER BY R.RowID DESC LIMIT " + iCount.ToString();
+                oDAL.FillDataGrid(cmd, dgvRecords);                
+            }
+            catch (Exception ex)
+            {
+                DisplayError("An unexpected error has occured");
+                _logger.LogError(ex, ex.Source);
+            }            
         }
 
         private bool Validation()
@@ -367,6 +376,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
+                DisplayError("An unexpected error has occured");
                 _logger.LogError(ex, ex.Source);
             }
         }
@@ -377,17 +387,35 @@ namespace WorkLog
             {
                 string start = dtpFilterStart.Value.ToString("yyyy-MM-dd");
                 string end = dtpFilterEnd.Value.ToString("yyyy-MM-dd");
-                string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
-                             "FROM Record " +
-                             "WHERE Date BETWEEN '" + start + "' AND '" + end + "' " +
-                             "ORDER BY Date";
-                oDAL.FillDataGrid(cmd, dgvRecords);
+                string where = "WHERE R.Date BETWEEN '" + start + "' AND '" + end + "' ";
+                FillRecordView(where);                
             }
             catch (Exception ex)
             {
+                DisplayError("An unexpected error has occured");
                 _logger.LogError(ex, ex.Source);
             }
         }
+
+        private void FillRecordView(string where)
+        {
+            try
+            {
+                string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTime, R.EndTime, " +
+                    "R.Hours, C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost)  Billable, R.Description, R.RowID " +
+                    "FROM Record R " +
+                    "INNER JOIN Client C ON R.Client = C.ClientName " +
+                     where +
+                    " ORDER BY R.Date";
+                oDAL.FillDataGrid(cmd, dgvRecords);                
+            }
+            catch (Exception ex)
+            {
+                DisplayError("An unexpected error has occured");
+                _logger.LogError(ex, ex.Source);
+            }            
+        }
+
 
         private void ToolStripManageCat_Click(object sender, EventArgs e)
         {
@@ -400,16 +428,25 @@ namespace WorkLog
         private void OnRowNumberChanged()
         {
             lblRecordCount.Text = dgvRecords.Rows.Count.ToString();
+            dgvRecords.Columns["RowID"].Visible = false;
             dgvRecords.Columns["RowID"].ReadOnly = true;
             dgvRecords.Columns["CreateDate"].ReadOnly = true;
+            lblMessage.ForeColor = SystemColors.ControlText;
+            lblMessage.Text = "";
             dgvRecords.AutoResizeColumns();                      
         }
 
-        private void BtnLastMonth_Click(object sender, EventArgs e)
+        private void DisplayError(string msg)
         {
-            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
-                         "FROM Record WHERE date >= date('now', 'start of month', '-1 month') AND date < date('now','start of month') ORDER BY Date";
-            oDAL.FillDataGrid(cmd, dgvRecords);
+            lblMessage.Text = msg;
+            lblMessage.ForeColor = Color.Red;
+        }
+
+        private void BtnLastMonth_Click(object sender, EventArgs e)
+        {            
+            string where = " WHERE R.Date >= date('now', 'start of month', '-1 month') AND R.Date < date('now','start of month') ";
+            string cmd;
+            FillRecordView(where);
 
             cmd = "SELECT date('now', 'start of month', '-1 month')";
             string startDate = oDAL.ReadString(cmd);
@@ -421,10 +458,10 @@ namespace WorkLog
         }
 
         private void BtnLast30_Click(object sender, EventArgs e)
-        {
-            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
-                         "FROM Record WHERE date >= date('now','-30 days') ORDER BY Date";
-            oDAL.FillDataGrid(cmd, dgvRecords);
+        {            
+            string where = " WHERE R.Date >= date('now','-30 days') ";
+            string cmd;
+            FillRecordView(where);
 
             cmd = "SELECT date('now','-30 days')";
             string startDate = oDAL.ReadString(cmd);
@@ -434,10 +471,10 @@ namespace WorkLog
         }
 
         private void BtnYTD_Click(object sender, EventArgs e)
-        {
-            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
-                         "FROM Record WHERE date >= date('now', 'start of year') AND date < date('now','start of year', '+1 year')";
-            oDAL.FillDataGrid(cmd, dgvRecords);
+        {            
+            string where = " WHERE R.Date >= date('now', 'start of year') AND R.Date < date('now','start of year', '+1 year') ";
+            string cmd;
+            FillRecordView(where);
 
             cmd = "SELECT date('now', 'start of year')";
             string startDate = oDAL.ReadString(cmd);
@@ -447,10 +484,10 @@ namespace WorkLog
         }        
 
         private void BtnMTD_Click(object sender, EventArgs e)
-        {
-            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
-                         "FROM Record WHERE date >= date('now', 'start of month') AND date < date('now','start of month', '+1 month')";
-            oDAL.FillDataGrid(cmd, dgvRecords);
+        {            
+            string where = " WHERE R.Date >= date('now', 'start of month') AND R.Date < date('now','start of month', '+1 month') ";
+            string cmd;
+            FillRecordView(where);
 
             cmd = "SELECT date('now', 'start of month')";
             string startDate = oDAL.ReadString(cmd);
@@ -461,8 +498,8 @@ namespace WorkLog
 
         private void BtnAll_Click(object sender, EventArgs e)
         {
-            string cmd = "SELECT CreateDate, Client, ProService, Task, Item, Date, StartTime, EndTime, Hours, ReimbursableCost, Description, RowID " +
-                         "FROM Record";
+            string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTime, R.EndTime, R.Hours, C.Rate, R.ReimbursableCost, R.Description, R.RowID " +
+                         "FROM Record R INNER JOIN Client C ON R.Client = C.ClientName ORDER BY R.Date ";
             oDAL.FillDataGrid(cmd, dgvRecords);
 
             cmd = "SELECT MIN(date) FROM Record";
@@ -500,6 +537,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
+                DisplayError("An unexpected error has occured");
                 _logger.LogError(ex, ex.Source);
             }         
         }
@@ -514,6 +552,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
+                DisplayError("An unexpected error has occured");
                 _logger.LogError(ex, ex.Source);
             }
         }
@@ -527,6 +566,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
+                DisplayError("An unexpected error has occured");
                 _logger.LogError(ex, ex.Source);
             }
         }
@@ -552,6 +592,7 @@ namespace WorkLog
             }
             catch (Exception ex)
             {
+                DisplayError("An unexpected error has occured");
                 _logger.LogError(ex, ex.Source);
             }
         }
@@ -560,18 +601,31 @@ namespace WorkLog
         {
             try
             {
-                DialogResult result = MessageBox.Show("Description field will be updated for all records in the view. Continue?", "Apply Changes Confirmation", MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show("Description field will be updated for all visible records. Continue?", "Apply Changes Confirmation", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
-                    oDAL.UpdateRecord(dgvRecords);                    
+                    oDAL.UpdateRecord(dgvRecords);
+                    lblMessage.ForeColor = Color.Green;
+                    lblMessage.Text = "Update Successful";
                 }
                 else
                     return;
             }
             catch (Exception ex)
             {
+                DisplayError("An unexpected error has occured");
                 _logger.LogError(ex, ex.Source);
             }
+        }
+
+        private void BtnReset_Click(object sender, EventArgs e)
+        {
+            dtpFilterStart.Value = DateTime.Today;
+            dtpFilterEnd.Value = DateTime.Today;
+            string start = dtpFilterStart.Value.ToString("yyyy-MM-dd");
+            string end = dtpFilterEnd.Value.ToString("yyyy-MM-dd");            
+            string where = " WHERE R.Date BETWEEN '" + start + "' AND '" + end + "' ";
+            FillRecordView(where);            
         }
     }
 }

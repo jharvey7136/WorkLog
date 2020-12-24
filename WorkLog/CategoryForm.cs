@@ -15,17 +15,17 @@ namespace WorkLog
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        DAL oDAL = new DAL();
+        DAL oDAL = new DAL();        
 
         public CategoryForm()
         {
             InitializeComponent();
             InitializeDefaults();
 
-            dgvClient.RowsAdded += (s, a) => OnRowNumberChanged(dgvClient);
-            dgvProService.RowsAdded += (s, a) => OnRowNumberChanged(dgvProService);
-            dgvTask.RowsAdded += (s, a) => OnRowNumberChanged(dgvTask);
-            dgvItem.RowsAdded += (s, a) => OnRowNumberChanged(dgvItem);
+            dgvClient.RowsAdded += (s, a) => OnRowNumberChanged(dgvClient, lblMessageTop);
+            dgvProService.RowsAdded += (s, a) => OnRowNumberChanged(dgvProService, lblMessageTopPS);
+            dgvTask.RowsAdded += (s, a) => OnRowNumberChanged(dgvTask, lblMessageTopTask);
+            dgvItem.RowsAdded += (s, a) => OnRowNumberChanged(dgvItem, lblMessageTopItem);
 
             // Attach DataGridView events to the corresponding event handlers.
             dgvClient.CellValidating += new DataGridViewCellValidatingEventHandler(dgvClient_CellValidating);
@@ -54,15 +54,19 @@ namespace WorkLog
 
                 oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService", cbProService, "ProServiceName", "ProServiceID");
                 oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService", cbProServiceItem, "ProServiceName", "ProServiceID");
+
+                //dgvClient.Columns[0].Width = 130;
+                dgvClient.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dgvProService.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dgvTask.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dgvItem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Source);
             }
         }
-
-
-
+               
 
         /************************************** Client *************************************/
         private void BtnUpdateClient_Click(object sender, EventArgs e)
@@ -74,7 +78,7 @@ namespace WorkLog
                 {
                     oDAL.UpdateClient(dgvClient);
                     lblMessageTop.ForeColor = Color.Green;
-                    lblMessageTop.Text = "Update Successful!";                    
+                    lblMessageTop.Text = "Update Successful";                    
                 }
                 else
                     return;
@@ -100,9 +104,10 @@ namespace WorkLog
         {
             try
             {
-                string cmd = "SELECT DISTINCT ClientID, ClientName, AddressLine1, AddressLine2, City, State, Zip, Enabled FROM Client ORDER BY ClientID";
+                string cmd = "SELECT DISTINCT ClientID, ClientName, Rate, AddressLine1, AddressLine2, City, State, Zip, Enabled FROM Client ORDER BY ClientID";
                 oDAL.FillDataGrid(cmd, dgvClient);
-                dgvClient.Columns["ClientID"].ReadOnly = true;
+                dgvClient.Columns["ClientID"].Visible = false;
+                dgvClient.Columns["ClientID"].ReadOnly = true;                
             }
             catch (Exception ex)
             {
@@ -148,6 +153,7 @@ namespace WorkLog
             {
                 string cmd = "SELECT DISTINCT ProServiceID, ProServiceName, Enabled FROM ProfessionalService ORDER BY ProServiceID";
                 oDAL.FillDataGrid(cmd, dgvProService);
+                dgvProService.Columns["ProServiceID"].Visible = false;
                 dgvProService.Columns["ProServiceID"].ReadOnly = true;
             }
             catch (Exception ex)
@@ -157,6 +163,26 @@ namespace WorkLog
         }
 
         /************************************** Task *************************************/
+        private void CbProService_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                string cmd = "";
+                if (cbProService.SelectedValue.ToString() != "System.Data.DataRowView" && cbProService.SelectedValue != null)
+                    cmd = "SELECT TaskID, TaskName, Enabled FROM Task WHERE ProServiceID = " + cbProService.SelectedValue;
+                else
+                    cmd = "SELECT TaskID, TaskName, Enabled FROM Task WHERE ProServiceID = 1";
+
+                oDAL.FillDataGrid(cmd, dgvTask);
+                dgvTask.Columns["TaskID"].Visible = false;
+                dgvTask.Columns["TaskID"].ReadOnly = true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Source);
+            }
+        }
+
         private void BtnUpdateTask_Click(object sender, EventArgs e)
         {
             try
@@ -189,6 +215,7 @@ namespace WorkLog
             {
                 string cmd = "SELECT DISTINCT TaskID, TaskName, Enabled FROM Task WHERE ProServiceID = " + cbProService.SelectedValue;
                 oDAL.FillDataGrid(cmd, dgvTask);
+                dgvTask.Columns["TaskID"].Visible = false;
                 dgvTask.Columns["TaskID"].ReadOnly = true;
             }
             catch (Exception ex)
@@ -205,6 +232,26 @@ namespace WorkLog
 
 
         /************************************** Item *************************************/
+        private void CbProServiceItem_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                string cmd = "";
+                if (cbProServiceItem.SelectedValue.ToString() != "System.Data.DataRowView" && cbProServiceItem.SelectedValue != null)
+                    cmd = "SELECT ItemID, ItemName, Enabled FROM Item WHERE ProServiceID = " + cbProServiceItem.SelectedValue;
+                else
+                    cmd = "SELECT ItemID, ItemName, Enabled FROM Item WHERE ProServiceID = 1";
+
+                oDAL.FillDataGrid(cmd, dgvItem);
+                dgvItem.Columns["ItemID"].Visible = false;
+                dgvItem.Columns["ItemID"].ReadOnly = true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Source);
+            }
+        }
+
         private void BtnUpdateItem_Click(object sender, EventArgs e)
         {
             try
@@ -242,6 +289,7 @@ namespace WorkLog
             {
                 string cmd = "SELECT DISTINCT ItemID, ItemName, Enabled FROM Item WHERE ProServiceID = " + cbProServiceItem.SelectedValue;
                 oDAL.FillDataGrid(cmd, dgvItem);
+                dgvItem.Columns["ItemID"].Visible = false;
                 dgvItem.Columns["ItemID"].ReadOnly = true;
             }
             catch (Exception ex)
@@ -264,50 +312,16 @@ namespace WorkLog
             lblMessageTopItem.ForeColor = SystemColors.ControlText;
         }
 
-        private void CbProService_SelectedIndexChanged(object sender, EventArgs e)
+        
+
+        
+
+        private void OnRowNumberChanged(DataGridView dgv, Label lblMessage)
         {
-            try
-            {
-                string cmd = "";
-                if (cbProService.SelectedValue.ToString() != "System.Data.DataRowView" && cbProService.SelectedValue != null)
-                    cmd = "SELECT TaskID, TaskName, Enabled FROM Task WHERE ProServiceID = " + cbProService.SelectedValue;
-                else
-                    cmd = "SELECT TaskID, TaskName, Enabled FROM Task WHERE ProServiceID = 1";
-
-                oDAL.FillDataGrid(cmd, dgvTask);
-                dgvTask.Columns[0].ReadOnly = true;
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, ex.Source);
-            }
+            lblMessage.ForeColor = SystemColors.ControlText;
+            lblMessage.Text = "";
+            //dgv.AutoResizeColumns();
         }
-
-        private void CbProServiceItem_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                string cmd = "";
-                if (cbProServiceItem.SelectedValue.ToString() != "System.Data.DataRowView" && cbProServiceItem.SelectedValue != null)
-                    cmd = "SELECT ItemID, ItemName, Enabled FROM Item WHERE ProServiceID = " + cbProServiceItem.SelectedValue;
-                else
-                    cmd = "SELECT ItemID, ItemName, Enabled FROM Item WHERE ProServiceID = 1";
-
-                oDAL.FillDataGrid(cmd, dgvItem);
-                dgvItem.Columns[0].ReadOnly = true;
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, ex.Source);
-            }
-        }
-
-        private void OnRowNumberChanged(DataGridView dgv)
-        {
-            //lblRecordCount.Text = dgvRecords.Rows.Count.ToString();
-            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-        }
-
 
         /************************************** Cell Validation *************************************/
         /* Client */
