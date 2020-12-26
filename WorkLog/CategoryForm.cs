@@ -311,10 +311,7 @@ namespace WorkLog
             lblMessageTopItem.Text = "";
             lblMessageTopItem.ForeColor = SystemColors.ControlText;
         }
-
-        
-
-        
+                
 
         private void OnRowNumberChanged(DataGridView dgv, Label lblMessage)
         {

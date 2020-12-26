@@ -11,15 +11,35 @@ using System.Windows.Forms;
 using System.IO;
 using Microsoft.Extensions.Logging;
 using System.IO.Compression;
+using System.Reflection;
 
 namespace WorkLog
 {
     public class DAL
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        
+        private string _database;  
+        public string Database 
+        {
+            get => _database;
+            set => _database = value;
+        }
+
         private static string LoadConnectionString(string id = "Default")
         {
             return ConfigurationManager.ConnectionStrings[id].ConnectionString;
+        }
+
+        public void SetConnectionString(string con)
+        {            
+            var DBCS = ConfigurationManager.ConnectionStrings["Default"];
+            
+            var writable = typeof(ConfigurationElement).GetField("_bReadOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+            writable.SetValue(DBCS, false);
+             
+            DBCS.ConnectionString = con;
+                        
         }
 
         public void FillComboBox(string cmd, ComboBox cb, string strDisplay, string strValue)
@@ -65,6 +85,32 @@ namespace WorkLog
             }
         }
 
+        public void FileSaveAs()
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "SQLite Database|*.db";
+            sfd.Title = "Save Database As";
+            sfd.FileName = "WorkLog_" + DateTime.Now.ToString("yyyyMMddmmss");
+            sfd.ShowDialog();
+            string fn = sfd.FileName;
+            string backupConnection = @"DataSource=" + fn + ";Version=3;";
+
+            if (string.IsNullOrWhiteSpace(fn))
+                return;
+
+            else
+            {
+                using (SQLiteConnection dest = new SQLiteConnection(backupConnection))
+                using (SQLiteConnection src = new SQLiteConnection(LoadConnectionString()))
+                {
+                    dest.Open();
+                    src.Open();
+                    src.BackupDatabase(dest, "main", "main", -1, null, 0);
+                }
+               
+            }
+        }
+
         public bool BackupDB()
         {
             try
@@ -75,6 +121,7 @@ namespace WorkLog
 
                 string fullPathNew = Path.GetFullPath(@"..\..\..\db\" + strFilename);
                 string fullPathCurr;
+                int i = 0;
 
                 using (SQLiteConnection dest = new SQLiteConnection(backupConnection))
                 using (SQLiteConnection src = new SQLiteConnection(LoadConnectionString()))
@@ -93,8 +140,12 @@ namespace WorkLog
                         fi.Delete();
                         logger.Info("Duplicate backup database deleted: {0}", fi.FullName);
                     }
-
+                    i++;
                 }
+
+                if (i > 50)
+                    ArchiveBackups();
+
                 return true;
             }
             catch (Exception ex)
@@ -104,7 +155,7 @@ namespace WorkLog
             }
         }
 
-        public void ArchiveBackups(int daysOld)
+        public void ArchiveBackups(int daysOld = 0)
         {
             string now = DateTime.Now.ToString("yyyyMMddmmss");
             string strFilename = "WorkLog_" + now + ".zip";

@@ -57,6 +57,8 @@
             this.lblMessage = new System.Windows.Forms.Label();
             this.btnExport = new System.Windows.Forms.Button();
             this.gbDataFilters = new System.Windows.Forms.GroupBox();
+            this.cbFilterClient = new System.Windows.Forms.ComboBox();
+            this.btnReset = new System.Windows.Forms.Button();
             this.btnAll = new System.Windows.Forms.Button();
             this.btnMTD = new System.Windows.Forms.Button();
             this.btnYTD = new System.Windows.Forms.Button();
@@ -76,7 +78,12 @@
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnUpdateRecord = new System.Windows.Forms.Button();
             this.btnLoad = new System.Windows.Forms.Button();
-            this.btnReset = new System.Windows.Forms.Button();
+            this.lblFilterClient = new System.Windows.Forms.Label();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lblDatabaseName = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.gbDataFilters.SuspendLayout();
@@ -143,7 +150,7 @@
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(1034, 40);
+            this.btnClose.Location = new System.Drawing.Point(1125, 69);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(78, 24);
             this.btnClose.TabIndex = 8;
@@ -355,16 +362,16 @@
             // lblMessage
             // 
             this.lblMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMessage.Location = new System.Drawing.Point(24, 228);
+            this.lblMessage.Location = new System.Drawing.Point(169, 228);
             this.lblMessage.Name = "lblMessage";
-            this.lblMessage.Size = new System.Drawing.Size(1207, 18);
+            this.lblMessage.Size = new System.Drawing.Size(913, 18);
             this.lblMessage.TabIndex = 33;
             this.lblMessage.Text = "lblMessage";
             this.lblMessage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnExport
             // 
-            this.btnExport.Location = new System.Drawing.Point(950, 40);
+            this.btnExport.Location = new System.Drawing.Point(1041, 69);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(78, 24);
             this.btnExport.TabIndex = 32;
@@ -374,6 +381,8 @@
             // 
             // gbDataFilters
             // 
+            this.gbDataFilters.Controls.Add(this.lblFilterClient);
+            this.gbDataFilters.Controls.Add(this.cbFilterClient);
             this.gbDataFilters.Controls.Add(this.btnReset);
             this.gbDataFilters.Controls.Add(this.btnAll);
             this.gbDataFilters.Controls.Add(this.btnMTD);
@@ -393,6 +402,30 @@
             this.gbDataFilters.TabIndex = 34;
             this.gbDataFilters.TabStop = false;
             this.gbDataFilters.Text = "Filter Data View";
+            // 
+            // cbFilterClient
+            // 
+            this.cbFilterClient.DropDownHeight = 120;
+            this.cbFilterClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbFilterClient.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbFilterClient.FormattingEnabled = true;
+            this.cbFilterClient.IntegralHeight = false;
+            this.cbFilterClient.ItemHeight = 16;
+            this.cbFilterClient.Location = new System.Drawing.Point(248, 40);
+            this.cbFilterClient.Name = "cbFilterClient";
+            this.cbFilterClient.Size = new System.Drawing.Size(122, 24);
+            this.cbFilterClient.TabIndex = 47;
+            this.cbFilterClient.SelectedIndexChanged += new System.EventHandler(this.CbFilterClient_SelectedIndexChanged);
+            // 
+            // btnReset
+            // 
+            this.btnReset.Location = new System.Drawing.Point(466, 70);
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(85, 23);
+            this.btnReset.TabIndex = 45;
+            this.btnReset.Text = "Reset";
+            this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.BtnReset_Click);
             // 
             // btnAll
             // 
@@ -446,9 +479,9 @@
             // 
             // btnView
             // 
-            this.btnView.Location = new System.Drawing.Point(245, 40);
+            this.btnView.Location = new System.Drawing.Point(376, 40);
             this.btnView.Name = "btnView";
-            this.btnView.Size = new System.Drawing.Size(75, 24);
+            this.btnView.Size = new System.Drawing.Size(85, 23);
             this.btnView.TabIndex = 40;
             this.btnView.Text = "View";
             this.btnView.UseVisualStyleBackColor = true;
@@ -456,7 +489,6 @@
             // 
             // lblFilterStart
             // 
-            this.lblFilterStart.AutoSize = true;
             this.lblFilterStart.Location = new System.Drawing.Point(8, 23);
             this.lblFilterStart.Name = "lblFilterStart";
             this.lblFilterStart.Size = new System.Drawing.Size(55, 13);
@@ -465,7 +497,6 @@
             // 
             // lblFilterEnd
             // 
-            this.lblFilterEnd.AutoSize = true;
             this.lblFilterEnd.Location = new System.Drawing.Point(125, 23);
             this.lblFilterEnd.Name = "lblFilterEnd";
             this.lblFilterEnd.Size = new System.Drawing.Size(52, 13);
@@ -494,6 +525,7 @@
             // 
             this.menuStrip.BackColor = System.Drawing.SystemColors.MenuBar;
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
             this.menuFile});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -514,21 +546,21 @@
             // toolStripManageCat
             // 
             this.toolStripManageCat.Name = "toolStripManageCat";
-            this.toolStripManageCat.Size = new System.Drawing.Size(176, 22);
+            this.toolStripManageCat.Size = new System.Drawing.Size(180, 22);
             this.toolStripManageCat.Text = "Manage Categories";
             this.toolStripManageCat.Click += new System.EventHandler(this.ToolStripManageCat_Click);
             // 
             // backupDatabaseToolStripMenuItem
             // 
             this.backupDatabaseToolStripMenuItem.Name = "backupDatabaseToolStripMenuItem";
-            this.backupDatabaseToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.backupDatabaseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.backupDatabaseToolStripMenuItem.Text = "Backup Database";
             this.backupDatabaseToolStripMenuItem.Click += new System.EventHandler(this.BackupDatabaseToolStripMenuItem_Click);
             // 
             // archiveBackupsToolStripMenuItem
             // 
             this.archiveBackupsToolStripMenuItem.Name = "archiveBackupsToolStripMenuItem";
-            this.archiveBackupsToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.archiveBackupsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.archiveBackupsToolStripMenuItem.Text = "Archive Backups";
             this.archiveBackupsToolStripMenuItem.Click += new System.EventHandler(this.ArchiveBackupsToolStripMenuItem_Click);
             // 
@@ -573,21 +605,58 @@
             this.btnLoad.UseVisualStyleBackColor = true;
             this.btnLoad.Click += new System.EventHandler(this.BtnLoad_Click);
             // 
-            // btnReset
+            // lblFilterClient
             // 
-            this.btnReset.Location = new System.Drawing.Point(326, 40);
-            this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(75, 24);
-            this.btnReset.TabIndex = 45;
-            this.btnReset.Text = "Reset";
-            this.btnReset.UseVisualStyleBackColor = true;
-            this.btnReset.Click += new System.EventHandler(this.BtnReset_Click);
+            this.lblFilterClient.Location = new System.Drawing.Point(245, 23);
+            this.lblFilterClient.Name = "lblFilterClient";
+            this.lblFilterClient.Size = new System.Drawing.Size(52, 13);
+            this.lblFilterClient.TabIndex = 48;
+            this.lblFilterClient.Text = "Client";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveToolStripMenuItem,
+            this.saveAsToolStripMenuItem,
+            this.openToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Text = "Save As";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.SaveAsToolStripMenuItem_Click);
+            // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            // 
+            // lblDatabaseName
+            // 
+            this.lblDatabaseName.Location = new System.Drawing.Point(24, 229);
+            this.lblDatabaseName.Name = "lblDatabaseName";
+            this.lblDatabaseName.Size = new System.Drawing.Size(166, 17);
+            this.lblDatabaseName.TabIndex = 48;
+            this.lblDatabaseName.Text = "lblDatabaseName";
             // 
             // WorkLog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1243, 741);
+            this.Controls.Add(this.lblDatabaseName);
             this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.btnUpdateRecord);
             this.Controls.Add(this.btnDelete);
@@ -604,7 +673,6 @@
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).EndInit();
             this.gbDataFilters.ResumeLayout(false);
-            this.gbDataFilters.PerformLayout();
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -663,6 +731,13 @@
         private System.Windows.Forms.Button btnUpdateRecord;
         private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.ComboBox cbFilterClient;
+        private System.Windows.Forms.Label lblFilterClient;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.Label lblDatabaseName;
     }
 }
 
