@@ -341,3 +341,5 @@ healthchecksdb
 
 # SQLiteDatabase folder
 db/
+
+*.db

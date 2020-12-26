@@ -18,13 +18,6 @@ namespace WorkLog
     public class DAL
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        
-        private string _database;  
-        public string Database 
-        {
-            get => _database;
-            set => _database = value;
-        }
 
         private static string LoadConnectionString(string id = "Default")
         {
@@ -38,8 +31,7 @@ namespace WorkLog
             var writable = typeof(ConfigurationElement).GetField("_bReadOnly", BindingFlags.Instance | BindingFlags.NonPublic);
             writable.SetValue(DBCS, false);
              
-            DBCS.ConnectionString = con;
-                        
+            DBCS.ConnectionString = con;                        
         }
 
         public void FillComboBox(string cmd, ComboBox cb, string strDisplay, string strValue)
@@ -90,14 +82,13 @@ namespace WorkLog
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "SQLite Database|*.db";
             sfd.Title = "Save Database As";
-            sfd.FileName = "WorkLog_" + DateTime.Now.ToString("yyyyMMddmmss");
+            sfd.FileName = "WorkLog_" + DateTime.Now.ToString("yyyy-MM-dd_HHmm");
             sfd.ShowDialog();
             string fn = sfd.FileName;
             string backupConnection = @"DataSource=" + fn + ";Version=3;";
 
             if (string.IsNullOrWhiteSpace(fn))
                 return;
-
             else
             {
                 using (SQLiteConnection dest = new SQLiteConnection(backupConnection))
@@ -106,16 +97,16 @@ namespace WorkLog
                     dest.Open();
                     src.Open();
                     src.BackupDatabase(dest, "main", "main", -1, null, 0);
-                }
-               
-            }
+                    SetConnectionString(backupConnection);                    
+                }               
+            }            
         }
 
         public bool BackupDB()
         {
             try
             {
-                string now = DateTime.Now.ToString("yyyyMMddHHmmss");
+                string now = DateTime.Now.ToString("yyyy-MM-dd_HHmm");
                 string strFilename = "WorkLog_" + now + ".db";
                 string backupConnection = @"DataSource=..\..\..\db\" + strFilename + ";Version=3;";
 
@@ -157,7 +148,7 @@ namespace WorkLog
 
         public void ArchiveBackups(int daysOld = 0)
         {
-            string now = DateTime.Now.ToString("yyyyMMddmmss");
+            string now = DateTime.Now.ToString("yyyy-MM-dd_HHmm");
             string strFilename = "WorkLog_" + now + ".zip";
             string zipPath = Path.GetFullPath(@"..\..\..\db\Archive\" + strFilename);
             int i = 0;

@@ -39,6 +39,9 @@ namespace WorkLog
             dtpStartTime.MouseWheel += new MouseEventHandler(dtpStartTime_MouseWheel);
             dtpEndTime.MouseWheel += new MouseEventHandler(dtpEndTime_MouseWheel);
 
+            dtpFilterStart.MouseWheel += new MouseEventHandler(dtpFilterStart_MouseWheel);
+            dtpFilterEnd.MouseWheel += new MouseEventHandler(dtpFilterEnd_MouseWheel);
+
             txtReimburseCost.KeyPress += new KeyPressEventHandler(TxtReimburseCost_KeyPress);
             dgvRecords.RowsAdded += (s, a) => OnRowNumberChanged();
         }
@@ -84,26 +87,34 @@ namespace WorkLog
 
         private void dtpStartTime_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (e.Delta > 0)
-            {
-                SendKeys.Send("{UP}");
-            }
-            else
-            {
-                SendKeys.Send("{DOWN}");
-            }
+            if (e.Delta > 0)            
+                SendKeys.Send("{UP}");            
+            else            
+                SendKeys.Send("{DOWN}");            
         }
 
         private void dtpEndTime_MouseWheel(object sender, MouseEventArgs e)
         {
+            if (e.Delta > 0)            
+                SendKeys.Send("{UP}");            
+            else            
+                SendKeys.Send("{DOWN}");            
+        }
+
+        private void dtpFilterStart_MouseWheel(object sender, MouseEventArgs e)
+        {
             if (e.Delta > 0)
-            {
                 SendKeys.Send("{UP}");
-            }
             else
-            {
                 SendKeys.Send("{DOWN}");
-            }
+        }
+
+        private void dtpFilterEnd_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta > 0)
+                SendKeys.Send("{UP}");
+            else
+                SendKeys.Send("{DOWN}");
         }
 
         private string GetTotalHours()
@@ -377,7 +388,7 @@ namespace WorkLog
                     SaveFileDialog sfd = new SaveFileDialog();
                     sfd.Filter = "CSV (Comma delimited)|*.csv";
                     sfd.Title = "Export Records to CSV";
-                    sfd.FileName = "WorkLog_" + DateTime.Now.ToString("yyyyMMddmmss");
+                    sfd.FileName = "WorkLog_" + DateTime.Now.ToString("yyyy-MM-dd_HHmm");
                     sfd.ShowDialog();
                     string fn = sfd.FileName;
 
@@ -398,6 +409,11 @@ namespace WorkLog
         }
 
         private void BtnView_Click(object sender, EventArgs e)
+        {
+            RefreshCurrentView();
+        }
+
+        private void RefreshCurrentView()
         {
             try
             {
@@ -520,7 +536,8 @@ namespace WorkLog
 
         private void BtnAll_Click(object sender, EventArgs e)
         {
-            string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTime, R.EndTime, R.Hours, C.Rate, R.ReimbursableCost, R.Description, R.RowID " +
+            string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTime, R.EndTime, R.Hours, C.Rate, " +
+                         "R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost)  Billable, R.Description, R.RowID " +
                          "FROM Record R INNER JOIN Client C ON R.Client = C.ClientName ORDER BY R.Date ";
             oDAL.FillDataGrid(cmd, dgvRecords);
 
@@ -650,6 +667,7 @@ namespace WorkLog
                     oDAL.UpdateRecord(dgvRecords);
                     lblMessage.ForeColor = Color.Green;
                     lblMessage.Text = "Update Successful";
+                    RefreshCurrentView();
                 }
                 else
                     return;
@@ -661,11 +679,15 @@ namespace WorkLog
             }
         }
 
-
-
         private void BtnReset_Click(object sender, EventArgs e)
         {
+            ResetRecordGrid();
+        }
+
+        private void ResetRecordGrid()
+        {
             lblMessage.Text = "";
+            lblRecordCount.Text = "";
             dtpFilterStart.Value = DateTime.Today;
             dtpFilterEnd.Value = DateTime.Today;
             string start = dtpFilterStart.Value.ToString("yyyy-MM-dd");
@@ -673,6 +695,9 @@ namespace WorkLog
             string where = " WHERE R.Date BETWEEN '" + start + "' AND '" + end + "' ";
             cbFilterClient.SelectedIndex = 0;
             FillRecordView(where);
+
+            if (dgvRecords.RowCount == 0)
+                dgvRecords.DataSource = null;
         }
 
         private void InitializeTimer()
@@ -688,28 +713,30 @@ namespace WorkLog
         }
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
-        {           
-            var filePath = string.Empty;
-
-            using (OpenFileDialog ofg = new OpenFileDialog())
+        {
+            try
             {
-                //ofg.InitialDirectory = "c:\\";
-                ofg.Filter = "SQLite Database|*.db";               
-                ofg.RestoreDirectory = true;
+                var filePath = string.Empty;
+                using (OpenFileDialog ofg = new OpenFileDialog())
+                {                    
+                    ofg.Filter = "SQLite Database|*.db";
+                    ofg.RestoreDirectory = true;
 
-                if (ofg.ShowDialog() == DialogResult.OK)
-                {
-                    
-                    filePath = @"DataSource=" + ofg.FileName + ";Version=3;";
-
-                    oDAL.SetConnectionString(filePath);
-
-                    strCurrDatabase = oDAL.ReadString("SELECT file FROM pragma_database_list WHERE seq = 0");
-                    lblDatabaseName.Text = Path.GetFileName(strCurrDatabase);
+                    if (ofg.ShowDialog() == DialogResult.OK)
+                    {
+                        filePath = @"DataSource=" + ofg.FileName + ";Version=3;";
+                        oDAL.SetConnectionString(filePath);
+                        strCurrDatabase = oDAL.ReadString("SELECT file FROM pragma_database_list WHERE seq = 0");
+                        lblDatabaseName.Text = Path.GetFileName(strCurrDatabase);
+                        ResetRecordGrid();
+                    }
                 }
             }
-            
-            //string con = @"DataSource=C:\Users\johnh\Documents\Projects\db_backups\WorkLog_202012254241.db;Version=3;";            
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occured", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }                    
         }
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)

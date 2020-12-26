@@ -54,8 +54,7 @@ namespace WorkLog
 
                 oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService", cbProService, "ProServiceName", "ProServiceID");
                 oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService", cbProServiceItem, "ProServiceName", "ProServiceID");
-
-                //dgvClient.Columns[0].Width = 130;
+                                
                 dgvClient.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dgvProService.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dgvTask.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -65,8 +64,7 @@ namespace WorkLog
             {
                 logger.Error(ex, ex.Source);
             }
-        }
-               
+        }               
 
         /************************************** Client *************************************/
         private void BtnUpdateClient_Click(object sender, EventArgs e)
@@ -167,11 +165,16 @@ namespace WorkLog
         {
             try
             {
+                if (cbProService.SelectedIndex < 1)
+                {
+                    dgvTask.DataSource = null;
+                    return;
+                }                    
+
                 string cmd = "";
-                if (cbProService.SelectedValue.ToString() != "System.Data.DataRowView" && cbProService.SelectedValue != null)
-                    cmd = "SELECT TaskID, TaskName, Enabled FROM Task WHERE ProServiceID = " + cbProService.SelectedValue;
-                else
-                    cmd = "SELECT TaskID, TaskName, Enabled FROM Task WHERE ProServiceID = 1";
+                
+                if (cbProService.SelectedIndex > 0)
+                    cmd = "SELECT TaskID, TaskName, Enabled FROM Task WHERE ProServiceID = " + cbProService.SelectedValue;                
 
                 oDAL.FillDataGrid(cmd, dgvTask);
                 dgvTask.Columns["TaskID"].Visible = false;
@@ -236,12 +239,15 @@ namespace WorkLog
         {
             try
             {
+                if (cbProServiceItem.SelectedIndex < 1)
+                {
+                    dgvItem.DataSource = null;
+                    return;
+                }
                 string cmd = "";
-                if (cbProServiceItem.SelectedValue.ToString() != "System.Data.DataRowView" && cbProServiceItem.SelectedValue != null)
+                if (cbProServiceItem.SelectedIndex > 0)
                     cmd = "SELECT ItemID, ItemName, Enabled FROM Item WHERE ProServiceID = " + cbProServiceItem.SelectedValue;
-                else
-                    cmd = "SELECT ItemID, ItemName, Enabled FROM Item WHERE ProServiceID = 1";
-
+                
                 oDAL.FillDataGrid(cmd, dgvItem);
                 dgvItem.Columns["ItemID"].Visible = false;
                 dgvItem.Columns["ItemID"].ReadOnly = true;

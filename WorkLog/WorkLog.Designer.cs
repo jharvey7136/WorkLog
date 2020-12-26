@@ -82,7 +82,6 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lblDatabaseName = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
@@ -413,7 +412,7 @@
             this.cbFilterClient.ItemHeight = 16;
             this.cbFilterClient.Location = new System.Drawing.Point(248, 40);
             this.cbFilterClient.Name = "cbFilterClient";
-            this.cbFilterClient.Size = new System.Drawing.Size(122, 24);
+            this.cbFilterClient.Size = new System.Drawing.Size(212, 24);
             this.cbFilterClient.TabIndex = 47;
             this.cbFilterClient.SelectedIndexChanged += new System.EventHandler(this.CbFilterClient_SelectedIndexChanged);
             // 
@@ -479,7 +478,7 @@
             // 
             // btnView
             // 
-            this.btnView.Location = new System.Drawing.Point(376, 40);
+            this.btnView.Location = new System.Drawing.Point(466, 40);
             this.btnView.Name = "btnView";
             this.btnView.Size = new System.Drawing.Size(85, 23);
             this.btnView.TabIndex = 40;
@@ -616,9 +615,8 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveToolStripMenuItem,
-            this.saveAsToolStripMenuItem,
-            this.openToolStripMenuItem});
+            this.openToolStripMenuItem,
+            this.saveAsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -636,12 +634,6 @@
             this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
-            // 
-            // saveToolStripMenuItem
-            // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.saveToolStripMenuItem.Text = "Save";
             // 
             // lblDatabaseName
             // 
@@ -734,7 +726,6 @@
         private System.Windows.Forms.ComboBox cbFilterClient;
         private System.Windows.Forms.Label lblFilterClient;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.Label lblDatabaseName;
