@@ -256,12 +256,25 @@ namespace WorkLog
         {
             try
             {
+                if (table == "ProfessionalService")
+                {
+                    if (CheckProServiceDependency("Task", strRowID, "TaskID"))
+                    {
+                        MessageBox.Show("Cannot delete Professional Service because a Task depends on it. Delete the Task first");
+                        return false;
+                    }
+                    if (CheckProServiceDependency("Item", strRowID, "ItemID"))
+                    {
+                        MessageBox.Show("Cannot delete Professional Service because an Item depends on it. Delete the Item first");
+                        return false;
+                    }
+                }
+
                 using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                 {
-                    //string deleteSql = @"DELETE FROM " + table + " WHERE @tableID = @strRowID";           
                     string deleteSql = @"DELETE FROM " + table + " WHERE " + tableID + " = " + strRowID;
                     using (SQLiteCommand cmd = new SQLiteCommand(deleteSql, con))
-                    {                        
+                    {
                         con.Open();
                         cmd.ExecuteNonQuery();
                     }
@@ -478,25 +491,18 @@ namespace WorkLog
             }
         }
 
-        //public bool DeleteClient(string strRowID)
-        //{
-        //    try
-        //    {
-        //        using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
-        //        {
-        //            string deleteSql = @"DELETE FROM Client WHERE RowID = " + strRowID;
-        //            con.Open();
-        //            SQLiteCommand cmd = new SQLiteCommand(deleteSql, con);
-        //            cmd.ExecuteNonQuery();
-        //        }
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.Error(ex, ex.Source);
-        //        return false;
-        //    }
-        //}
+        public bool CheckProServiceDependency(string table, string proServiceID, string existsID)
+        {
+            //example: table = Task, 
+
+            //string proServiceID = ReadString("SELECT ProServiceID FROM ProfessionalService WHERE ProServiceID = " + rowID);
+
+            //SELECT TaskID FROM Task WHERE ProServiceID = 6
+            if (!string.IsNullOrEmpty(ReadString("SELECT " + existsID + " FROM " + table + " WHERE ProServiceID = " + proServiceID)))
+                return true;
+            else
+                return false;
+        }
 
         public string ReadString(string txtQuery)
         {

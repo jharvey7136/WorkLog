@@ -43,7 +43,7 @@ namespace WorkLog
             tabCategories.SelectedIndexChanged += new EventHandler(tabCategories_SelectedIndexChanged);
 
             dgvTask.DataSource = null;
-            dgvItem.DataSource = null;
+            dgvItem.DataSource = null;            
         }
 
         private void InitializeDefaults()
@@ -59,14 +59,14 @@ namespace WorkLog
                 dgvClient.AutoResizeColumns();
                 dgvProService.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dgvTask.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                dgvItem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dgvItem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;                
             }
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Source);
             }
-        }  
-        
+        }
+
         private void RefreshComboBoxes()
         {
             oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService", cbProService, "ProServiceName", "ProServiceID");
@@ -81,7 +81,7 @@ namespace WorkLog
                 DialogResult result = MessageBox.Show("Database will be updated. Continue?", "Apply Changes Confirmation", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
-                    if (oDAL.UpdateClient(dgvClient))                    
+                    if (oDAL.UpdateClient(dgvClient))
                         DisplayMessage(lblMessageTop, "Update Successful", Color.Green);
                     else
                         DisplayMessage(lblMessageTop, "An unexpected error has occured", Color.Red);
@@ -105,7 +105,7 @@ namespace WorkLog
                     if (oDAL.UpdateProService(dgvProService))
                         DisplayMessage(lblMessageTopPS, "Update Successful", Color.Green);
                     else
-                        DisplayMessage(lblMessageTopPS, "An unexpected error has occured", Color.Red);                    
+                        DisplayMessage(lblMessageTopPS, "An unexpected error has occured", Color.Red);
                 }
                 else
                     return;
@@ -126,7 +126,7 @@ namespace WorkLog
                     if (oDAL.UpdateTask(dgvTask, cbProService))
                         DisplayMessage(lblMessageTopTask, "Update Successful", Color.Green);
                     else
-                        DisplayMessage(lblMessageTopTask, "An unexpected error has occured", Color.Red);                    
+                        DisplayMessage(lblMessageTopTask, "An unexpected error has occured", Color.Red);
                 }
                 else
                     return;
@@ -147,7 +147,7 @@ namespace WorkLog
                     if (oDAL.UpdateItem(dgvItem, cbProServiceItem))
                         DisplayMessage(lblMessageTopItem, "Update Successful", Color.Green);
                     else
-                        DisplayMessage(lblMessageTopItem, "An unexpected error has occured", Color.Red);                    
+                        DisplayMessage(lblMessageTopItem, "An unexpected error has occured", Color.Red);
                 }
                 else
                     return;
@@ -242,6 +242,8 @@ namespace WorkLog
 
         private void GetDataTask()
         {
+            if (dgvTask.DataSource == null)
+                return;
             try
             {
                 string cmd = "SELECT DISTINCT TaskID, TaskName, Enabled FROM Task WHERE ProServiceID = " + cbProService.SelectedValue;
@@ -257,6 +259,8 @@ namespace WorkLog
 
         private void GetDataItem()
         {
+            if (dgvItem.DataSource == null)
+                return;
             try
             {
                 string cmd = "SELECT DISTINCT ItemID, ItemName, Enabled FROM Item WHERE ProServiceID = " + cbProServiceItem.SelectedValue;
@@ -323,14 +327,6 @@ namespace WorkLog
         private void tabCategories_SelectedIndexChanged(Object sender, EventArgs e)
         {
             RefreshComboBoxes();
-            //switch ((sender as TabControl).SelectedIndex)
-            //{
-            //    case 0:
-                    
-            //        break;
-            //    case 1:
-            //        break;
-            //}
         }
 
 
@@ -477,15 +473,15 @@ namespace WorkLog
                             }
                             else
                             {
-                                DisplayMessage(lbl, "An unexpected error has occured at row index " + dr.Index.ToString(), Color.Red);
+                                DisplayMessage(lbl, "Error while attempting to delete", Color.Red);
                                 return;
                             }
                         }
                         if (i == 1)
-                            DisplayMessage(lbl, "1 record deleted", Color.Green);
+                            DisplayMessage(lbl, "1 row deleted", Color.Green);
                         else if (i > 1)
-                            DisplayMessage(lbl, i.ToString() + " records deleted", Color.Green);
-                        
+                            DisplayMessage(lbl, i.ToString() + " rows deleted", Color.Green);
+
                     }
                     else
                         return;
