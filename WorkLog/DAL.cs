@@ -25,13 +25,13 @@ namespace WorkLog
         }
 
         public void SetConnectionString(string con)
-        {            
+        {
             var DBCS = ConfigurationManager.ConnectionStrings["Default"];
-            
+
             var writable = typeof(ConfigurationElement).GetField("_bReadOnly", BindingFlags.Instance | BindingFlags.NonPublic);
             writable.SetValue(DBCS, false);
-             
-            DBCS.ConnectionString = con;                        
+
+            DBCS.ConnectionString = con;
         }
 
         public void FillComboBox(string cmd, ComboBox cb, string strDisplay, string strValue)
@@ -97,9 +97,9 @@ namespace WorkLog
                     dest.Open();
                     src.Open();
                     src.BackupDatabase(dest, "main", "main", -1, null, 0);
-                    SetConnectionString(backupConnection);                    
-                }               
-            }            
+                    SetConnectionString(backupConnection);
+                }
+            }
         }
 
         public bool BackupDB()
@@ -175,7 +175,7 @@ namespace WorkLog
             }
         }
 
-        public void InsertRecord(Record record, bool isReimburse)
+        public bool InsertRecord(Record record, bool isReimburse)
         {
             try
             {
@@ -216,14 +216,16 @@ namespace WorkLog
 
                     cmd.ExecuteNonQuery();
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Source);
+                return false;
             }
         }
 
-        public void UpdateRecord(DataGridView dgv)
+        public bool UpdateRecord(DataGridView dgv)
         {
             try
             {
@@ -233,7 +235,7 @@ namespace WorkLog
                     using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                     {
                         using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
-                        {                            
+                        {
                             cmd.Parameters.Add("@Description", DbType.String).Value = row.Cells["Description"].Value;
                             cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["RowID"].Value;
                             con.Open();
@@ -241,34 +243,41 @@ namespace WorkLog
                         }
                     }
                 }
-
+                return true;
             }
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Source);
+                return false;
             }
         }
-               
-        public void DeleteRecord(string strRowID)
+
+        public bool DeleteRecord(string table, string tableID, string strRowID)
         {
             try
             {
                 using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                 {
-                    string deleteSql = @"DELETE FROM Record WHERE RowID = " + strRowID;
-                    con.Open();
-                    SQLiteCommand cmd = new SQLiteCommand(deleteSql, con);
-                    cmd.ExecuteNonQuery();
+                    //string deleteSql = @"DELETE FROM " + table + " WHERE @tableID = @strRowID";           
+                    string deleteSql = @"DELETE FROM " + table + " WHERE " + tableID + " = " + strRowID;
+                    using (SQLiteCommand cmd = new SQLiteCommand(deleteSql, con))
+                    {                        
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                    }
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Source);
+                return false;
             }
         }
 
-        public void UpdateClient(DataGridView dgv)
-        {            
+        /********************************************** CATEGORIES  **********************************************/
+        public bool UpdateClient(DataGridView dgv)
+        {
             try
             {
                 foreach (DataGridViewRow row in dgv.Rows)
@@ -276,7 +285,7 @@ namespace WorkLog
                     if (IsRowEmpty(row))
                         break;
 
-                    if (row.Cells["ClientID"].Value == null && !string.IsNullOrEmpty(row.Cells["ClientName"].Value.ToString()))
+                    if (row.Cells["ClientID"].Value == DBNull.Value && !string.IsNullOrEmpty(row.Cells["ClientName"].Value.ToString()))
                     {
                         string sqlInsert = "INSERT INTO Client(ClientName, AddressLine1, AddressLine2, City, State, Zip, Rate) VALUES(@name, @a1, @a2, @city, @state, @zip, @rate)";
                         using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
@@ -288,7 +297,7 @@ namespace WorkLog
                                 cmd.Parameters.Add("@a2", DbType.String).Value = row.Cells["AddressLine2"].Value;
                                 cmd.Parameters.Add("@city", DbType.String).Value = row.Cells["City"].Value;
                                 cmd.Parameters.Add("@state", DbType.String).Value = row.Cells["State"].Value;
-                                cmd.Parameters.Add("@zip", DbType.String).Value = row.Cells["Zip"].Value; 
+                                cmd.Parameters.Add("@zip", DbType.String).Value = row.Cells["Zip"].Value;
                                 cmd.Parameters.Add("@rate", DbType.String).Value = row.Cells["Rate"].Value;
                                 con.Open();
                                 cmd.ExecuteNonQuery();
@@ -312,20 +321,22 @@ namespace WorkLog
                                 cmd.Parameters.Add("@enabled", DbType.String).Value = row.Cells["Enabled"].Value;
                                 cmd.Parameters.Add("@rate", DbType.String).Value = row.Cells["Rate"].Value;
                                 con.Open();
-                                cmd.ExecuteNonQuery();                                
+                                cmd.ExecuteNonQuery();
                             }
                         }
                     }
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Source);
+                return false;
             }
         }
 
 
-        public void UpdateProService(DataGridView dgv)
+        public bool UpdateProService(DataGridView dgv)
         {
             try
             {
@@ -334,7 +345,7 @@ namespace WorkLog
                     if (IsRowEmpty(row))
                         break;
 
-                    if (row.Cells["ProServiceID"].Value == null && !string.IsNullOrEmpty(row.Cells["ProServiceName"].Value.ToString()))
+                    if (row.Cells["ProServiceID"].Value == DBNull.Value && !string.IsNullOrEmpty(row.Cells["ProServiceName"].Value.ToString()))
                     {
                         string sqlInsert = "INSERT INTO ProfessionalService(ProServiceName) VALUES(@proservice)";
                         using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
@@ -363,14 +374,16 @@ namespace WorkLog
                         }
                     }
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Source);
+                return false;
             }
         }
 
-        public void UpdateTask(DataGridView dgv, ComboBox cbProServ)
+        public bool UpdateTask(DataGridView dgv, ComboBox cbProServ)
         {
             try
             {
@@ -379,7 +392,7 @@ namespace WorkLog
                     if (IsRowEmpty(row))
                         break;
 
-                    if (row.Cells["TaskID"].Value == null && !string.IsNullOrEmpty(row.Cells["TaskName"].Value.ToString()))
+                    if (row.Cells["TaskID"].Value == DBNull.Value && !string.IsNullOrEmpty(row.Cells["TaskName"].Value.ToString()))
                     {
                         string sqlInsert = "INSERT INTO Task(ProServiceID, TaskName) VALUES(" + cbProServ.SelectedValue + ", @taskname)";
                         using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
@@ -409,14 +422,16 @@ namespace WorkLog
                     }
 
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Source);
+                return false;
             }
         }
 
-        public void UpdateItem(DataGridView dgv, ComboBox cbProServ)
+        public bool UpdateItem(DataGridView dgv, ComboBox cbProServ)
         {
             try
             {
@@ -425,7 +440,7 @@ namespace WorkLog
                     if (IsRowEmpty(row))
                         break;
 
-                    if (row.Cells["ItemID"].Value == null && !string.IsNullOrEmpty(row.Cells["ItemName"].Value.ToString()))
+                    if (row.Cells["ItemID"].Value == DBNull.Value && !string.IsNullOrEmpty(row.Cells["ItemName"].Value.ToString()))
                     {
                         string sqlInsert = "INSERT INTO Item(ProServiceID, ItemName) VALUES(" + cbProServ.SelectedValue + ", @itemname)";
                         using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
@@ -454,12 +469,34 @@ namespace WorkLog
                         }
                     }
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Source);
+                return false;
             }
         }
+
+        //public bool DeleteClient(string strRowID)
+        //{
+        //    try
+        //    {
+        //        using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
+        //        {
+        //            string deleteSql = @"DELETE FROM Client WHERE RowID = " + strRowID;
+        //            con.Open();
+        //            SQLiteCommand cmd = new SQLiteCommand(deleteSql, con);
+        //            cmd.ExecuteNonQuery();
+        //        }
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.Error(ex, ex.Source);
+        //        return false;
+        //    }
+        //}
 
         public string ReadString(string txtQuery)
         {

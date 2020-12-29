@@ -401,16 +401,18 @@
             this.gbDataFilters.TabIndex = 34;
             this.gbDataFilters.TabStop = false;
             this.gbDataFilters.Text = "Filter Data View";
+            
             // 
             // cbFilterClient
             // 
-            this.cbFilterClient.DropDownHeight = 120;
+            this.cbFilterClient.DropDownHeight = 160;
             this.cbFilterClient.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbFilterClient.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbFilterClient.FormattingEnabled = true;
             this.cbFilterClient.IntegralHeight = false;
             this.cbFilterClient.ItemHeight = 16;
             this.cbFilterClient.Location = new System.Drawing.Point(248, 40);
+            this.cbFilterClient.MaxDropDownItems = 20;
             this.cbFilterClient.Name = "cbFilterClient";
             this.cbFilterClient.Size = new System.Drawing.Size(212, 24);
             this.cbFilterClient.TabIndex = 47;

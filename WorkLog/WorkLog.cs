@@ -270,28 +270,33 @@ namespace WorkLog
             {
                 try
                 {
+                    bool insert;
                     Record myRecord = NewRecord();
                     if (cbProService.Text == "Reimbursable")
                     {
                         if (txtReimburseCost.Text == "0")
                         {
-                            DialogResult result = MessageBox.Show("Reimbursable cost is 0, continue?", "Confirmation", MessageBoxButtons.YesNo);
+                            DialogResult result = MessageBox.Show("Reimbursable cost is 0. Continue?", "Confirmation", MessageBoxButtons.YesNo);
                             if (result == DialogResult.Yes)
-                            {
-                                oDAL.InsertRecord(myRecord, true);
-
-                            }
+                                insert = oDAL.InsertRecord(myRecord, true);
                             else
                                 return;
                         }
                         else
-                            oDAL.InsertRecord(myRecord, true);
+                            insert = oDAL.InsertRecord(myRecord, true);
                     }
                     else
-                        oDAL.InsertRecord(myRecord, false);
+                        insert = oDAL.InsertRecord(myRecord, false);
 
-                    iCount++;
-                    FillDataGridOnSubmit(iCount);
+                    if (insert)
+                    {
+                        DisplayMessage("Record added successfully", Color.Green);
+                        iCount++;
+                        FillDataGridOnSubmit(iCount);
+                    }
+                    else
+                        DisplayMessage("An unexpected error has occured", Color.Red);
+
                 }
                 catch (Exception ex)
                 {
@@ -306,7 +311,8 @@ namespace WorkLog
             try
             {
                 string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTime, R.EndTime, R.Hours, " +
-                    "C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost)  Billable, R.Description, R.RowID " +
+                    "C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost)  Billable, R.Description, R.RowID, " +
+                    "C.AddressLine1, C.AddressLine2, C.City, C.State, C.Zip  " +
                     "FROM Record R " +
                     "INNER JOIN Client C ON R.Client = C.ClientName " +
                     "ORDER BY R.RowID DESC LIMIT " + iCount.ToString();
@@ -434,7 +440,8 @@ namespace WorkLog
             try
             {
                 string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTime, R.EndTime, " +
-                    "R.Hours, C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost)  Billable, R.Description, R.RowID " +
+                    "R.Hours, C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost) Billable, R.Description, R.RowID, " +
+                    "C.AddressLine1, C.AddressLine2, C.City, C.State, C.Zip  " +
                     "FROM Record R " +
                     "INNER JOIN Client C ON R.Client = C.ClientName " +
                      where;
@@ -467,6 +474,11 @@ namespace WorkLog
         {
             lblRecordCount.Text = dgvRecords.Rows.Count.ToString();
             dgvRecords.Columns["RowID"].Visible = false;
+            dgvRecords.Columns["AddressLine1"].Visible = false;
+            dgvRecords.Columns["AddressLine2"].Visible = false;
+            dgvRecords.Columns["City"].Visible = false;
+            dgvRecords.Columns["State"].Visible = false;
+            dgvRecords.Columns["Zip"].Visible = false;
             dgvRecords.Columns["RowID"].ReadOnly = true;
             dgvRecords.Columns["CreateDate"].ReadOnly = true;
             lblMessage.ForeColor = SystemColors.ControlText;
@@ -537,7 +549,8 @@ namespace WorkLog
         private void BtnAll_Click(object sender, EventArgs e)
         {
             string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTime, R.EndTime, R.Hours, C.Rate, " +
-                         "R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost)  Billable, R.Description, R.RowID " +
+                         "R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost)  Billable, R.Description, R.RowID, " +
+                         "C.AddressLine1, C.AddressLine2, C.City, C.State, C.Zip  " +
                          "FROM Record R INNER JOIN Client C ON R.Client = C.ClientName ORDER BY R.Date ";
             oDAL.FillDataGrid(cmd, dgvRecords);
 
@@ -553,7 +566,7 @@ namespace WorkLog
         private void BtnDelete_Click(object sender, EventArgs e)
         {
             try
-            {
+            {                
                 if (dgvRecords.DataSource == null)
                 {
                     MessageBox.Show("Data table is empty. Select a view or filter to populate table");
@@ -568,10 +581,17 @@ namespace WorkLog
                     {
                         foreach (DataGridViewRow dr in dgvRecords.SelectedRows)
                         {
-                            oDAL.DeleteRecord(dr.Cells["RowID"].Value.ToString());
-                            dgvRecords.Rows.RemoveAt(dr.Index);
-                            iCount--;
-                            i++;
+                            if (oDAL.DeleteRecord("Record", "RowID", dr.Cells["RowID"].Value.ToString()))
+                            {
+                                dgvRecords.Rows.RemoveAt(dr.Index);
+                                iCount--;
+                                i++;
+                            }
+                            else
+                            {
+                                DisplayMessage("An unexpected error has occured at row index " + dr.Index.ToString(), Color.Red);
+                                return;
+                            }
                         }
                         if (i == 1)
                             DisplayMessage("1 record deleted", Color.Green);
@@ -737,7 +757,7 @@ namespace WorkLog
                 DisplayMessage("An unexpected error has occured", Color.Red);
                 _logger.LogError(ex, ex.Source);
             }                    
-        }
+        }        
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
