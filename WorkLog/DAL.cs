@@ -1,15 +1,10 @@
-﻿using Dapper;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.Data;
 using System.Configuration;
 using System.Windows.Forms;
 using System.IO;
-using Microsoft.Extensions.Logging;
 using System.IO.Compression;
 using System.Reflection;
 
@@ -129,7 +124,7 @@ namespace WorkLog
                     if (FileCompare(fullPathNew, fullPathCurr))
                     {
                         fi.Delete();
-                        logger.Info("Duplicate backup database deleted: {0}", fi.FullName);
+                        //logger.Info("Duplicate backup database deleted: {0}", fi.FullName);
                     }
                     i++;
                 }

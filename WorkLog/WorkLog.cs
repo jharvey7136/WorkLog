@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.SQLite;
-using System.Configuration;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
@@ -30,6 +23,9 @@ namespace WorkLog
             _logger = logger;
 
             InitializeComponent();
+
+            btnTest.Visible = false;
+
             InitializeDefaults();
             InitializeTimer();
 
@@ -44,6 +40,8 @@ namespace WorkLog
 
             txtReimburseCost.KeyPress += new KeyPressEventHandler(TxtReimburseCost_KeyPress);
             dgvRecords.RowsAdded += (s, a) => OnRowNumberChanged();
+
+            oDAL.BackupDB();
         }
 
         private void InitializeDefaults()
@@ -87,18 +85,18 @@ namespace WorkLog
 
         private void dtpStartTime_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (e.Delta > 0)            
-                SendKeys.Send("{UP}");            
-            else            
-                SendKeys.Send("{DOWN}");            
+            if (e.Delta > 0)
+                SendKeys.Send("{UP}");
+            else
+                SendKeys.Send("{DOWN}");
         }
 
         private void dtpEndTime_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (e.Delta > 0)            
-                SendKeys.Send("{UP}");            
-            else            
-                SendKeys.Send("{DOWN}");            
+            if (e.Delta > 0)
+                SendKeys.Send("{UP}");
+            else
+                SendKeys.Send("{DOWN}");
         }
 
         private void dtpFilterStart_MouseWheel(object sender, MouseEventArgs e)
@@ -147,7 +145,7 @@ namespace WorkLog
         private void CbProService_SelectedIndexChanged(object sender, EventArgs e)
         {
             string cmd = "";
-                        
+
             if (cbProService.SelectedIndex > 0 && cbProService.SelectedValue != null)
                 cmd = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = " + cbProService.SelectedValue + " AND Enabled = 1";
             else
@@ -448,9 +446,9 @@ namespace WorkLog
 
                 if (!string.IsNullOrEmpty(strFilterClientID))
                 {
-                    cmd += " AND ClientID = " + strFilterClientID; 
+                    cmd += " AND ClientID = " + strFilterClientID;
                 }
-                 
+
                 cmd += " ORDER BY R.Date";
                 oDAL.FillDataGrid(cmd, dgvRecords);
             }
@@ -566,7 +564,7 @@ namespace WorkLog
         private void BtnDelete_Click(object sender, EventArgs e)
         {
             try
-            {                
+            {
                 if (dgvRecords.DataSource == null)
                 {
                     MessageBox.Show("Data table is empty. Select a view or filter to populate table");
@@ -721,9 +719,9 @@ namespace WorkLog
         }
 
         private void InitializeTimer()
-        {            
+        {
             timer.Interval = 300000;
-            timer.Enabled = true;            
+            timer.Enabled = true;
             timer.Tick += new System.EventHandler(Timer_Tick);
         }
 
@@ -738,7 +736,7 @@ namespace WorkLog
             {
                 var filePath = string.Empty;
                 using (OpenFileDialog ofg = new OpenFileDialog())
-                {                    
+                {
                     ofg.Filter = "SQLite Database|*.db";
                     ofg.RestoreDirectory = true;
 
@@ -756,8 +754,8 @@ namespace WorkLog
             {
                 DisplayMessage("An unexpected error has occured", Color.Red);
                 _logger.LogError(ex, ex.Source);
-            }                    
-        }        
+            }
+        }
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {

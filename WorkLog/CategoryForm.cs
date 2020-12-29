@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.SQLite;
 
 namespace WorkLog
 {
@@ -54,8 +47,7 @@ namespace WorkLog
                 GetDataClient();
                 GetDataProService();
                 RefreshComboBoxes();
-
-                //dgvClient.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                                
                 dgvClient.AutoResizeColumns();
                 dgvProService.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dgvTask.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -208,6 +200,28 @@ namespace WorkLog
 
         /* ------------------------------------------------------------------------------------------------ */
 
+        private void BtnDeleteClient_Click(object sender, EventArgs e)
+        {
+            DeleteRow(dgvClient, "ClientID", lblMessageTop, "Client", "ClientID");
+        }
+
+        private void BtnDeletePS_Click(object sender, EventArgs e)
+        {
+            DeleteRow(dgvProService, "ProServiceID", lblMessageTopPS, "ProfessionalService", "ProServiceID");
+        }
+
+        private void BtnDeleteTask_Click(object sender, EventArgs e)
+        {
+            DeleteRow(dgvTask, "TaskID", lblMessageTopTask, "Task", "TaskID");
+        }
+
+        private void BtnDeleteItem_Click(object sender, EventArgs e)
+        {
+            DeleteRow(dgvItem, "ItemID", lblMessageTopItem, "Item", "ItemID");
+        }
+
+        /* ------------------------------------------------------------------------------------------------ */
+
         private void GetDataClient()
         {
             try
@@ -231,8 +245,7 @@ namespace WorkLog
                 string cmd = "SELECT DISTINCT ProServiceID, ProServiceName, Enabled FROM ProfessionalService ORDER BY ProServiceID";
                 oDAL.FillDataGrid(cmd, dgvProService);
                 dgvProService.Columns["ProServiceID"].Visible = false;
-                dgvProService.Columns["ProServiceID"].ReadOnly = true;
-                //dgvProService.AutoResizeColumns();
+                dgvProService.Columns["ProServiceID"].ReadOnly = true;                
             }
             catch (Exception ex)
             {
@@ -276,7 +289,7 @@ namespace WorkLog
 
         /* ------------------------------------------------------------------------------------------------ */
 
-        private void CbProService_SelectedIndexChanged(object sender, EventArgs e)
+        private void CbProService_SelectedIndexChanged(object sender, EventArgs e)      //Task page
         {
             try
             {
@@ -301,7 +314,7 @@ namespace WorkLog
             }
         }
 
-        private void CbProServiceItem_SelectedIndexChanged(object sender, EventArgs e)
+        private void CbProServiceItem_SelectedIndexChanged(object sender, EventArgs e)  //Item page
         {
             try
             {
@@ -346,8 +359,7 @@ namespace WorkLog
         private void OnRowNumberChanged(DataGridView dgv, Label lblMessage)
         {
             lblMessage.ForeColor = SystemColors.ControlText;
-            lblMessage.Text = "";
-            //dgv.AutoResizeColumns();
+            lblMessage.Text = "";            
         }
 
         private void DisplayMessage(Label lbl, string msg, Color color)
@@ -498,24 +510,6 @@ namespace WorkLog
             }
         }
 
-        private void BtnDeleteClient_Click(object sender, EventArgs e)
-        {
-            DeleteRow(dgvClient, "ClientID", lblMessageTop, "Client", "ClientID");
-        }
-
-        private void BtnDeletePS_Click(object sender, EventArgs e)
-        {
-            DeleteRow(dgvProService, "ProServiceID", lblMessageTopPS, "ProfessionalService", "ProServiceID");
-        }
-
-        private void BtnDeleteTask_Click(object sender, EventArgs e)
-        {
-            DeleteRow(dgvTask, "TaskID", lblMessageTopTask, "Task", "TaskID");
-        }
-
-        private void BtnDeleteItem_Click(object sender, EventArgs e)
-        {
-            DeleteRow(dgvItem, "ItemID", lblMessageTopItem, "Item", "ItemID");
-        }
+        
     }
 }
