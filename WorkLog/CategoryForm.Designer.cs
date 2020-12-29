@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CategoryForm));
             this.tabCategories = new System.Windows.Forms.TabControl();
             this.tabPageClient = new System.Windows.Forms.TabPage();
             this.btnClose = new System.Windows.Forms.Button();
@@ -430,6 +431,7 @@
             this.ClientSize = new System.Drawing.Size(860, 361);
             this.Controls.Add(this.tabCategories);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CategoryForm";
             this.Text = "Manage Categories";
             this.tabCategories.ResumeLayout(false);

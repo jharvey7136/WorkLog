@@ -258,12 +258,6 @@
       <DependentUpon>CategoryForm.cs</DependentUpon>
     </Compile>
     <Compile Include="DAL.cs" />
-    <Compile Include="DataGrid.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DataGrid.Designer.cs">
-      <DependentUpon>DataGrid.cs</DependentUpon>
-    </Compile>
     <Compile Include="WorkLog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -277,9 +271,6 @@
     <Content Include="worklog.ico" />
     <EmbeddedResource Include="CategoryForm.resx">
       <DependentUpon>CategoryForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DataGrid.resx">
-      <DependentUpon>DataGrid.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorkLog.resx">
       <DependentUpon>WorkLog.cs</DependentUpon>

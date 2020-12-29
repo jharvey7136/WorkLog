@@ -6,37 +6,36 @@ namespace WorkLog
 {
     public partial class CategoryForm : Form
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
-        DAL oDAL = new DAL();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly DAL oDAL = new DAL();
 
         public CategoryForm()
         {
             InitializeComponent();
             InitializeDefaults();
 
-            dgvClient.RowsAdded += (s, a) => OnRowNumberChanged(dgvClient, lblMessageTop);
-            dgvProService.RowsAdded += (s, a) => OnRowNumberChanged(dgvProService, lblMessageTopPS);
-            dgvTask.RowsAdded += (s, a) => OnRowNumberChanged(dgvTask, lblMessageTopTask);
-            dgvItem.RowsAdded += (s, a) => OnRowNumberChanged(dgvItem, lblMessageTopItem);
+            dgvClient.RowsAdded += (s, a) => OnRowNumberChanged(lblMessageTop);
+            dgvProService.RowsAdded += (s, a) => OnRowNumberChanged(lblMessageTopPS);
+            dgvTask.RowsAdded += (s, a) => OnRowNumberChanged(lblMessageTopTask);
+            dgvItem.RowsAdded += (s, a) => OnRowNumberChanged(lblMessageTopItem);
 
             // Attach DataGridView events to the corresponding event handlers.
-            dgvClient.CellValidating += new DataGridViewCellValidatingEventHandler(dgvClient_CellValidating);
-            dgvClient.CellEndEdit += new DataGridViewCellEventHandler(dgvClient_CellEndEdit);
+            dgvClient.CellValidating += dgvClient_CellValidating;
+            dgvClient.CellEndEdit += dgvClient_CellEndEdit;
 
-            dgvProService.CellValidating += new DataGridViewCellValidatingEventHandler(dgvProService_CellValidating);
-            dgvProService.CellEndEdit += new DataGridViewCellEventHandler(dgvProService_CellEndEdit);
+            dgvProService.CellValidating += dgvProService_CellValidating;
+            dgvProService.CellEndEdit += dgvProService_CellEndEdit;
 
-            dgvTask.CellValidating += new DataGridViewCellValidatingEventHandler(dgvTask_CellValidating);
-            dgvTask.CellEndEdit += new DataGridViewCellEventHandler(dgvTask_CellEndEdit);
+            dgvTask.CellValidating += dgvTask_CellValidating;
+            dgvTask.CellEndEdit += dgvTask_CellEndEdit;
 
-            dgvItem.CellValidating += new DataGridViewCellValidatingEventHandler(dgvItem_CellValidating);
-            dgvItem.CellEndEdit += new DataGridViewCellEventHandler(dgvItem_CellEndEdit);
+            dgvItem.CellValidating += dgvItem_CellValidating;
+            dgvItem.CellEndEdit += dgvItem_CellEndEdit;
 
-            tabCategories.SelectedIndexChanged += new EventHandler(tabCategories_SelectedIndexChanged);
+            tabCategories.SelectedIndexChanged += tabCategories_SelectedIndexChanged;
 
             dgvTask.DataSource = null;
-            dgvItem.DataSource = null;            
+            dgvItem.DataSource = null;
         }
 
         private void InitializeDefaults()
@@ -47,11 +46,11 @@ namespace WorkLog
                 GetDataClient();
                 GetDataProService();
                 RefreshComboBoxes();
-                                
+
                 dgvClient.AutoResizeColumns();
                 dgvProService.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dgvTask.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-                dgvItem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;                
+                dgvItem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
             catch (Exception ex)
             {
@@ -70,13 +69,13 @@ namespace WorkLog
         {
             try
             {
-                DialogResult result = MessageBox.Show("Database will be updated. Continue?", "Apply Changes Confirmation", MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show(@"Database will be updated. Continue?", @"Apply Changes Confirmation", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
                     if (oDAL.UpdateClient(dgvClient))
                         DisplayMessage(lblMessageTop, "Update Successful", Color.Green);
                     else
-                        DisplayMessage(lblMessageTop, "An unexpected error has occured", Color.Red);
+                        DisplayMessage(lblMessageTop, "An unexpected error has occurred", Color.Red);
                 }
                 else
                     return;
@@ -91,13 +90,13 @@ namespace WorkLog
         {
             try
             {
-                DialogResult result = MessageBox.Show("Database will be updated. Continue?", "Apply Changes Confirmation", MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show(@"Database will be updated. Continue?", @"Apply Changes Confirmation", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
                     if (oDAL.UpdateProService(dgvProService))
                         DisplayMessage(lblMessageTopPS, "Update Successful", Color.Green);
                     else
-                        DisplayMessage(lblMessageTopPS, "An unexpected error has occured", Color.Red);
+                        DisplayMessage(lblMessageTopPS, "An unexpected error has occurred", Color.Red);
                 }
                 else
                     return;
@@ -112,13 +111,13 @@ namespace WorkLog
         {
             try
             {
-                DialogResult result = MessageBox.Show("Database will be updated. Continue?", "Apply Changes Confirmation", MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show(@"Database will be updated. Continue?", @"Apply Changes Confirmation", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
                     if (oDAL.UpdateTask(dgvTask, cbProService))
                         DisplayMessage(lblMessageTopTask, "Update Successful", Color.Green);
                     else
-                        DisplayMessage(lblMessageTopTask, "An unexpected error has occured", Color.Red);
+                        DisplayMessage(lblMessageTopTask, "An unexpected error has occurred", Color.Red);
                 }
                 else
                     return;
@@ -133,13 +132,13 @@ namespace WorkLog
         {
             try
             {
-                DialogResult result = MessageBox.Show("Database will be updated. Continue?", "Apply Changes Confirmation", MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show(@"Database will be updated. Continue?", @"Apply Changes Confirmation", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
                     if (oDAL.UpdateItem(dgvItem, cbProServiceItem))
                         DisplayMessage(lblMessageTopItem, "Update Successful", Color.Green);
                     else
-                        DisplayMessage(lblMessageTopItem, "An unexpected error has occured", Color.Red);
+                        DisplayMessage(lblMessageTopItem, "An unexpected error has occurred", Color.Red);
                 }
                 else
                     return;
@@ -245,7 +244,7 @@ namespace WorkLog
                 string cmd = "SELECT DISTINCT ProServiceID, ProServiceName, Enabled FROM ProfessionalService ORDER BY ProServiceID";
                 oDAL.FillDataGrid(cmd, dgvProService);
                 dgvProService.Columns["ProServiceID"].Visible = false;
-                dgvProService.Columns["ProServiceID"].ReadOnly = true;                
+                dgvProService.Columns["ProServiceID"].ReadOnly = true;
             }
             catch (Exception ex)
             {
@@ -356,16 +355,71 @@ namespace WorkLog
             lblMessageTopItem.ForeColor = SystemColors.ControlText;
         }
 
-        private void OnRowNumberChanged(DataGridView dgv, Label lblMessage)
+        private static void OnRowNumberChanged(Label lblMessage)
         {
             lblMessage.ForeColor = SystemColors.ControlText;
-            lblMessage.Text = "";            
+            lblMessage.Text = "";
         }
 
         private void DisplayMessage(Label lbl, string msg, Color color)
         {
             lbl.Text = msg;
             lbl.ForeColor = color;
+        }
+
+        private void DeleteRow(DataGridView dgv, string id, Label lbl, string table, string tableID)
+        {
+            try
+            {
+                if (dgv.DataSource == null)
+                {
+                    MessageBox.Show(@"Data table is empty. Select a view or filter to populate table");
+                    return;
+                }
+
+                if (dgv.SelectedRows.Count > 0)
+                {
+                    int i = 0;
+                    DialogResult result = MessageBox.Show(@"Selected rows will attempt to be deleted. Continue?", @"Delete Confirmation", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.Yes)
+                    {
+                        foreach (DataGridViewRow dr in dgv.SelectedRows)
+                        {
+                            if (dr.Cells[id].Value == DBNull.Value || dr.Cells[id].Value == null)
+                            {
+                                DisplayMessage(lbl, "Row is empty", Color.Red);
+                                return;
+                            }
+
+                            if (oDAL.DeleteRecord(table, tableID, dr.Cells[id].Value.ToString()))
+                            {
+                                dgv.Rows.RemoveAt(dr.Index);
+                                i++;
+                            }
+                            else
+                            {
+                                DisplayMessage(lbl, "Error while attempting to delete", Color.Red);
+                                return;
+                            }
+                        }
+                        if (i == 1)
+                            DisplayMessage(lbl, "1 row deleted", Color.Green);
+                        else if (i > 1)
+                            DisplayMessage(lbl, i.ToString() + " rows deleted", Color.Green);
+                    }
+                    else
+                        return;
+                }
+                else
+                {
+                    MessageBox.Show(@"No rows selected. Select one or more rows by clicking the black arrow in the left-most cell");
+                }
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage(lbl, "An unexpected error has occurred", Color.Red);
+                logger.Error(ex, ex.Source);
+            }
         }
 
         /************************************** Cell Validation *************************************/
@@ -386,7 +440,7 @@ namespace WorkLog
             }
         }
 
-        void dgvClient_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void dgvClient_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             dgvClient.Rows[e.RowIndex].ErrorText = String.Empty;
         }
@@ -408,7 +462,7 @@ namespace WorkLog
             }
         }
 
-        void dgvProService_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void dgvProService_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             dgvProService.Rows[e.RowIndex].ErrorText = String.Empty;
         }
@@ -430,7 +484,7 @@ namespace WorkLog
             }
         }
 
-        void dgvTask_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void dgvTask_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             dgvTask.Rows[e.RowIndex].ErrorText = String.Empty;
         }
@@ -452,64 +506,14 @@ namespace WorkLog
             }
         }
 
-        void dgvItem_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void dgvItem_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             dgvItem.Rows[e.RowIndex].ErrorText = String.Empty;
         }
 
 
-        private void DeleteRow(DataGridView dgv, string id, Label lbl, string table, string tableID)
-        {
-            try
-            {
-                int iCount = 0;
-                if (dgv.DataSource == null)
-                {
-                    MessageBox.Show("Data table is empty. Select a view or filter to populate table");
-                    return;
-                }
 
-                if (dgv.SelectedRows.Count > 0)
-                {
-                    int i = 0;
-                    DialogResult result = MessageBox.Show("Selected rows will be deleted. Continue?", "Confirmation", MessageBoxButtons.YesNo);
-                    if (result == DialogResult.Yes)
-                    {
-                        foreach (DataGridViewRow dr in dgv.SelectedRows)
-                        {
-                            if (oDAL.DeleteRecord(table, tableID, dr.Cells[id].Value.ToString()))
-                            {
-                                dgv.Rows.RemoveAt(dr.Index);
-                                iCount--;
-                                i++;
-                            }
-                            else
-                            {
-                                DisplayMessage(lbl, "Error while attempting to delete", Color.Red);
-                                return;
-                            }
-                        }
-                        if (i == 1)
-                            DisplayMessage(lbl, "1 row deleted", Color.Green);
-                        else if (i > 1)
-                            DisplayMessage(lbl, i.ToString() + " rows deleted", Color.Green);
 
-                    }
-                    else
-                        return;
-                }
-                else
-                {
-                    MessageBox.Show("No rows selected. Select one or more rows by clicking the black arrow in the left-most cell");
-                }
-            }
-            catch (Exception ex)
-            {
-                DisplayMessage(lbl, "An unexpected error has occured", Color.Red);
-                logger.Error(ex, ex.Source);
-            }
-        }
 
-        
     }
 }
