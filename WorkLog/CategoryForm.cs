@@ -20,19 +20,19 @@ namespace WorkLog
             dgvItem.RowsAdded += (s, a) => OnRowNumberChanged(lblMessageTopItem);
 
             // Attach DataGridView events to the corresponding event handlers.
-            dgvClient.CellValidating += dgvClient_CellValidating;
-            dgvClient.CellEndEdit += dgvClient_CellEndEdit;
+            dgvClient.CellValidating += DgvClient_CellValidating;
+            dgvClient.CellEndEdit += DgvClient_CellEndEdit;
 
-            dgvProService.CellValidating += dgvProService_CellValidating;
-            dgvProService.CellEndEdit += dgvProService_CellEndEdit;
+            dgvProService.CellValidating += DgvProService_CellValidating;
+            dgvProService.CellEndEdit += DgvProService_CellEndEdit;
 
-            dgvTask.CellValidating += dgvTask_CellValidating;
-            dgvTask.CellEndEdit += dgvTask_CellEndEdit;
+            dgvTask.CellValidating += DgvTask_CellValidating;
+            dgvTask.CellEndEdit += DgvTask_CellEndEdit;
 
-            dgvItem.CellValidating += dgvItem_CellValidating;
-            dgvItem.CellEndEdit += dgvItem_CellEndEdit;
+            dgvItem.CellValidating += DgvItem_CellValidating;
+            dgvItem.CellEndEdit += DgvItem_CellEndEdit;
 
-            tabCategories.SelectedIndexChanged += tabCategories_SelectedIndexChanged;
+            tabCategories.SelectedIndexChanged += TabCategories_SelectedIndexChanged;
 
             dgvTask.DataSource = null;
             dgvItem.DataSource = null;
@@ -336,7 +336,7 @@ namespace WorkLog
             }
         }
 
-        private void tabCategories_SelectedIndexChanged(Object sender, EventArgs e)
+        private void TabCategories_SelectedIndexChanged(object sender, EventArgs e)
         {
             RefreshComboBoxes();
         }
@@ -424,7 +424,7 @@ namespace WorkLog
 
         /************************************** Cell Validation *************************************/
         /* Client */
-        private void dgvClient_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        private void DgvClient_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             string headerText = dgvClient.Columns[e.ColumnIndex].HeaderText;
 
@@ -440,13 +440,13 @@ namespace WorkLog
             }
         }
 
-        private void dgvClient_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void DgvClient_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            dgvClient.Rows[e.RowIndex].ErrorText = String.Empty;
+            dgvClient.Rows[e.RowIndex].ErrorText = string.Empty;
         }
 
         /* ProService */
-        private void dgvProService_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        private void DgvProService_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             string headerText = dgvProService.Columns[e.ColumnIndex].HeaderText;
 
@@ -462,13 +462,13 @@ namespace WorkLog
             }
         }
 
-        private void dgvProService_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void DgvProService_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            dgvProService.Rows[e.RowIndex].ErrorText = String.Empty;
+            dgvProService.Rows[e.RowIndex].ErrorText = string.Empty;
         }
 
         /* Task */
-        private void dgvTask_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        private void DgvTask_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             string headerText = dgvTask.Columns[e.ColumnIndex].HeaderText;
 
@@ -484,13 +484,13 @@ namespace WorkLog
             }
         }
 
-        private void dgvTask_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void DgvTask_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            dgvTask.Rows[e.RowIndex].ErrorText = String.Empty;
+            dgvTask.Rows[e.RowIndex].ErrorText = string.Empty;
         }
 
         /* Item */
-        private void dgvItem_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        private void DgvItem_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             string headerText = dgvItem.Columns[e.ColumnIndex].HeaderText;
 
@@ -506,9 +506,9 @@ namespace WorkLog
             }
         }
 
-        private void dgvItem_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        private void DgvItem_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            dgvItem.Rows[e.RowIndex].ErrorText = String.Empty;
+            dgvItem.Rows[e.RowIndex].ErrorText = string.Empty;
         }
 
 

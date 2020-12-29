@@ -29,14 +29,14 @@ namespace WorkLog
             InitializeDefaults();
             InitializeTimer();
 
-            dtpStartTime.ValueChanged += dtpStartTime_ValueChanged;
-            dtpEndTime.ValueChanged += dtpEndTime_ValueChanged;
+            dtpStartTime.ValueChanged += DtpStartTime_ValueChanged;
+            dtpEndTime.ValueChanged += DtpEndTime_ValueChanged;
 
-            dtpStartTime.MouseWheel += dtpStartTime_MouseWheel;
-            dtpEndTime.MouseWheel += dtpEndTime_MouseWheel;
+            dtpStartTime.MouseWheel += DtpStartTime_MouseWheel;
+            dtpEndTime.MouseWheel += DtpEndTime_MouseWheel;
 
-            dtpFilterStart.MouseWheel += dtpFilterStart_MouseWheel;
-            dtpFilterEnd.MouseWheel += dtpFilterEnd_MouseWheel;
+            dtpFilterStart.MouseWheel += DtpFilterStart_MouseWheel;
+            dtpFilterEnd.MouseWheel += DtpFilterEnd_MouseWheel;
 
             txtReimburseCost.KeyPress += TxtReimburseCost_KeyPress;
             dgvRecords.RowsAdded += (s, a) => OnRowNumberChanged();
@@ -66,7 +66,7 @@ namespace WorkLog
             //dgvRecords.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;            
         }
 
-        private void dtpStartTime_ValueChanged(object sender, EventArgs e)
+        private void DtpStartTime_ValueChanged(object sender, EventArgs e)
         {
             lblHours.Text = GetTotalHours();
         }
@@ -78,41 +78,29 @@ namespace WorkLog
             oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbFilterClient, "ClientName", "ClientID");
         }
 
-        private void dtpEndTime_ValueChanged(object sender, EventArgs e)
+        private void DtpEndTime_ValueChanged(object sender, EventArgs e)
         {
             lblHours.Text = GetTotalHours();
         }
 
-        private void dtpStartTime_MouseWheel(object sender, MouseEventArgs e)
+        private void DtpStartTime_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (e.Delta > 0)
-                SendKeys.Send("{UP}");
-            else
-                SendKeys.Send("{DOWN}");
+            SendKeys.Send(e.Delta > 0 ? "{UP}" : "{DOWN}");
         }
 
-        private void dtpEndTime_MouseWheel(object sender, MouseEventArgs e)
+        private void DtpEndTime_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (e.Delta > 0)
-                SendKeys.Send("{UP}");
-            else
-                SendKeys.Send("{DOWN}");
+            SendKeys.Send(e.Delta > 0 ? "{UP}" : "{DOWN}");
         }
 
-        private void dtpFilterStart_MouseWheel(object sender, MouseEventArgs e)
+        private void DtpFilterStart_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (e.Delta > 0)
-                SendKeys.Send("{UP}");
-            else
-                SendKeys.Send("{DOWN}");
+            SendKeys.Send(e.Delta > 0 ? "{UP}" : "{DOWN}");
         }
 
-        private void dtpFilterEnd_MouseWheel(object sender, MouseEventArgs e)
+        private void DtpFilterEnd_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (e.Delta > 0)
-                SendKeys.Send("{UP}");
-            else
-                SendKeys.Send("{DOWN}");
+            SendKeys.Send(e.Delta > 0 ? "{UP}" : "{DOWN}");
         }
 
         private string GetTotalHours()
@@ -386,10 +374,12 @@ namespace WorkLog
                     return;
                 }
 
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Filter = @"CSV (Comma delimited)|*.csv";
-                sfd.Title = @"Export Records to CSV";
-                sfd.FileName = "WorkLog_" + DateTime.Now.ToString("yyyy-MM-dd_HHmm");
+                SaveFileDialog sfd = new SaveFileDialog
+                {
+                    Filter = @"CSV (Comma delimited)|*.csv",
+                    Title = @"Export Records to CSV",
+                    FileName = "WorkLog_" + DateTime.Now.ToString("yyyy-MM-dd_HHmm")
+                };
 
                 if (sfd.ShowDialog() != DialogResult.OK) return;
                 string fn = sfd.FileName;
@@ -398,6 +388,7 @@ namespace WorkLog
 
                 dt.ToCSV(fn);
                 Process.Start("explorer.exe", fn);
+                DisplayMessage(@"Export successful", Color.Green);
             }
             catch (Exception ex)
             {
@@ -486,11 +477,10 @@ namespace WorkLog
 
         private void BtnLastMonth_Click(object sender, EventArgs e)
         {
-            string where = " WHERE R.Date >= date('now', 'start of month', '-1 month') AND R.Date < date('now','start of month') ";
-            string cmd;
+            const string where = " WHERE R.Date >= date('now', 'start of month', '-1 month') AND R.Date < date('now','start of month') ";
             FillRecordView(where);
 
-            cmd = "SELECT date('now', 'start of month', '-1 month')";
+            string cmd = "SELECT date('now', 'start of month', '-1 month')";
             string startDate = oDAL.ReadString(cmd);
             dtpFilterStart.Value = DateTime.Parse(startDate);
 
@@ -501,11 +491,10 @@ namespace WorkLog
 
         private void BtnLast30_Click(object sender, EventArgs e)
         {
-            string where = " WHERE R.Date >= date('now','-30 days') ";
-            string cmd;
+            const string where = " WHERE R.Date >= date('now','-30 days') ";
             FillRecordView(where);
 
-            cmd = "SELECT date('now','-30 days')";
+            const string cmd = "SELECT date('now','-30 days')";
             string startDate = oDAL.ReadString(cmd);
             dtpFilterStart.Value = DateTime.Parse(startDate);
 
@@ -514,11 +503,10 @@ namespace WorkLog
 
         private void BtnYTD_Click(object sender, EventArgs e)
         {
-            string where = " WHERE R.Date >= date('now', 'start of year') AND R.Date < date('now','start of year', '+1 year') ";
-            string cmd;
+            const string where = " WHERE R.Date >= date('now', 'start of year') AND R.Date < date('now','start of year', '+1 year') ";
             FillRecordView(where);
 
-            cmd = "SELECT date('now', 'start of year')";
+            const string cmd = "SELECT date('now', 'start of year')";
             string startDate = oDAL.ReadString(cmd);
             dtpFilterStart.Value = DateTime.Parse(startDate);
 
@@ -527,11 +515,10 @@ namespace WorkLog
 
         private void BtnMTD_Click(object sender, EventArgs e)
         {
-            string where = " WHERE R.Date >= date('now', 'start of month') AND R.Date < date('now','start of month', '+1 month') ";
-            string cmd;
+            const string where = " WHERE R.Date >= date('now', 'start of month') AND R.Date < date('now','start of month', '+1 month') ";
             FillRecordView(where);
 
-            cmd = "SELECT date('now', 'start of month')";
+            const string cmd = "SELECT date('now', 'start of month')";
             string startDate = oDAL.ReadString(cmd);
             dtpFilterStart.Value = DateTime.Parse(startDate);
 
@@ -567,6 +554,7 @@ namespace WorkLog
 
                 if (dgvRecords.SelectedRows.Count > 0)
                 {
+                    oDAL.BackupDB();
                     int i = 0;
                     DialogResult result = MessageBox.Show(@"Selected rows will be deleted. Continue?", @"Confirmation", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes)
@@ -722,6 +710,7 @@ namespace WorkLog
         private void Timer_Tick(object sender, EventArgs e)
         {
             oDAL.BackupDB();
+            _logger.LogInformation(@"Timer tick: Database backup executed");
         }
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
@@ -740,6 +729,7 @@ namespace WorkLog
                     strCurrDatabase = oDAL.ReadString("SELECT file FROM pragma_database_list WHERE seq = 0");
                     lblDatabaseName.Text = Path.GetFileName(strCurrDatabase);
                     ResetRecordGrid();
+                    DisplayMessage(@"Database loaded successfully", Color.Green);
                 }
             }
             catch (Exception ex)
@@ -751,7 +741,15 @@ namespace WorkLog
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            oDAL.FileSaveAs();
+            if (oDAL.FileSaveAs())
+            {
+                strCurrDatabase = oDAL.ReadString("SELECT file FROM pragma_database_list WHERE seq = 0");
+                lblDatabaseName.Text = Path.GetFileName(strCurrDatabase);
+                ResetRecordGrid();
+                DisplayMessage(@"Database file saved successfully", Color.Green);
+            }
+            else
+                DisplayMessage(@"Database file was not saved", Color.Red);
         }
     }
 }

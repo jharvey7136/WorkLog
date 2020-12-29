@@ -12,7 +12,7 @@ namespace WorkLog
 {
     public class DAL
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private static string LoadConnectionString(string id = "Default")
         {
@@ -21,9 +21,9 @@ namespace WorkLog
 
         public void SetConnectionString(string con)
         {
-            var DBCS = ConfigurationManager.ConnectionStrings["Default"];
+            ConnectionStringSettings DBCS = ConfigurationManager.ConnectionStrings["Default"];
 
-            var writable = typeof(ConfigurationElement).GetField("_bReadOnly", BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo writable = typeof(ConfigurationElement).GetField("_bReadOnly", BindingFlags.Instance | BindingFlags.NonPublic);
             writable.SetValue(DBCS, false);
 
             DBCS.ConnectionString = con;
@@ -72,20 +72,24 @@ namespace WorkLog
             }
         }
 
-        public void FileSaveAs()
+        public bool FileSaveAs()
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "SQLite Database|*.db";
-            sfd.Title = "Save Database As";
-            sfd.FileName = "WorkLog_" + DateTime.Now.ToString("yyyy-MM-dd_HHmm");
-            sfd.ShowDialog();
-            string fn = sfd.FileName;
-            string backupConnection = @"DataSource=" + fn + ";Version=3;";
-
-            if (string.IsNullOrWhiteSpace(fn))
-                return;
-            else
+            try
             {
+                SaveFileDialog sfd = new SaveFileDialog
+                {
+                    Filter = @"SQLite Database|*.db",
+                    Title = @"Save Database As",
+                    FileName = "WorkLog_" + DateTime.Now.ToString("yyyy-MM-dd_HHmm")
+                };
+
+                if (sfd.ShowDialog() != DialogResult.OK) return false;
+
+                string fn = sfd.FileName;
+                string backupConnection = @"DataSource=" + fn + ";Version=3;";
+
+                if (string.IsNullOrWhiteSpace(fn)) return false;
+
                 using (SQLiteConnection dest = new SQLiteConnection(backupConnection))
                 using (SQLiteConnection src = new SQLiteConnection(LoadConnectionString()))
                 {
@@ -94,7 +98,15 @@ namespace WorkLog
                     src.BackupDatabase(dest, "main", "main", -1, null, 0);
                     SetConnectionString(backupConnection);
                 }
+
+                return true;
             }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Source);
+                return false;
+            }
+            
         }
 
         public bool BackupDB()
@@ -106,7 +118,6 @@ namespace WorkLog
                 string backupConnection = @"DataSource=..\..\..\db\" + strFilename + ";Version=3;";
 
                 string fullPathNew = Path.GetFullPath(@"..\..\..\db\" + strFilename);
-                string fullPathCurr;
                 int i = 0;
 
                 using (SQLiteConnection dest = new SQLiteConnection(backupConnection))
@@ -117,20 +128,21 @@ namespace WorkLog
                     src.BackupDatabase(dest, "main", "main", -1, null, 0);
                 }
 
-                foreach (var fi in new DirectoryInfo(@"..\..\..\db").GetFiles().OrderByDescending(x => x.LastWriteTime).Skip(1))
+                foreach (FileInfo fi in new DirectoryInfo(@"..\..\..\db").GetFiles().OrderByDescending(x => x.LastWriteTime).Skip(1))
                 {
-                    fullPathCurr = Path.GetFullPath(fi.FullName);
+                    string fullPathCurr = Path.GetFullPath(fi.FullName);
 
                     if (FileCompare(fullPathNew, fullPathCurr))
                     {
                         fi.Delete();
-                        //logger.Info("Duplicate backup database deleted: {0}", fi.FullName);
+                        logger.Info("Duplicate backup database deleted: {0}", fi.FullName);
                     }
                     i++;
                 }
 
-                if (i > 50)
-                    ArchiveBackups();
+                if (i <= 50) return true;
+                ArchiveBackups();
+                logger.Info(@"Backups Archived");
 
                 return true;
             }
@@ -152,14 +164,12 @@ namespace WorkLog
             {
                 using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Create))
                 {
-                    foreach (var fi in new DirectoryInfo(@"..\..\..\db").GetFiles().OrderBy(x => x.LastWriteTime))
+                    foreach (FileInfo fi in new DirectoryInfo(@"..\..\..\db").GetFiles().OrderBy(x => x.LastWriteTime))
                     {
-                        if (fi.LastWriteTime < DateTime.Now.AddDays(daysOld))
-                        {
-                            zip.CreateEntryFromFile(fi.FullName, fi.Name);
-                            fi.Delete();
-                            i++;
-                        }
+                        if (fi.LastWriteTime >= DateTime.Now.AddDays(daysOld)) continue;
+                        zip.CreateEntryFromFile(fi.FullName, fi.Name);
+                        fi.Delete();
+                        i++;
                     }
                 }
                 logger.Info("Database archive count: {0}, zip file: {1} ", i.ToString(), zipPath);
@@ -176,10 +186,10 @@ namespace WorkLog
             {
                 using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                 {
-                    string insertSQL = @"INSERT INTO Record (Client, ProService, Task, Item, Date, StartTime, " +
-                    "EndTime, Hours, ReimbursableCost, Description, CreateDate) " +
-                    "VALUES (@Client, @ProService, @Task, @Item, @Date, @StartTime, @EndTime, @Hours, @ReimbursableCost, " +
-                    "@Description, @CreateDate)";
+                    const string insertSQL = @"INSERT INTO Record (Client, ProService, Task, Item, Date, StartTime, " +
+                                             "EndTime, Hours, ReimbursableCost, Description, CreateDate) " +
+                                             "VALUES (@Client, @ProService, @Task, @Item, @Date, @StartTime, @EndTime, @Hours, @ReimbursableCost, " +
+                                             "@Description, @CreateDate)";
 
                     con.Open();
 
@@ -191,7 +201,7 @@ namespace WorkLog
                     cmd.Parameters.Add("@Item", DbType.String).Value = record.Item;
                     cmd.Parameters.Add("@Date", DbType.String).Value = record.Date.ToString("yyyy-MM-dd");
 
-                    if (isReimburse == true)
+                    if (isReimburse)
                     {
                         cmd.Parameters.Add("@StartTime", DbType.String).Value = "";
                         cmd.Parameters.Add("@EndTime", DbType.String).Value = "";
@@ -255,12 +265,12 @@ namespace WorkLog
                 {
                     if (CheckProServiceDependency("Task", strRowID, "TaskID"))
                     {
-                        MessageBox.Show("Cannot delete Professional Service because a Task depends on it. Delete the Task first");
+                        MessageBox.Show(@"Cannot delete Professional Service because a Task depends on it. Delete the Task first");
                         return false;
                     }
                     if (CheckProServiceDependency("Item", strRowID, "ItemID"))
                     {
-                        MessageBox.Show("Cannot delete Professional Service because an Item depends on it. Delete the Item first");
+                        MessageBox.Show(@"Cannot delete Professional Service because an Item depends on it. Delete the Item first");
                         return false;
                     }
                 }
@@ -355,7 +365,7 @@ namespace WorkLog
 
                     if (row.Cells["ProServiceID"].Value == DBNull.Value && !string.IsNullOrEmpty(row.Cells["ProServiceName"].Value.ToString()))
                     {
-                        string sqlInsert = "INSERT INTO ProfessionalService(ProServiceName) VALUES(@proservice)";
+                        const string sqlInsert = "INSERT INTO ProfessionalService(ProServiceName) VALUES(@proservice)";
                         using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                         {
                             using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
@@ -463,7 +473,7 @@ namespace WorkLog
                     }
                     else if (!string.IsNullOrEmpty(row.Cells["ItemName"].Value.ToString()))
                     {
-                        string sql = "UPDATE Item SET ItemName = @itemname, Enabled = @enabled WHERE ItemID = @ID";
+                        const string sql = "UPDATE Item SET ItemName = @itemname, Enabled = @enabled WHERE ItemID = @ID";
                         using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                         {
                             using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
@@ -488,15 +498,7 @@ namespace WorkLog
 
         public bool CheckProServiceDependency(string table, string proServiceID, string existsID)
         {
-            //example: table = Task, 
-
-            //string proServiceID = ReadString("SELECT ProServiceID FROM ProfessionalService WHERE ProServiceID = " + rowID);
-
-            //SELECT TaskID FROM Task WHERE ProServiceID = 6
-            if (!string.IsNullOrEmpty(ReadString("SELECT " + existsID + " FROM " + table + " WHERE ProServiceID = " + proServiceID)))
-                return true;
-            else
-                return false;
+            return !string.IsNullOrEmpty(ReadString("SELECT " + existsID + " FROM " + table + " WHERE ProServiceID = " + proServiceID));
         }
 
         public string ReadString(string txtQuery)
@@ -517,15 +519,14 @@ namespace WorkLog
             try
             {
                 int file1byte, file2byte;
-                FileStream fs1, fs2;
 
                 if (file1 == file2)
                 {
                     return true;
                 }
 
-                fs1 = new FileStream(file1, FileMode.Open);
-                fs2 = new FileStream(file2, FileMode.Open);
+                FileStream fs1 = new FileStream(file1, FileMode.Open);
+                FileStream fs2 = new FileStream(file2, FileMode.Open);
 
                 if (fs1.Length != fs2.Length)
                 {
@@ -569,7 +570,7 @@ namespace WorkLog
 
     public static class CSVUtility
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public static void ToCSV(this DataTable dtDataTable, string strFilePath)
         {
             try
@@ -594,7 +595,7 @@ namespace WorkLog
                             string value = dr[i].ToString();
                             if (value.Contains(','))
                             {
-                                value = String.Format("\"{0}\"", value);
+                                value = string.Format("\"{0}\"", value);
                                 sw.Write(value);
                             }
                             else
