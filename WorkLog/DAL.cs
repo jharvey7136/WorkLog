@@ -1,4 +1,5 @@
 ﻿using System;
+//using System.Collections.Generic;
 using System.Linq;
 using System.Data.SQLite;
 using System.Data;
@@ -7,12 +8,15 @@ using System.Windows.Forms;
 using System.IO;
 using System.IO.Compression;
 using System.Reflection;
+using System.Security.Cryptography;
 
 namespace WorkLog
 {
     public class DAL
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        public string SaveAsFilename { get; set; }
+        public string SessionRowIDs { get; set; }
 
         private static string LoadConnectionString(string id = "Default")
         {
@@ -97,6 +101,7 @@ namespace WorkLog
                     src.Open();
                     src.BackupDatabase(dest, "main", "main", -1, null, 0);
                     SetConnectionString(backupConnection);
+                    SaveAsFilename = sfd.FileName;
                 }
 
                 return true;
@@ -106,19 +111,18 @@ namespace WorkLog
                 logger.Error(ex, ex.Source);
                 return false;
             }
-            
+
         }
 
         public bool BackupDB()
         {
             try
             {
-                string now = DateTime.Now.ToString("yyyy-MM-dd_HHmm");
+                string now = DateTime.Now.ToString("yyyy-MM-dd_HHmmsss");
                 string strFilename = "WorkLog_" + now + ".db";
                 string backupConnection = @"DataSource=..\..\..\db\" + strFilename + ";Version=3;";
 
                 string fullPathNew = Path.GetFullPath(@"..\..\..\db\" + strFilename);
-                int i = 0;
 
                 using (SQLiteConnection dest = new SQLiteConnection(backupConnection))
                 using (SQLiteConnection src = new SQLiteConnection(LoadConnectionString()))
@@ -127,22 +131,14 @@ namespace WorkLog
                     src.Open();
                     src.BackupDatabase(dest, "main", "main", -1, null, 0);
                 }
+                logger.Info("Database backed up: {0}", fullPathNew);
 
-                foreach (FileInfo fi in new DirectoryInfo(@"..\..\..\db").GetFiles().OrderByDescending(x => x.LastWriteTime).Skip(1))
-                {
-                    string fullPathCurr = Path.GetFullPath(fi.FullName);
+                int iBackups = Directory.GetFiles(@"..\..\..\db\", "*.db", SearchOption.TopDirectoryOnly).Length;
 
-                    if (FileCompare(fullPathNew, fullPathCurr))
-                    {
-                        fi.Delete();
-                        logger.Info("Duplicate backup database deleted: {0}", fi.FullName);
-                    }
-                    i++;
-                }
+                DeleteDuplicateFiles(@"..\..\..\db\");
 
-                if (i <= 50) return true;
+                if (iBackups <= 50) return true;
                 ArchiveBackups();
-                logger.Info(@"Backups Archived");
 
                 return true;
             }
@@ -151,6 +147,34 @@ namespace WorkLog
                 logger.Error(ex, ex.Source);
                 return false;
             }
+        }
+
+        //https://codereview.stackexchange.com/questions/166120/delete-duplicate-files
+        public void DeleteDuplicateFiles(string directoryPath)
+        {
+            string[] allFiles = Directory.GetFiles(directoryPath, "*.db*", SearchOption.AllDirectories);
+            //logger.Info(@"Backups found: {0}", allFiles.Length);
+
+            // get duplicate files
+            var dupFiles = allFiles.Select(f =>
+                {
+                    using (FileStream fs = new FileStream(f, FileMode.Open, FileAccess.Read))
+                    {
+                        return new
+                        {
+                            FileName = f,
+                            FileHash = BitConverter.ToString(SHA1.Create().ComputeHash(fs))
+                        };
+                    }
+                }).GroupBy(f => f.FileHash).Select(g => new { FileHash = g.Key, Files = g.Select(z => z.FileName).ToList() })
+                .SelectMany(f => f.Files.Skip(1)).ToList();
+            int iDupes = dupFiles.Count;
+
+            // delete duplicate files
+            dupFiles.ForEach(File.Delete);
+
+            if (iDupes > 0)
+                logger.Info(@"Duplicate backups found and deleted: {0}", dupFiles.Count);
         }
 
         public void ArchiveBackups(int daysOld = 0)
@@ -187,9 +211,9 @@ namespace WorkLog
                 using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                 {
                     const string insertSQL = @"INSERT INTO Record (Client, ProService, Task, Item, Date, StartTime, " +
-                                             "EndTime, Hours, ReimbursableCost, Description, CreateDate) " +
+                                             "EndTime, Hours, ReimbursableCost, Description, Comments, StartTimeOnly, EndTimeOnly, CreateDate) " +
                                              "VALUES (@Client, @ProService, @Task, @Item, @Date, @StartTime, @EndTime, @Hours, @ReimbursableCost, " +
-                                             "@Description, @CreateDate)";
+                                             "@Description, @Comments, @StartTimeOnly, @EndTimeOnly, @CreateDate)";
 
                     con.Open();
 
@@ -199,28 +223,35 @@ namespace WorkLog
                     cmd.Parameters.Add("@ProService", DbType.String).Value = record.ProService;
                     cmd.Parameters.Add("@Task", DbType.String).Value = record.Task;
                     cmd.Parameters.Add("@Item", DbType.String).Value = record.Item;
-                    cmd.Parameters.Add("@Date", DbType.String).Value = record.Date.ToString("yyyy-MM-dd");
+                    //cmd.Parameters.Add("@Date", DbType.String).Value = record.Date.ToString("yyyy-MM-dd");
+                    cmd.Parameters.Add("@Date", DbType.String).Value = record.StartTime.ToString("yyyy-MM-dd");
 
                     if (isReimburse)
                     {
                         cmd.Parameters.Add("@StartTime", DbType.String).Value = "";
                         cmd.Parameters.Add("@EndTime", DbType.String).Value = "";
+                        cmd.Parameters.Add("@StartTimeOnly", DbType.String).Value = "";
+                        cmd.Parameters.Add("@EndTimeOnly", DbType.String).Value = "";
                         cmd.Parameters.Add("@Hours", DbType.String).Value = "";
                         cmd.Parameters.Add("@ReimbursableCost", DbType.String).Value = record.ReimburseAmount.ToString();
                     }
                     else
                     {
-                        cmd.Parameters.Add("@StartTime", DbType.String).Value = record.StartTime.ToString("h:mm tt");
-                        cmd.Parameters.Add("@EndTime", DbType.String).Value = record.EndTime.ToString("h:mm tt");
+                        cmd.Parameters.Add("@StartTime", DbType.String).Value = record.StartTime.ToString("yyyy-MM-dd HH:mm");
+                        cmd.Parameters.Add("@EndTime", DbType.String).Value = record.EndTime.ToString("yyyy-MM-dd HH:mm");
+                        cmd.Parameters.Add("@StartTimeOnly", DbType.String).Value = record.StartTime.ToString("hh:mm tt");
+                        cmd.Parameters.Add("@EndTimeOnly", DbType.String).Value = record.EndTime.ToString("hh:mm tt");
                         cmd.Parameters.Add("@Hours", DbType.String).Value = record.TotalHours.ToString();
                         cmd.Parameters.Add("@ReimbursableCost", DbType.String).Value = "0";
                     }
 
                     cmd.Parameters.Add("@Description", DbType.String).Value = record.Description;
+                    cmd.Parameters.Add("@Comments", DbType.String).Value = record.Comments;
                     cmd.Parameters.Add("@CreateDate", DbType.String).Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
                     cmd.ExecuteNonQuery();
                 }
+
                 return true;
             }
             catch (Exception ex)
@@ -236,12 +267,13 @@ namespace WorkLog
             {
                 foreach (DataGridViewRow row in dgv.Rows)
                 {
-                    string sql = "UPDATE Record SET Description = @Description WHERE RowID = @ID";
+                    const string sql = "UPDATE Record SET Description = @Description, Comments = @Comments WHERE RowID = @ID";
                     using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                     {
                         using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
                         {
                             cmd.Parameters.Add("@Description", DbType.String).Value = row.Cells["Description"].Value;
+                            cmd.Parameters.Add("@Comments", DbType.String).Value = row.Cells["Comments"].Value;
                             cmd.Parameters.Add("@ID", DbType.String).Value = row.Cells["RowID"].Value;
                             con.Open();
                             cmd.ExecuteNonQuery();
@@ -284,6 +316,7 @@ namespace WorkLog
                         cmd.ExecuteNonQuery();
                     }
                 }
+                logger.Info("Row deleted: " + table + "|" + tableID + "|" + strRowID);
                 return true;
             }
             catch (Exception ex)
@@ -305,7 +338,7 @@ namespace WorkLog
 
                     if (row.Cells["ClientID"].Value == DBNull.Value && !string.IsNullOrEmpty(row.Cells["ClientName"].Value.ToString()))
                     {
-                        string sqlInsert = "INSERT INTO Client(ClientName, AddressLine1, AddressLine2, City, State, Zip, Rate) VALUES(@name, @a1, @a2, @city, @state, @zip, @rate)";
+                        const string sqlInsert = "INSERT INTO Client(ClientName, AddressLine1, AddressLine2, City, State, Zip, Rate) VALUES(@name, @a1, @a2, @city, @state, @zip, @rate)";
                         using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                         {
                             using (SQLiteCommand cmd = new SQLiteCommand(sqlInsert, con))
@@ -321,10 +354,11 @@ namespace WorkLog
                                 cmd.ExecuteNonQuery();
                             }
                         }
+                        logger.Info("New Client added: {0}", row.Cells["ClientName"].Value);
                     }
                     else if (!string.IsNullOrEmpty(row.Cells["ClientName"].Value.ToString()))
                     {
-                        string sql = "UPDATE Client SET ClientName = @name, AddressLine1 = @a1, AddressLine2 = @a2, City = @city, State = @state, Zip = @zip, Enabled = @enabled, Rate = @rate WHERE ClientID = @ID";
+                        const string sql = "UPDATE Client SET ClientName = @name, AddressLine1 = @a1, AddressLine2 = @a2, City = @city, State = @state, Zip = @zip, Enabled = @enabled, Rate = @rate WHERE ClientID = @ID";
                         using (SQLiteConnection con = new SQLiteConnection(LoadConnectionString()))
                         {
                             using (SQLiteCommand cmd = new SQLiteCommand(sql, con))
@@ -342,6 +376,7 @@ namespace WorkLog
                                 cmd.ExecuteNonQuery();
                             }
                         }
+                        //logger.Info("Existing Client updated: {0}", row.Cells["ClientName"].Value);
                     }
                 }
                 return true;
@@ -375,6 +410,7 @@ namespace WorkLog
                                 cmd.ExecuteNonQuery();
                             }
                         }
+                        logger.Info("New Professional Service added: {0}", row.Cells["ProServiceName"].Value);
                     }
                     else if (!string.IsNullOrEmpty(row.Cells["ProServiceName"].Value.ToString()))
                     {
@@ -390,6 +426,7 @@ namespace WorkLog
                                 cmd.ExecuteNonQuery();
                             }
                         }
+                        //logger.Info("Existing Professional Service updated: {0}", row.Cells["ProServiceName"].Value);
                     }
                 }
                 return true;
@@ -422,6 +459,7 @@ namespace WorkLog
                                 cmd.ExecuteNonQuery();
                             }
                         }
+                        logger.Info("New Task added: {0}", row.Cells["TaskName"].Value);
                     }
                     else if (!string.IsNullOrEmpty(row.Cells["TaskName"].Value.ToString()))
                     {
@@ -437,6 +475,7 @@ namespace WorkLog
                                 cmd.ExecuteNonQuery();
                             }
                         }
+                        //logger.Info("Existing Task updated: {0}", row.Cells["TaskName"].Value);
                     }
 
                 }
@@ -470,6 +509,7 @@ namespace WorkLog
                                 cmd.ExecuteNonQuery();
                             }
                         }
+                        logger.Info("New Item added: {0}", row.Cells["ItemName"].Value);
                     }
                     else if (!string.IsNullOrEmpty(row.Cells["ItemName"].Value.ToString()))
                     {
@@ -485,6 +525,7 @@ namespace WorkLog
                                 cmd.ExecuteNonQuery();
                             }
                         }
+                        //logger.Info("Existing Item updated: {0}", row.Cells["ItemName"].Value);
                     }
                 }
                 return true;
@@ -514,6 +555,8 @@ namespace WorkLog
             }
         }
 
+
+/*
         private bool FileCompare(string file1, string file2)
         {
             try
@@ -554,6 +597,7 @@ namespace WorkLog
                 return false;
             }
         }
+*/
 
         private bool IsRowEmpty(DataGridViewRow row)
         {

@@ -31,18 +31,21 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CategoryForm));
             this.tabCategories = new System.Windows.Forms.TabControl();
             this.tabPageClient = new System.Windows.Forms.TabPage();
+            this.btnDeleteClient = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.lblMessageTop = new System.Windows.Forms.Label();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnUpdateClient = new System.Windows.Forms.Button();
             this.dgvClient = new System.Windows.Forms.DataGridView();
             this.tabPageProService = new System.Windows.Forms.TabPage();
+            this.btnDeletePS = new System.Windows.Forms.Button();
             this.btnClosePS = new System.Windows.Forms.Button();
             this.lblMessageTopPS = new System.Windows.Forms.Label();
             this.btnRefreshPS = new System.Windows.Forms.Button();
             this.btnUpdatePS = new System.Windows.Forms.Button();
             this.dgvProService = new System.Windows.Forms.DataGridView();
             this.tabPageTask = new System.Windows.Forms.TabPage();
+            this.btnDeleteTask = new System.Windows.Forms.Button();
             this.lblMessageTopTask = new System.Windows.Forms.Label();
             this.btnCloseTask = new System.Windows.Forms.Button();
             this.btnRefreshTask = new System.Windows.Forms.Button();
@@ -51,6 +54,7 @@
             this.lblProService = new System.Windows.Forms.Label();
             this.cbProService = new System.Windows.Forms.ComboBox();
             this.tabPageItem = new System.Windows.Forms.TabPage();
+            this.btnDeleteItem = new System.Windows.Forms.Button();
             this.lblMessageTopItem = new System.Windows.Forms.Label();
             this.btnCloseItem = new System.Windows.Forms.Button();
             this.btnRefreshItem = new System.Windows.Forms.Button();
@@ -58,10 +62,6 @@
             this.dgvItem = new System.Windows.Forms.DataGridView();
             this.lblProServiceItem = new System.Windows.Forms.Label();
             this.cbProServiceItem = new System.Windows.Forms.ComboBox();
-            this.btnDeleteClient = new System.Windows.Forms.Button();
-            this.btnDeletePS = new System.Windows.Forms.Button();
-            this.btnDeleteTask = new System.Windows.Forms.Button();
-            this.btnDeleteItem = new System.Windows.Forms.Button();
             this.tabCategories.SuspendLayout();
             this.tabPageClient.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvClient)).BeginInit();
@@ -83,7 +83,7 @@
             this.tabCategories.Name = "tabCategories";
             this.tabCategories.SelectedIndex = 0;
             this.tabCategories.Size = new System.Drawing.Size(836, 341);
-            this.tabCategories.TabIndex = 0;
+            this.tabCategories.TabIndex = 19;
             // 
             // tabPageClient
             // 
@@ -101,12 +101,22 @@
             this.tabPageClient.Text = "Client";
             this.tabPageClient.UseVisualStyleBackColor = true;
             // 
+            // btnDeleteClient
+            // 
+            this.btnDeleteClient.Location = new System.Drawing.Point(220, 275);
+            this.btnDeleteClient.Name = "btnDeleteClient";
+            this.btnDeleteClient.Size = new System.Drawing.Size(101, 32);
+            this.btnDeleteClient.TabIndex = 4;
+            this.btnDeleteClient.Text = "Delete";
+            this.btnDeleteClient.UseVisualStyleBackColor = true;
+            this.btnDeleteClient.Click += new System.EventHandler(this.BtnDeleteClient_Click);
+            // 
             // btnClose
             // 
             this.btnClose.Location = new System.Drawing.Point(721, 275);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(101, 32);
-            this.btnClose.TabIndex = 1;
+            this.btnClose.TabIndex = 5;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
@@ -126,7 +136,7 @@
             this.btnRefresh.Location = new System.Drawing.Point(113, 275);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(101, 32);
-            this.btnRefresh.TabIndex = 2;
+            this.btnRefresh.TabIndex = 3;
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
@@ -136,7 +146,7 @@
             this.btnUpdateClient.Location = new System.Drawing.Point(6, 275);
             this.btnUpdateClient.Name = "btnUpdateClient";
             this.btnUpdateClient.Size = new System.Drawing.Size(101, 32);
-            this.btnUpdateClient.TabIndex = 1;
+            this.btnUpdateClient.TabIndex = 2;
             this.btnUpdateClient.Text = "Apply";
             this.btnUpdateClient.UseVisualStyleBackColor = true;
             this.btnUpdateClient.Click += new System.EventHandler(this.BtnUpdateClient_Click);
@@ -146,7 +156,7 @@
             this.dgvClient.Location = new System.Drawing.Point(6, 39);
             this.dgvClient.Name = "dgvClient";
             this.dgvClient.Size = new System.Drawing.Size(816, 230);
-            this.dgvClient.TabIndex = 0;
+            this.dgvClient.TabIndex = 1;
             // 
             // tabPageProService
             // 
@@ -164,12 +174,22 @@
             this.tabPageProService.Text = "Professional Service";
             this.tabPageProService.UseVisualStyleBackColor = true;
             // 
+            // btnDeletePS
+            // 
+            this.btnDeletePS.Location = new System.Drawing.Point(220, 272);
+            this.btnDeletePS.Name = "btnDeletePS";
+            this.btnDeletePS.Size = new System.Drawing.Size(101, 32);
+            this.btnDeletePS.TabIndex = 10;
+            this.btnDeletePS.Text = "Delete";
+            this.btnDeletePS.UseVisualStyleBackColor = true;
+            this.btnDeletePS.Click += new System.EventHandler(this.BtnDeletePS_Click);
+            // 
             // btnClosePS
             // 
             this.btnClosePS.Location = new System.Drawing.Point(721, 272);
             this.btnClosePS.Name = "btnClosePS";
             this.btnClosePS.Size = new System.Drawing.Size(101, 32);
-            this.btnClosePS.TabIndex = 5;
+            this.btnClosePS.TabIndex = 11;
             this.btnClosePS.Text = "Close";
             this.btnClosePS.UseVisualStyleBackColor = true;
             this.btnClosePS.Click += new System.EventHandler(this.BtnClosePS_Click);
@@ -189,7 +209,7 @@
             this.btnRefreshPS.Location = new System.Drawing.Point(113, 272);
             this.btnRefreshPS.Name = "btnRefreshPS";
             this.btnRefreshPS.Size = new System.Drawing.Size(101, 32);
-            this.btnRefreshPS.TabIndex = 7;
+            this.btnRefreshPS.TabIndex = 9;
             this.btnRefreshPS.Text = "Refresh";
             this.btnRefreshPS.UseVisualStyleBackColor = true;
             this.btnRefreshPS.Click += new System.EventHandler(this.BtnRefreshPS_Click);
@@ -199,7 +219,7 @@
             this.btnUpdatePS.Location = new System.Drawing.Point(6, 272);
             this.btnUpdatePS.Name = "btnUpdatePS";
             this.btnUpdatePS.Size = new System.Drawing.Size(101, 32);
-            this.btnUpdatePS.TabIndex = 6;
+            this.btnUpdatePS.TabIndex = 8;
             this.btnUpdatePS.Text = "Apply";
             this.btnUpdatePS.UseVisualStyleBackColor = true;
             this.btnUpdatePS.Click += new System.EventHandler(this.BtnUpdatePS_Click);
@@ -209,7 +229,7 @@
             this.dgvProService.Location = new System.Drawing.Point(6, 36);
             this.dgvProService.Name = "dgvProService";
             this.dgvProService.Size = new System.Drawing.Size(816, 230);
-            this.dgvProService.TabIndex = 4;
+            this.dgvProService.TabIndex = 7;
             // 
             // tabPageTask
             // 
@@ -229,6 +249,16 @@
             this.tabPageTask.Text = "Task";
             this.tabPageTask.UseVisualStyleBackColor = true;
             // 
+            // btnDeleteTask
+            // 
+            this.btnDeleteTask.Location = new System.Drawing.Point(220, 277);
+            this.btnDeleteTask.Name = "btnDeleteTask";
+            this.btnDeleteTask.Size = new System.Drawing.Size(101, 32);
+            this.btnDeleteTask.TabIndex = 17;
+            this.btnDeleteTask.Text = "Delete";
+            this.btnDeleteTask.UseVisualStyleBackColor = true;
+            this.btnDeleteTask.Click += new System.EventHandler(this.BtnDeleteTask_Click);
+            // 
             // lblMessageTopTask
             // 
             this.lblMessageTopTask.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -244,7 +274,7 @@
             this.btnCloseTask.Location = new System.Drawing.Point(721, 277);
             this.btnCloseTask.Name = "btnCloseTask";
             this.btnCloseTask.Size = new System.Drawing.Size(101, 32);
-            this.btnCloseTask.TabIndex = 19;
+            this.btnCloseTask.TabIndex = 18;
             this.btnCloseTask.Text = "Close";
             this.btnCloseTask.UseVisualStyleBackColor = true;
             this.btnCloseTask.Click += new System.EventHandler(this.BtnCloseTask_Click);
@@ -254,7 +284,7 @@
             this.btnRefreshTask.Location = new System.Drawing.Point(113, 277);
             this.btnRefreshTask.Name = "btnRefreshTask";
             this.btnRefreshTask.Size = new System.Drawing.Size(101, 32);
-            this.btnRefreshTask.TabIndex = 21;
+            this.btnRefreshTask.TabIndex = 16;
             this.btnRefreshTask.Text = "Refresh";
             this.btnRefreshTask.UseVisualStyleBackColor = true;
             this.btnRefreshTask.Click += new System.EventHandler(this.BtnRefreshTask_Click);
@@ -264,7 +294,7 @@
             this.btnUpdateTask.Location = new System.Drawing.Point(6, 277);
             this.btnUpdateTask.Name = "btnUpdateTask";
             this.btnUpdateTask.Size = new System.Drawing.Size(101, 32);
-            this.btnUpdateTask.TabIndex = 20;
+            this.btnUpdateTask.TabIndex = 15;
             this.btnUpdateTask.Text = "Apply";
             this.btnUpdateTask.UseVisualStyleBackColor = true;
             this.btnUpdateTask.Click += new System.EventHandler(this.BtnUpdateTask_Click);
@@ -274,7 +304,7 @@
             this.dgvTask.Location = new System.Drawing.Point(9, 100);
             this.dgvTask.Name = "dgvTask";
             this.dgvTask.Size = new System.Drawing.Size(813, 171);
-            this.dgvTask.TabIndex = 18;
+            this.dgvTask.TabIndex = 14;
             // 
             // lblProService
             // 
@@ -294,7 +324,7 @@
             this.cbProService.Location = new System.Drawing.Point(9, 41);
             this.cbProService.Name = "cbProService";
             this.cbProService.Size = new System.Drawing.Size(215, 24);
-            this.cbProService.TabIndex = 16;
+            this.cbProService.TabIndex = 13;
             this.cbProService.SelectedIndexChanged += new System.EventHandler(this.CbProService_SelectedIndexChanged);
             // 
             // tabPageItem
@@ -315,6 +345,16 @@
             this.tabPageItem.Text = "Item";
             this.tabPageItem.UseVisualStyleBackColor = true;
             // 
+            // btnDeleteItem
+            // 
+            this.btnDeleteItem.Location = new System.Drawing.Point(220, 277);
+            this.btnDeleteItem.Name = "btnDeleteItem";
+            this.btnDeleteItem.Size = new System.Drawing.Size(101, 32);
+            this.btnDeleteItem.TabIndex = 24;
+            this.btnDeleteItem.Text = "Delete";
+            this.btnDeleteItem.UseVisualStyleBackColor = true;
+            this.btnDeleteItem.Click += new System.EventHandler(this.BtnDeleteItem_Click);
+            // 
             // lblMessageTopItem
             // 
             this.lblMessageTopItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -330,7 +370,7 @@
             this.btnCloseItem.Location = new System.Drawing.Point(721, 277);
             this.btnCloseItem.Name = "btnCloseItem";
             this.btnCloseItem.Size = new System.Drawing.Size(101, 32);
-            this.btnCloseItem.TabIndex = 22;
+            this.btnCloseItem.TabIndex = 25;
             this.btnCloseItem.Text = "Close";
             this.btnCloseItem.UseVisualStyleBackColor = true;
             this.btnCloseItem.Click += new System.EventHandler(this.BtnCloseItem_Click);
@@ -340,7 +380,7 @@
             this.btnRefreshItem.Location = new System.Drawing.Point(113, 277);
             this.btnRefreshItem.Name = "btnRefreshItem";
             this.btnRefreshItem.Size = new System.Drawing.Size(101, 32);
-            this.btnRefreshItem.TabIndex = 24;
+            this.btnRefreshItem.TabIndex = 23;
             this.btnRefreshItem.Text = "Refresh";
             this.btnRefreshItem.UseVisualStyleBackColor = true;
             this.btnRefreshItem.Click += new System.EventHandler(this.BtnRefreshItem_Click);
@@ -350,7 +390,7 @@
             this.btnUpdateItem.Location = new System.Drawing.Point(6, 277);
             this.btnUpdateItem.Name = "btnUpdateItem";
             this.btnUpdateItem.Size = new System.Drawing.Size(101, 32);
-            this.btnUpdateItem.TabIndex = 23;
+            this.btnUpdateItem.TabIndex = 22;
             this.btnUpdateItem.Text = "Apply";
             this.btnUpdateItem.UseVisualStyleBackColor = true;
             this.btnUpdateItem.Click += new System.EventHandler(this.BtnUpdateItem_Click);
@@ -380,48 +420,8 @@
             this.cbProServiceItem.Location = new System.Drawing.Point(9, 39);
             this.cbProServiceItem.Name = "cbProServiceItem";
             this.cbProServiceItem.Size = new System.Drawing.Size(215, 24);
-            this.cbProServiceItem.TabIndex = 19;
+            this.cbProServiceItem.TabIndex = 20;
             this.cbProServiceItem.SelectedIndexChanged += new System.EventHandler(this.CbProServiceItem_SelectedIndexChanged);
-            // 
-            // btnDeleteClient
-            // 
-            this.btnDeleteClient.Location = new System.Drawing.Point(220, 275);
-            this.btnDeleteClient.Name = "btnDeleteClient";
-            this.btnDeleteClient.Size = new System.Drawing.Size(101, 32);
-            this.btnDeleteClient.TabIndex = 4;
-            this.btnDeleteClient.Text = "Delete";
-            this.btnDeleteClient.UseVisualStyleBackColor = true;
-            this.btnDeleteClient.Click += new System.EventHandler(this.BtnDeleteClient_Click);
-            // 
-            // btnDeletePS
-            // 
-            this.btnDeletePS.Location = new System.Drawing.Point(220, 272);
-            this.btnDeletePS.Name = "btnDeletePS";
-            this.btnDeletePS.Size = new System.Drawing.Size(101, 32);
-            this.btnDeletePS.TabIndex = 9;
-            this.btnDeletePS.Text = "Delete";
-            this.btnDeletePS.UseVisualStyleBackColor = true;
-            this.btnDeletePS.Click += new System.EventHandler(this.BtnDeletePS_Click);
-            // 
-            // btnDeleteTask
-            // 
-            this.btnDeleteTask.Location = new System.Drawing.Point(220, 277);
-            this.btnDeleteTask.Name = "btnDeleteTask";
-            this.btnDeleteTask.Size = new System.Drawing.Size(101, 32);
-            this.btnDeleteTask.TabIndex = 23;
-            this.btnDeleteTask.Text = "Delete";
-            this.btnDeleteTask.UseVisualStyleBackColor = true;
-            this.btnDeleteTask.Click += new System.EventHandler(this.BtnDeleteTask_Click);
-            // 
-            // btnDeleteItem
-            // 
-            this.btnDeleteItem.Location = new System.Drawing.Point(220, 277);
-            this.btnDeleteItem.Name = "btnDeleteItem";
-            this.btnDeleteItem.Size = new System.Drawing.Size(101, 32);
-            this.btnDeleteItem.TabIndex = 26;
-            this.btnDeleteItem.Text = "Delete";
-            this.btnDeleteItem.UseVisualStyleBackColor = true;
-            this.btnDeleteItem.Click += new System.EventHandler(this.BtnDeleteItem_Click);
             // 
             // CategoryForm
             // 

@@ -8,7 +8,6 @@ namespace WorkLog
 {
     public class Record
     {
-        
         public string Client { get; set; }
         public string ProService { get; set; }
         public string Task { get; set; }
@@ -18,33 +17,8 @@ namespace WorkLog
         public DateTime EndTime { get; set; }
         public double TotalHours { get; set; }
         public int ReimburseAmount { get; set; }
-        //public double TotalCost { get; set; }
-        //public int Rate { get; set; }
         public string Description { get; set; }
-
-        public string FullRecord
-        {
-            get
-            {
-                return $"{Client} {ProService} {Task} {Item} {Date} {StartTime} {EndTime} {TotalHours}";
-            }
-        }
-
-        public string PrintRecord()
-        {
-            string ret = "";
-
-            ret += Client + " : " + ProService + " : " + Task + " : " + Item + " : " + 
-                String.Format("{0:M/d/yyyy}", Date) + " : " + String.Format("{0:t}", StartTime) + " : " + String.Format("{0:t}", EndTime);
-
-            return ret;
-        }
-
-
-
+        public string Comments { get; set; }
+        public string FullRecord => $"{Client}" + "|" + $"{ProService}" + "|" + $"{Task}" + "|" + $"{Item}" + "|" + $"{Date}" + "|" + $"{StartTime}" + "|" + $"{EndTime}" + "|" + $"{TotalHours}";
     }
-
-
-
-
 }

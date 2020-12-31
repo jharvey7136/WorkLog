@@ -34,6 +34,8 @@ namespace WorkLog
 
             tabCategories.SelectedIndexChanged += TabCategories_SelectedIndexChanged;
 
+            FormClosing += CategoryForm_FormClosing;
+
             dgvTask.DataSource = null;
             dgvItem.DataSource = null;
         }
@@ -73,7 +75,10 @@ namespace WorkLog
                 if (result == DialogResult.Yes)
                 {
                     if (oDAL.UpdateClient(dgvClient))
+                    {
                         DisplayMessage(lblMessageTop, "Update Successful", Color.Green);
+                        logger.Info("Client table updated");
+                    }
                     else
                         DisplayMessage(lblMessageTop, "An unexpected error has occurred", Color.Red);
                 }
@@ -94,7 +99,11 @@ namespace WorkLog
                 if (result == DialogResult.Yes)
                 {
                     if (oDAL.UpdateProService(dgvProService))
+                    {
                         DisplayMessage(lblMessageTopPS, "Update Successful", Color.Green);
+                        logger.Info("Professional Service table updated");
+                    }
+                        
                     else
                         DisplayMessage(lblMessageTopPS, "An unexpected error has occurred", Color.Red);
                 }
@@ -115,7 +124,10 @@ namespace WorkLog
                 if (result == DialogResult.Yes)
                 {
                     if (oDAL.UpdateTask(dgvTask, cbProService))
+                    {
                         DisplayMessage(lblMessageTopTask, "Update Successful", Color.Green);
+                        logger.Info("Task table updated");
+                    }
                     else
                         DisplayMessage(lblMessageTopTask, "An unexpected error has occurred", Color.Red);
                 }
@@ -136,7 +148,10 @@ namespace WorkLog
                 if (result == DialogResult.Yes)
                 {
                     if (oDAL.UpdateItem(dgvItem, cbProServiceItem))
+                    {
                         DisplayMessage(lblMessageTopItem, "Update Successful", Color.Green);
+                        logger.Info("Item table updated");
+                    }
                     else
                         DisplayMessage(lblMessageTopItem, "An unexpected error has occurred", Color.Red);
                 }
@@ -512,7 +527,11 @@ namespace WorkLog
         }
 
 
-
+        private void CategoryForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            logger.Info("Category form closing... Backing up database");
+            oDAL.BackupDB();
+        }
 
 
     }
