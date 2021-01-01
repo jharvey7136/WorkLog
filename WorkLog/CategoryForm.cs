@@ -11,35 +11,44 @@ namespace WorkLog
 
         public CategoryForm()
         {
-            InitializeComponent();
-            InitializeDefaults();
+            try
+            {
+                InitializeComponent();
+                InitializeDefaults();
 
-            dgvClient.RowsAdded += (s, a) => OnRowNumberChanged(lblMessageTop);
-            dgvProService.RowsAdded += (s, a) => OnRowNumberChanged(lblMessageTopPS);
-            dgvTask.RowsAdded += (s, a) => OnRowNumberChanged(lblMessageTopTask);
-            dgvItem.RowsAdded += (s, a) => OnRowNumberChanged(lblMessageTopItem);
+                dgvClient.RowsAdded += (s, a) => OnRowNumberChanged(lblMessageTop);
+                dgvProService.RowsAdded += (s, a) => OnRowNumberChanged(lblMessageTopPS);
+                dgvTask.RowsAdded += (s, a) => OnRowNumberChanged(lblMessageTopTask);
+                dgvItem.RowsAdded += (s, a) => OnRowNumberChanged(lblMessageTopItem);
 
-            // Attach DataGridView events to the corresponding event handlers.
-            dgvClient.CellValidating += DgvClient_CellValidating;
-            dgvClient.CellEndEdit += DgvClient_CellEndEdit;
+                // Attach DataGridView events to the corresponding event handlers.
+                dgvClient.CellValidating += DgvClient_CellValidating;
+                dgvClient.CellEndEdit += DgvClient_CellEndEdit;
 
-            dgvProService.CellValidating += DgvProService_CellValidating;
-            dgvProService.CellEndEdit += DgvProService_CellEndEdit;
+                dgvProService.CellValidating += DgvProService_CellValidating;
+                dgvProService.CellEndEdit += DgvProService_CellEndEdit;
 
-            dgvTask.CellValidating += DgvTask_CellValidating;
-            dgvTask.CellEndEdit += DgvTask_CellEndEdit;
+                dgvTask.CellValidating += DgvTask_CellValidating;
+                dgvTask.CellEndEdit += DgvTask_CellEndEdit;
 
-            dgvItem.CellValidating += DgvItem_CellValidating;
-            dgvItem.CellEndEdit += DgvItem_CellEndEdit;
+                dgvItem.CellValidating += DgvItem_CellValidating;
+                dgvItem.CellEndEdit += DgvItem_CellEndEdit;
 
-            tabCategories.SelectedIndexChanged += TabCategories_SelectedIndexChanged;
+                tabCategories.SelectedIndexChanged += TabCategories_SelectedIndexChanged;
 
-            dgvClient.DataBindingComplete += DgvClient_DataBindingComplete;
+                dgvClient.DataBindingComplete += DgvClient_DataBindingComplete;
 
-            FormClosing += CategoryForm_FormClosing;
+                FormClosing += CategoryForm_FormClosing;
 
-            dgvTask.DataSource = null;
-            dgvItem.DataSource = null;
+                dgvTask.DataSource = null;
+                dgvItem.DataSource = null;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(@"An error has occurred while trying to open the category management tool");
+                logger.Error(ex, ex.Source);
+            }
+
         }
 
         private void InitializeDefaults()
@@ -50,28 +59,48 @@ namespace WorkLog
                 GetDataClient();
                 GetDataProService();
                 RefreshComboBoxes();
-                
+
                 dgvProService.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dgvTask.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dgvItem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
             catch (Exception ex)
             {
+                MessageBox.Show(@"An error has occurred initializing the category management tool");
                 logger.Error(ex, ex.Source);
             }
         }
 
         private void DgvClient_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-            dgvClient.Columns["ClientID"].Visible = false;
-            dgvClient.Columns["ClientID"].ReadOnly = true;
-            dgvClient.AutoResizeColumns();
+            try
+            {
+                dgvClient.Columns["ClientID"].Visible = false;
+                dgvClient.Columns["ClientID"].ReadOnly = true;
+                dgvClient.AutoResizeColumns();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage(lblMessageTop, "An unexpected error has occurred", Color.Red);
+                logger.Error(ex, ex.Source);
+            }
         }
 
         private void RefreshComboBoxes()
         {
-            oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService", cbProService, "ProServiceName", "ProServiceID");
-            oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService", cbProServiceItem, "ProServiceName", "ProServiceID");
+            try
+            {
+                /* Fill Task page dropdown */
+                oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1 ", cbProService, "ProServiceName", "ProServiceID");
+
+                /* Fill Item page dropdown */
+                oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1 ", cbProServiceItem, "ProServiceName", "ProServiceID");
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage(lblMessageTop, "An unexpected error has occurred", Color.Red);
+                logger.Error(ex, ex.Source);
+            }
         }
 
         /* ------------------------------------------------------------------------------------------------ */
@@ -84,6 +113,7 @@ namespace WorkLog
                 {
                     if (oDAL.UpdateClient(dgvClient))
                     {
+                        GetDataClient();
                         DisplayMessage(lblMessageTop, "Update Successful", Color.Green);
                         logger.Info("Client table updated");
                     }
@@ -109,10 +139,11 @@ namespace WorkLog
                 {
                     if (oDAL.UpdateProService(dgvProService))
                     {
+                        RefreshComboBoxes();
+                        GetDataProService();
                         DisplayMessage(lblMessageTopPS, "Update Successful", Color.Green);
                         logger.Info("Professional Service table updated");
                     }
-
                     else
                         DisplayMessage(lblMessageTopPS, "Professional Service update failed", Color.Red);
                 }
@@ -135,6 +166,7 @@ namespace WorkLog
                 {
                     if (oDAL.UpdateTask(dgvTask, cbProService))
                     {
+                        GetDataTask();
                         DisplayMessage(lblMessageTopTask, "Update Successful", Color.Green);
                         logger.Info("Task table updated");
                     }
@@ -160,6 +192,7 @@ namespace WorkLog
                 {
                     if (oDAL.UpdateItem(dgvItem, cbProServiceItem))
                     {
+                        GetDataItem();
                         DisplayMessage(lblMessageTopItem, "Update Successful", Color.Green);
                         logger.Info("Item table updated");
                     }
@@ -228,22 +261,59 @@ namespace WorkLog
 
         private void BtnDeleteClient_Click(object sender, EventArgs e)
         {
-            DeleteRow(dgvClient, "ClientID", lblMessageTop, "Client", "ClientID");
+            try
+            {
+                DeleteRow(dgvClient, "ClientID", lblMessageTop, "Client", "ClientID");
+                GetDataClient();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage(lblMessageTop, "An unexpected error has occurred", Color.Red);
+                logger.Error(ex, ex.Source);
+            }
         }
 
         private void BtnDeletePS_Click(object sender, EventArgs e)
         {
-            DeleteRow(dgvProService, "ProServiceID", lblMessageTopPS, "ProfessionalService", "ProServiceID");
+            try
+            {
+                DeleteRow(dgvProService, "ProServiceID", lblMessageTopPS, "ProfessionalService", "ProServiceID");
+                GetDataProService();
+                RefreshComboBoxes();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage(lblMessageTopPS, "An unexpected error has occurred", Color.Red);
+                logger.Error(ex, ex.Source);
+            }
         }
 
         private void BtnDeleteTask_Click(object sender, EventArgs e)
         {
-            DeleteRow(dgvTask, "TaskID", lblMessageTopTask, "Task", "TaskID");
+            try
+            {
+                DeleteRow(dgvTask, "TaskID", lblMessageTopTask, "Task", "TaskID");
+                GetDataTask();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage(lblMessageTopTask, "An unexpected error has occurred", Color.Red);
+                logger.Error(ex, ex.Source);
+            }
         }
 
         private void BtnDeleteItem_Click(object sender, EventArgs e)
         {
-            DeleteRow(dgvItem, "ItemID", lblMessageTopItem, "Item", "ItemID");
+            try
+            {
+                DeleteRow(dgvItem, "ItemID", lblMessageTopItem, "Item", "ItemID");
+                GetDataItem();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage(lblMessageTopItem, "An unexpected error has occurred", Color.Red);
+                logger.Error(ex, ex.Source);
+            }
         }
 
         /* ------------------------------------------------------------------------------------------------ */
@@ -268,7 +338,7 @@ namespace WorkLog
         {
             try
             {
-                string cmd = "SELECT DISTINCT ProServiceID, ProServiceName, Enabled FROM ProfessionalService ORDER BY ProServiceID";
+                const string cmd = "SELECT DISTINCT ProServiceID, ProServiceName, Enabled FROM ProfessionalService ORDER BY ProServiceID";
                 oDAL.FillDataGrid(cmd, dgvProService);
                 dgvProService.Columns["ProServiceID"].Visible = false;
                 dgvProService.Columns["ProServiceID"].ReadOnly = true;

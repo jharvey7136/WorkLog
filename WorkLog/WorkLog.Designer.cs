@@ -60,6 +60,8 @@
             this.lblMessage = new System.Windows.Forms.Label();
             this.btnExport = new System.Windows.Forms.Button();
             this.gbDataFilters = new System.Windows.Forms.GroupBox();
+            this.lblAggrReimbursableSum = new System.Windows.Forms.Label();
+            this.lblAggrReimbursable = new System.Windows.Forms.Label();
             this.lblAggrBillableSum = new System.Windows.Forms.Label();
             this.lblAggrBillable = new System.Windows.Forms.Label();
             this.lblAggrHoursSum = new System.Windows.Forms.Label();
@@ -92,8 +94,6 @@
             this.btnLoad = new System.Windows.Forms.Button();
             this.lblDatabaseName = new System.Windows.Forms.Label();
             this.btnRefreshView = new System.Windows.Forms.Button();
-            this.lblAggrReimbursableSum = new System.Windows.Forms.Label();
-            this.lblAggrReimbursable = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.gbDataFilters.SuspendLayout();
@@ -227,7 +227,6 @@
             this.cbTask.Name = "cbTask";
             this.cbTask.Size = new System.Drawing.Size(250, 24);
             this.cbTask.TabIndex = 7;
-            
             // 
             // txtDescription
             // 
@@ -437,6 +436,26 @@
             this.gbDataFilters.TabIndex = 34;
             this.gbDataFilters.TabStop = false;
             this.gbDataFilters.Text = "Filter Data View";
+            // 
+            // lblAggrReimbursableSum
+            // 
+            this.lblAggrReimbursableSum.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAggrReimbursableSum.Location = new System.Drawing.Point(885, 58);
+            this.lblAggrReimbursableSum.Name = "lblAggrReimbursableSum";
+            this.lblAggrReimbursableSum.Size = new System.Drawing.Size(84, 23);
+            this.lblAggrReimbursableSum.TabIndex = 55;
+            this.lblAggrReimbursableSum.Text = "0";
+            this.lblAggrReimbursableSum.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblAggrReimbursable
+            // 
+            this.lblAggrReimbursable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAggrReimbursable.Location = new System.Drawing.Point(708, 58);
+            this.lblAggrReimbursable.Name = "lblAggrReimbursable";
+            this.lblAggrReimbursable.Size = new System.Drawing.Size(175, 23);
+            this.lblAggrReimbursable.TabIndex = 54;
+            this.lblAggrReimbursable.Text = "Reimbursables:";
+            this.lblAggrReimbursable.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblAggrBillableSum
             // 
@@ -739,26 +758,6 @@
             this.btnRefreshView.Text = "Refresh";
             this.btnRefreshView.UseVisualStyleBackColor = true;
             this.btnRefreshView.Click += new System.EventHandler(this.BtnRefreshView_Click);
-            // 
-            // lblAggrReimbursableSum
-            // 
-            this.lblAggrReimbursableSum.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAggrReimbursableSum.Location = new System.Drawing.Point(885, 58);
-            this.lblAggrReimbursableSum.Name = "lblAggrReimbursableSum";
-            this.lblAggrReimbursableSum.Size = new System.Drawing.Size(84, 23);
-            this.lblAggrReimbursableSum.TabIndex = 55;
-            this.lblAggrReimbursableSum.Text = "0";
-            this.lblAggrReimbursableSum.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // lblAggrReimbursable
-            // 
-            this.lblAggrReimbursable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAggrReimbursable.Location = new System.Drawing.Point(708, 58);
-            this.lblAggrReimbursable.Name = "lblAggrReimbursable";
-            this.lblAggrReimbursable.Size = new System.Drawing.Size(175, 23);
-            this.lblAggrReimbursable.TabIndex = 54;
-            this.lblAggrReimbursable.Text = "Reimbursables:";
-            this.lblAggrReimbursable.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // WorkLog
             // 

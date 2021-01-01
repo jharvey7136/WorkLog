@@ -25,65 +25,82 @@ namespace WorkLog
         {
             _logger = logger;
 
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            btnTest.Visible = true;
-            dtpDate.Visible = false;
-            lblDate.Visible = false;
+                btnTest.Visible = true;
+                dtpDate.Visible = false;
+                lblDate.Visible = false;
 
-            InitializeDefaults();
-            InitializeTimer();
+                InitializeDefaults();
+                InitializeTimer();
 
-            dtpStartTime.ValueChanged += DtpStartTime_ValueChanged;
-            dtpEndTime.ValueChanged += DtpEndTime_ValueChanged;
+                dtpStartTime.ValueChanged += DtpStartTime_ValueChanged;
+                dtpEndTime.ValueChanged += DtpEndTime_ValueChanged;
 
-            dtpStartTime.MouseWheel += DtpStartTime_MouseWheel;
-            dtpEndTime.MouseWheel += DtpEndTime_MouseWheel;
+                dtpStartTime.MouseWheel += DtpStartTime_MouseWheel;
+                dtpEndTime.MouseWheel += DtpEndTime_MouseWheel;
 
-            dtpFilterStart.MouseWheel += DtpFilterStart_MouseWheel;
-            dtpFilterEnd.MouseWheel += DtpFilterEnd_MouseWheel;
+                dtpFilterStart.MouseWheel += DtpFilterStart_MouseWheel;
+                dtpFilterEnd.MouseWheel += DtpFilterEnd_MouseWheel;
 
-            txtReimburseCost.KeyPress += TxtReimburseCost_KeyPress;
-            dgvRecords.RowsAdded += (s, a) => OnRowNumberChanged();
+                txtReimburseCost.KeyPress += TxtReimburseCost_KeyPress;
+                dgvRecords.RowsAdded += (s, a) => OnRowNumberChanged();
 
-            //_logger.LogInformation("Work Log opened... Backing up current database state");
-            oDAL.BackupDB();
+                //_logger.LogInformation("Work Log opened... Backing up current database state");
+                oDAL.BackupDB();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void InitializeDefaults()
         {
-            dtpStartTime.CustomFormat = @"M/d/yyyy h:mm tt";
-            dtpEndTime.CustomFormat = @"M/d/yyyy h:mm tt";
-            lblHours.Text = Math.Round(CalculateTimespan().TotalHours, 2).ToString();
+            try
+            {
+                dtpStartTime.CustomFormat = @"M/d/yyyy h:mm tt";
+                dtpEndTime.CustomFormat = @"M/d/yyyy h:mm tt";
+                lblHours.Text = Math.Round(CalculateTimespan().TotalHours, 2).ToString();
 
-            cbClient.SelectedValue = "";
-            cbProService.SelectedValue = "";
-            lblMessage.Text = "";
-            lblRecordCount.Text = "";
+                cbClient.SelectedValue = "";
+                cbProService.SelectedValue = "";
+                lblMessage.Text = "";
+                lblRecordCount.Text = "";
 
-            lblAggrHoursSum.Text = @"0.00";
-            lblAggrReimbursableSum.Text = @"$0.00";
-            lblAggrBillableSum.Text = @"$0.00";
+                lblAggrHoursSum.Text = @"0.00";
+                lblAggrReimbursableSum.Text = @"$0.00";
+                lblAggrBillableSum.Text = @"$0.00";
 
-            dgvRecords.AllowUserToAddRows = false;
+                dgvRecords.AllowUserToAddRows = false;
 
-            oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
-            oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
-            oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbFilterClient, "ClientName", "ClientID");
+                oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
+                oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
+                oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbFilterClient, "ClientName", "ClientID");
 
-            dtpFilterStart.CustomFormat = @"M/dd/yyyy";
-            dtpFilterEnd.CustomFormat = @"M/dd/yyyy";
+                dtpFilterStart.CustomFormat = @"M/dd/yyyy";
+                dtpFilterEnd.CustomFormat = @"M/dd/yyyy";
 
-            strCurrDatabase = oDAL.ReadString("SELECT file FROM pragma_database_list WHERE seq = 0");
-            lblDatabaseName.Text = Path.GetFileName(strCurrDatabase);
+                strCurrDatabase = oDAL.ReadString("SELECT file FROM pragma_database_list WHERE seq = 0");
+                lblDatabaseName.Text = Path.GetFileName(strCurrDatabase);
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
-
-        private void RefreshComboBox()
-        {
-            //oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
-            //oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
-            //oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbFilterClient, "ClientName", "ClientID");
-        }
+        /*
+                private void RefreshComboBox()
+                {
+                    //oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
+                    //oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
+                    //oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbFilterClient, "ClientName", "ClientID");
+                }
+        */
 
         private void DtpStartTime_ValueChanged(object sender, EventArgs e)
         {
@@ -144,38 +161,41 @@ namespace WorkLog
 
         private void CbProService_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cbProService.SelectedIndex > 0 && cbProService.SelectedValue != null)
+            try
             {
-                string cmdTask = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = " + cbProService.SelectedValue + " AND Enabled = 1";
-                string cmdItem = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = " + cbProService.SelectedValue + " AND Enabled = 1";
-                oDAL.FillComboBox(cmdTask, cbTask, "TaskName", "TaskID");
-                oDAL.FillComboBox(cmdItem, cbItem, "ItemName", "ItemID");
+                if (cbProService.SelectedIndex > 0 && cbProService.SelectedValue != null)
+                {
+                    string cmdTask = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = " + cbProService.SelectedValue + " AND Enabled = 1";
+                    string cmdItem = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = " + cbProService.SelectedValue + " AND Enabled = 1";
+                    oDAL.FillComboBox(cmdTask, cbTask, "TaskName", "TaskID");
+                    oDAL.FillComboBox(cmdItem, cbItem, "ItemName", "ItemID");
+                }
+                if (cbProService.Text == @"Reimbursable")
+                {
+                    txtReimburseCost.Enabled = true;
+                    dtpStartTime.Enabled = false;
+                    dtpEndTime.Enabled = false;
+                    lblHours.Enabled = false;
+                }
+                else
+                {
+                    txtReimburseCost.Enabled = false;
+                    dtpStartTime.Enabled = true;
+                    dtpEndTime.Enabled = true;
+                    lblHours.Enabled = true;
+                }
             }
-
-            if (cbProService.Text == @"Reimbursable")
+            catch (Exception ex)
             {
-                txtReimburseCost.Enabled = true;
-                dtpStartTime.Enabled = false;
-                dtpEndTime.Enabled = false;
-                lblHours.Enabled = false;
-            }
-            else
-            {
-                txtReimburseCost.Enabled = false;
-                dtpStartTime.Enabled = true;
-                dtpEndTime.Enabled = true;
-                lblHours.Enabled = true;
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
             }
         }
 
         private void TxtReimburseCost_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar)
-                    && !char.IsDigit(e.KeyChar)
-                    && e.KeyChar != '.')
-            {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
                 e.Handled = true;
-            }
         }
 
         private void BtnTest_Click(object sender, EventArgs e)
@@ -244,20 +264,28 @@ namespace WorkLog
 
         private void BtnClear_Click(object sender, EventArgs e)
         {
-            cbClient.SelectedValue = 0;
-            cbProService.SelectedValue = 0;
-            cbTask.SelectedValue = 0;
-            cbItem.SelectedValue = 0;
+            try
+            {
+                cbClient.SelectedValue = 0;
+                cbProService.SelectedValue = 0;
+                cbTask.SelectedValue = 0;
+                cbItem.SelectedValue = 0;
 
-            dtpDate.Value = DateTime.Now;
-            dtpStartTime.Value = DateTime.Now;
-            dtpEndTime.Value = DateTime.Now;
+                dtpDate.Value = DateTime.Now;
+                dtpStartTime.Value = DateTime.Now;
+                dtpEndTime.Value = DateTime.Now;
 
-            txtDescription.Text = "";
-            txtComments.Text = "";
-            txtReimburseCost.Text = @"0";
-            lblMessage.Text = "";
-            lblMessage.ForeColor = SystemColors.ControlText;
+                txtDescription.Text = "";
+                txtComments.Text = "";
+                txtReimburseCost.Text = @"0";
+                lblMessage.Text = "";
+                lblMessage.ForeColor = SystemColors.ControlText;
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void BtnSubmit_Click(object sender, EventArgs e)
@@ -416,9 +444,17 @@ namespace WorkLog
 
         private void BtnView_Click(object sender, EventArgs e)
         {
-            RefreshCurrentView();
-            if (dgvRecords.RowCount == 0)
-                OnRowNumberChanged();
+            try
+            {
+                RefreshCurrentView();
+                if (dgvRecords.RowCount == 0)
+                    OnRowNumberChanged();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void RefreshCurrentView()
@@ -451,10 +487,11 @@ namespace WorkLog
                     "INNER JOIN Client C ON R.Client = C.ClientName " +
                     where;
 
-                if (!string.IsNullOrEmpty(strFilterClientID))
-                {
+                if (!string.IsNullOrWhiteSpace(where) && !string.IsNullOrWhiteSpace(strFilterClientID))
                     cmd += " AND ClientID = " + strFilterClientID;
-                }
+                else if (string.IsNullOrWhiteSpace(where) && !string.IsNullOrWhiteSpace(strFilterClientID))
+                    cmd += " WHERE ClientID = " + strFilterClientID;
+
 
                 cmd += " ORDER BY R.Date, R.StartTime ";
 
@@ -472,32 +509,47 @@ namespace WorkLog
 
         private void ToolStripManageCat_Click(object sender, EventArgs e)
         {
-            CategoryForm formCategories = new CategoryForm();
-            formCategories.ShowDialog();
-            RefreshComboBox();
+            try
+            {
+                CategoryForm formCategories = new CategoryForm();
+                formCategories.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void OnRowNumberChanged()
         {
-            lblRecordCount.Text = dgvRecords.Rows.Count.ToString();
-            dgvRecords.Columns["RowID"].Visible = false;
-            dgvRecords.Columns["AddressLine1"].Visible = false;
-            dgvRecords.Columns["AddressLine2"].Visible = false;
-            dgvRecords.Columns["City"].Visible = false;
-            dgvRecords.Columns["State"].Visible = false;
-            dgvRecords.Columns["Zip"].Visible = false;
-            dgvRecords.Columns["RowID"].ReadOnly = true;
-            dgvRecords.Columns["CreateDate"].ReadOnly = true;
-            dgvRecords.Columns["StartTime"].Visible = false;
-            dgvRecords.Columns["EndTime"].Visible = false;
-            lblMessage.ForeColor = SystemColors.ControlText;
-            lblMessage.Text = "";
-            dgvRecords.AutoResizeColumns();
+            try
+            {
+                lblRecordCount.Text = dgvRecords.Rows.Count.ToString();
+                dgvRecords.Columns["RowID"].Visible = false;
+                dgvRecords.Columns["AddressLine1"].Visible = false;
+                dgvRecords.Columns["AddressLine2"].Visible = false;
+                dgvRecords.Columns["City"].Visible = false;
+                dgvRecords.Columns["State"].Visible = false;
+                dgvRecords.Columns["Zip"].Visible = false;
+                dgvRecords.Columns["RowID"].ReadOnly = true;
+                dgvRecords.Columns["CreateDate"].ReadOnly = true;
+                dgvRecords.Columns["StartTime"].Visible = false;
+                dgvRecords.Columns["EndTime"].Visible = false;
+                lblMessage.ForeColor = SystemColors.ControlText;
+                lblMessage.Text = "";
+                dgvRecords.AutoResizeColumns();
 
-            CalculateTotals();
-            lblAggrHoursSum.Text = dblTotalHours.ToString("N02", ci);
-            lblAggrReimbursableSum.Text = dblTotalReimbursable.ToString("C", ci);
-            lblAggrBillableSum.Text = dblTotalBillable.ToString("C", ci);
+                CalculateTotals();
+                lblAggrHoursSum.Text = dblTotalHours.ToString("N02", ci);
+                lblAggrReimbursableSum.Text = dblTotalReimbursable.ToString("C", ci);
+                lblAggrBillableSum.Text = dblTotalBillable.ToString("C", ci);
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void CalculateTotals()
@@ -537,87 +589,129 @@ namespace WorkLog
 
         private void BtnLastMonth_Click(object sender, EventArgs e)
         {
-            const string where = " WHERE R.Date >= date('now', 'start of month', '-1 month') AND R.Date < date('now','start of month') ";
-            FillRecordView(where);
+            try
+            {
+                const string where = " WHERE R.Date >= date('now', 'start of month', '-1 month') AND R.Date < date('now','start of month') ";
+                FillRecordView(where);
 
-            string cmd = "SELECT date('now', 'start of month', '-1 month')";
-            string startDate = oDAL.ReadString(cmd);
-            dtpFilterStart.Value = DateTime.Parse(startDate);
+                string cmd = "SELECT date('now', 'start of month', '-1 month')";
+                string startDate = oDAL.ReadString(cmd);
+                dtpFilterStart.Value = DateTime.Parse(startDate);
 
-            cmd = "SELECT date('now','start of month', '-1 day')";
-            string endDate = oDAL.ReadString(cmd);
-            dtpFilterEnd.Value = DateTime.Parse(endDate);
+                cmd = "SELECT date('now','start of month', '-1 day')";
+                string endDate = oDAL.ReadString(cmd);
+                dtpFilterEnd.Value = DateTime.Parse(endDate);
 
-            if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
-                OnRowNumberChanged();
+                if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
+                    OnRowNumberChanged();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void BtnLast30_Click(object sender, EventArgs e)
         {
-            const string where = " WHERE R.Date >= date('now','-30 days') ";
-            FillRecordView(where);
+            try
+            {
+                const string where = " WHERE R.Date >= date('now','-30 days') ";
+                FillRecordView(where);
 
-            const string cmd = "SELECT date('now','-30 days')";
-            string startDate = oDAL.ReadString(cmd);
-            dtpFilterStart.Value = DateTime.Parse(startDate);
+                const string cmd = "SELECT date('now','-30 days')";
+                string startDate = oDAL.ReadString(cmd);
+                dtpFilterStart.Value = DateTime.Parse(startDate);
 
-            dtpFilterEnd.Value = DateTime.Now;
+                dtpFilterEnd.Value = DateTime.Now;
 
-            if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
-                OnRowNumberChanged();
+                if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
+                    OnRowNumberChanged();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void BtnYTD_Click(object sender, EventArgs e)
         {
-            const string where = " WHERE R.Date >= date('now', 'start of year') AND R.Date < date('now','start of year', '+1 year') ";
-            FillRecordView(where);
+            try
+            {
+                const string where = " WHERE R.Date >= date('now', 'start of year') AND R.Date < date('now','start of year', '+1 year') ";
+                FillRecordView(where);
 
-            const string cmd = "SELECT date('now', 'start of year')";
-            string startDate = oDAL.ReadString(cmd);
-            dtpFilterStart.Value = DateTime.Parse(startDate);
+                const string cmd = "SELECT date('now', 'start of year')";
+                string startDate = oDAL.ReadString(cmd);
+                dtpFilterStart.Value = DateTime.Parse(startDate);
 
-            dtpFilterEnd.Value = DateTime.Now;
+                dtpFilterEnd.Value = DateTime.Now;
 
-            if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
-                OnRowNumberChanged();
+                if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
+                    OnRowNumberChanged();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void BtnMTD_Click(object sender, EventArgs e)
         {
-            const string where = " WHERE R.Date >= date('now', 'start of month') AND R.Date < date('now','start of month', '+1 month') ";
-            FillRecordView(where);
+            try
+            {
+                const string where = " WHERE R.Date >= date('now', 'start of month') AND R.Date < date('now','start of month', '+1 month') ";
+                FillRecordView(where);
 
-            const string cmd = "SELECT date('now', 'start of month')";
-            string startDate = oDAL.ReadString(cmd);
-            dtpFilterStart.Value = DateTime.Parse(startDate);
+                const string cmd = "SELECT date('now', 'start of month')";
+                string startDate = oDAL.ReadString(cmd);
+                dtpFilterStart.Value = DateTime.Parse(startDate);
 
-            dtpFilterEnd.Value = DateTime.Now;
+                dtpFilterEnd.Value = DateTime.Now;
 
-            if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
-                OnRowNumberChanged();
+                if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
+                    OnRowNumberChanged();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void BtnAll_Click(object sender, EventArgs e)
         {
-            string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTimeOnly, R.EndTimeOnly, R.Hours, " +
-                         "C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost)  Billable, R.Description, R.Comments, R.RowID, " +
-                         "C.AddressLine1, C.AddressLine2, C.City, C.State, C.Zip, R.StartTime, R.EndTime  " +
-                         "FROM Record R " +
-                         "INNER JOIN Client C ON R.Client = C.ClientName " +
-                         "ORDER BY R.Date, R.StartTime";
+            try
+            {
+                //string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTimeOnly, R.EndTimeOnly, R.Hours, " +
+                //             "C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost)  Billable, R.Description, R.Comments, R.RowID, " +
+                //             "C.AddressLine1, C.AddressLine2, C.City, C.State, C.Zip, R.StartTime, R.EndTime  " +
+                //             "FROM Record R " +
+                //             "INNER JOIN Client C ON R.Client = C.ClientName " +
+                //             "ORDER BY R.Date, R.StartTime";
 
-            oDAL.FillDataGrid(cmd, dgvRecords);
+                //oDAL.FillDataGrid(cmd, dgvRecords);
 
-            cmd = "SELECT MIN(date) FROM Record";
-            string startDate = oDAL.ReadString(cmd);
-            dtpFilterStart.Value = DateTime.Parse(startDate);
+                FillRecordView("");
 
-            cmd = "SELECT MAX(date) FROM Record";
-            string endDate = oDAL.ReadString(cmd);
-            dtpFilterEnd.Value = DateTime.Parse(endDate);
+                string cmd = "SELECT MIN(date) FROM Record";
+                string startDate = oDAL.ReadString(cmd);
+                dtpFilterStart.Value = DateTime.Parse(startDate);
 
-            if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
-                OnRowNumberChanged();
+                cmd = "SELECT MAX(date) FROM Record";
+                string endDate = oDAL.ReadString(cmd);
+                dtpFilterEnd.Value = DateTime.Parse(endDate);
+
+                if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
+                    OnRowNumberChanged();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void BtnDelete_Click(object sender, EventArgs e)
@@ -787,8 +881,6 @@ namespace WorkLog
                 DisplayMessage("An unexpected error has occurred", Color.Red);
                 _logger.LogError(ex, ex.Source);
             }
-
-
         }
 
         private void BtnReset_Click(object sender, EventArgs e)
@@ -830,28 +922,36 @@ namespace WorkLog
 
         private void ResetRecordGrid()
         {
-            lblMessage.Text = "";
-            lblRecordCount.Text = "";
-            dtpFilterStart.Value = DateTime.Today;
-            dtpFilterEnd.Value = DateTime.Today;
-            cbFilterClient.SelectedIndex = 0;
-
-            lblAggrHoursSum.Text = @"0.00";
-            lblAggrReimbursableSum.Text = @"$0.00";
-            lblAggrBillableSum.Text = @"$0.00";
-
-            if (iCount > 0)
+            try
             {
-                string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTimeOnly, R.EndTimeOnly, R.Hours, " +
-                             "C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost) Billable, R.Description, R.Comments, R.RowID, " +
-                             "C.AddressLine1, C.AddressLine2, C.City, C.State, C.Zip, R.StartTime, R.EndTime  " +
-                             "FROM Record R " +
-                             "INNER JOIN Client C ON R.Client = C.ClientName " +
-                             "ORDER BY R.Date, R.StartTime LIMIT " + iCount;
-                oDAL.FillDataGrid(cmd, dgvRecords);
+                lblMessage.Text = "";
+                lblRecordCount.Text = "";
+                dtpFilterStart.Value = DateTime.Today;
+                dtpFilterEnd.Value = DateTime.Today;
+                cbFilterClient.SelectedIndex = 0;
+
+                lblAggrHoursSum.Text = @"0.00";
+                lblAggrReimbursableSum.Text = @"$0.00";
+                lblAggrBillableSum.Text = @"$0.00";
+
+                if (iCount > 0)
+                {
+                    string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTimeOnly, R.EndTimeOnly, R.Hours, " +
+                                 "C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost) Billable, R.Description, R.Comments, R.RowID, " +
+                                 "C.AddressLine1, C.AddressLine2, C.City, C.State, C.Zip, R.StartTime, R.EndTime  " +
+                                 "FROM Record R " +
+                                 "INNER JOIN Client C ON R.Client = C.ClientName " +
+                                 "ORDER BY R.Date, R.StartTime LIMIT " + iCount;
+                    oDAL.FillDataGrid(cmd, dgvRecords);
+                }
+                else
+                    dgvRecords.DataSource = null;
             }
-            else
-                dgvRecords.DataSource = null;
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void InitializeTimer()
@@ -863,8 +963,16 @@ namespace WorkLog
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            oDAL.BackupDB();
-            //_logger.LogInformation(@"Timer tick: Database backup executed");
+            try
+            {
+                oDAL.BackupDB();
+                //_logger.LogInformation(@"Timer tick: Database backup executed");
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
@@ -894,20 +1002,26 @@ namespace WorkLog
             }
         }
 
-
-
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (oDAL.FileSaveAs())
+            try
             {
-                strCurrDatabase = oDAL.ReadString("SELECT file FROM pragma_database_list WHERE seq = 0");
-                lblDatabaseName.Text = Path.GetFileName(strCurrDatabase);
-                ResetRecordGrid();
-                DisplayMessage(@"Database file saved successfully", Color.Green);
-                _logger.LogInformation("Database file saved via File -> Save As: {0}", oDAL.SaveAsFilename);
+                if (oDAL.FileSaveAs())
+                {
+                    strCurrDatabase = oDAL.ReadString("SELECT file FROM pragma_database_list WHERE seq = 0");
+                    lblDatabaseName.Text = Path.GetFileName(strCurrDatabase);
+                    ResetRecordGrid();
+                    DisplayMessage(@"Database file saved successfully", Color.Green);
+                    _logger.LogInformation("Database file saved via File -> Save As: {0}", oDAL.SaveAsFilename);
+                }
+                else
+                    DisplayMessage(@"Database file was not saved", Color.Red);
             }
-            else
-                DisplayMessage(@"Database file was not saved", Color.Red);
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
     }
