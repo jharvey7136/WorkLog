@@ -24,7 +24,7 @@ namespace WorkLog
             var builder = new HostBuilder()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddScoped<WorkLog>();                    
+                    services.AddScoped<WorkLog>();
                     services.AddLogging(option =>
                     {
                         option.SetMinimumLevel(LogLevel.Trace);
@@ -39,8 +39,8 @@ namespace WorkLog
                 var services = serviceScope.ServiceProvider;
                 try
                 {
-                    
-                    var workLog = services.GetRequiredService<WorkLog>();                    
+
+                    var workLog = services.GetRequiredService<WorkLog>();
                     Application.Run(workLog);
                 }
                 catch (Exception ex)
@@ -49,6 +49,6 @@ namespace WorkLog
                 }
             }
         }
-        
+
     }
 }

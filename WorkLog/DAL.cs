@@ -16,7 +16,6 @@ namespace WorkLog
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public string SaveAsFilename { get; set; }
-        public string SessionRowIDs { get; set; }
 
         private static string LoadConnectionString(string id = "Default")
         {
@@ -122,7 +121,7 @@ namespace WorkLog
                 string strFilename = "WorkLog_" + now + ".db";
                 string backupConnection = @"DataSource=..\..\..\db\" + strFilename + ";Version=3;";
 
-                string fullPathNew = Path.GetFullPath(@"..\..\..\db\" + strFilename);
+                //string fullPathNew = Path.GetFullPath(@"..\..\..\db\" + strFilename);
 
                 using (SQLiteConnection dest = new SQLiteConnection(backupConnection))
                 using (SQLiteConnection src = new SQLiteConnection(LoadConnectionString()))
@@ -131,7 +130,7 @@ namespace WorkLog
                     src.Open();
                     src.BackupDatabase(dest, "main", "main", -1, null, 0);
                 }
-                logger.Info("Database backed up: {0}", fullPathNew);
+                //logger.Info("Database backed up: {0}", fullPathNew);
 
                 int iBackups = Directory.GetFiles(@"..\..\..\db\", "*.db", SearchOption.TopDirectoryOnly).Length;
 
@@ -168,13 +167,13 @@ namespace WorkLog
                     }
                 }).GroupBy(f => f.FileHash).Select(g => new { FileHash = g.Key, Files = g.Select(z => z.FileName).ToList() })
                 .SelectMany(f => f.Files.Skip(1)).ToList();
-            int iDupes = dupFiles.Count;
+            //int iDupes = dupFiles.Count;
 
             // delete duplicate files
             dupFiles.ForEach(File.Delete);
 
-            if (iDupes > 0)
-                logger.Info(@"Duplicate backups found and deleted: {0}", dupFiles.Count);
+            //if (iDupes > 0)
+            //    logger.Info(@"Duplicate backups found and deleted: {0}", dupFiles.Count);
         }
 
         public void ArchiveBackups(int daysOld = 0)
@@ -556,48 +555,48 @@ namespace WorkLog
         }
 
 
-/*
-        private bool FileCompare(string file1, string file2)
-        {
-            try
-            {
-                int file1byte, file2byte;
-
-                if (file1 == file2)
+        /*
+                private bool FileCompare(string file1, string file2)
                 {
-                    return true;
+                    try
+                    {
+                        int file1byte, file2byte;
+
+                        if (file1 == file2)
+                        {
+                            return true;
+                        }
+
+                        FileStream fs1 = new FileStream(file1, FileMode.Open);
+                        FileStream fs2 = new FileStream(file2, FileMode.Open);
+
+                        if (fs1.Length != fs2.Length)
+                        {
+                            fs1.Close();
+                            fs2.Close();
+
+                            return false;
+                        }
+
+                        do
+                        {
+                            file1byte = fs1.ReadByte();
+                            file2byte = fs2.ReadByte();
+                        }
+                        while ((file1byte == file2byte) && (file1byte != -1));
+
+                        fs1.Close();
+                        fs2.Close();
+
+                        return ((file1byte - file2byte) == 0);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, ex.Source);
+                        return false;
+                    }
                 }
-
-                FileStream fs1 = new FileStream(file1, FileMode.Open);
-                FileStream fs2 = new FileStream(file2, FileMode.Open);
-
-                if (fs1.Length != fs2.Length)
-                {
-                    fs1.Close();
-                    fs2.Close();
-
-                    return false;
-                }
-
-                do
-                {
-                    file1byte = fs1.ReadByte();
-                    file2byte = fs2.ReadByte();
-                }
-                while ((file1byte == file2byte) && (file1byte != -1));
-
-                fs1.Close();
-                fs2.Close();
-
-                return ((file1byte - file2byte) == 0);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, ex.Source);
-                return false;
-            }
-        }
-*/
+        */
 
         private bool IsRowEmpty(DataGridViewRow row)
         {

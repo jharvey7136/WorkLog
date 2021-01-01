@@ -47,17 +47,24 @@
             this.dtpDate = new System.Windows.Forms.DateTimePicker();
             this.lblDate = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtComments = new System.Windows.Forms.TextBox();
+            this.lblComments = new System.Windows.Forms.Label();
             this.txtReimburseCost = new System.Windows.Forms.TextBox();
             this.btnSubmit = new System.Windows.Forms.Button();
             this.btnTest = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblReimbursableCost = new System.Windows.Forms.Label();
             this.lblItem = new System.Windows.Forms.Label();
             this.cbItem = new System.Windows.Forms.ComboBox();
             this.dgvRecords = new System.Windows.Forms.DataGridView();
             this.lblMessage = new System.Windows.Forms.Label();
             this.btnExport = new System.Windows.Forms.Button();
             this.gbDataFilters = new System.Windows.Forms.GroupBox();
+            this.lblAggrBillableSum = new System.Windows.Forms.Label();
+            this.lblAggrBillable = new System.Windows.Forms.Label();
+            this.lblAggrHoursSum = new System.Windows.Forms.Label();
+            this.lblAggrHours = new System.Windows.Forms.Label();
+            this.lblTotals = new System.Windows.Forms.Label();
             this.lblFilterClient = new System.Windows.Forms.Label();
             this.cbFilterClient = new System.Windows.Forms.ComboBox();
             this.btnReset = new System.Windows.Forms.Button();
@@ -84,9 +91,9 @@
             this.btnUpdateRecord = new System.Windows.Forms.Button();
             this.btnLoad = new System.Windows.Forms.Button();
             this.lblDatabaseName = new System.Windows.Forms.Label();
-            this.txtComments = new System.Windows.Forms.TextBox();
-            this.lblComments = new System.Windows.Forms.Label();
             this.btnRefreshView = new System.Windows.Forms.Button();
+            this.lblAggrReimbursableSum = new System.Windows.Forms.Label();
+            this.lblAggrReimbursable = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRecords)).BeginInit();
             this.gbDataFilters.SuspendLayout();
@@ -220,7 +227,7 @@
             this.cbTask.Name = "cbTask";
             this.cbTask.Size = new System.Drawing.Size(250, 24);
             this.cbTask.TabIndex = 7;
-            this.cbTask.SelectedIndexChanged += new System.EventHandler(this.CbTask_SelectedIndexChanged);
+            
             // 
             // txtDescription
             // 
@@ -265,7 +272,7 @@
             this.groupBox1.Controls.Add(this.lblDescription);
             this.groupBox1.Controls.Add(this.btnClear);
             this.groupBox1.Controls.Add(this.lblDate);
-            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.lblReimbursableCost);
             this.groupBox1.Controls.Add(this.lblItem);
             this.groupBox1.Controls.Add(this.dtpDate);
             this.groupBox1.Controls.Add(this.dtpStartTime);
@@ -287,6 +294,22 @@
             this.groupBox1.TabIndex = 20;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Options";
+            // 
+            // txtComments
+            // 
+            this.txtComments.Location = new System.Drawing.Point(556, 176);
+            this.txtComments.Name = "txtComments";
+            this.txtComments.Size = new System.Drawing.Size(318, 20);
+            this.txtComments.TabIndex = 10;
+            // 
+            // lblComments
+            // 
+            this.lblComments.Location = new System.Drawing.Point(490, 179);
+            this.lblComments.Name = "lblComments";
+            this.lblComments.Size = new System.Drawing.Size(60, 13);
+            this.lblComments.TabIndex = 24;
+            this.lblComments.Text = "Comments";
+            this.lblComments.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtReimburseCost
             // 
@@ -327,14 +350,14 @@
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.BtnClear_Click);
             // 
-            // label1
+            // lblReimbursableCost
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(206, 154);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Reimbursable Cost";
+            this.lblReimbursableCost.AutoSize = true;
+            this.lblReimbursableCost.Location = new System.Drawing.Point(206, 154);
+            this.lblReimbursableCost.Name = "lblReimbursableCost";
+            this.lblReimbursableCost.Size = new System.Drawing.Size(95, 13);
+            this.lblReimbursableCost.TabIndex = 1;
+            this.lblReimbursableCost.Text = "Reimbursable Cost";
             // 
             // lblItem
             // 
@@ -386,6 +409,13 @@
             // 
             // gbDataFilters
             // 
+            this.gbDataFilters.Controls.Add(this.lblAggrReimbursableSum);
+            this.gbDataFilters.Controls.Add(this.lblAggrReimbursable);
+            this.gbDataFilters.Controls.Add(this.lblAggrBillableSum);
+            this.gbDataFilters.Controls.Add(this.lblAggrBillable);
+            this.gbDataFilters.Controls.Add(this.lblAggrHoursSum);
+            this.gbDataFilters.Controls.Add(this.lblAggrHours);
+            this.gbDataFilters.Controls.Add(this.lblTotals);
             this.gbDataFilters.Controls.Add(this.lblFilterClient);
             this.gbDataFilters.Controls.Add(this.cbFilterClient);
             this.gbDataFilters.Controls.Add(this.btnReset);
@@ -407,6 +437,56 @@
             this.gbDataFilters.TabIndex = 34;
             this.gbDataFilters.TabStop = false;
             this.gbDataFilters.Text = "Filter Data View";
+            // 
+            // lblAggrBillableSum
+            // 
+            this.lblAggrBillableSum.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAggrBillableSum.Location = new System.Drawing.Point(885, 82);
+            this.lblAggrBillableSum.Name = "lblAggrBillableSum";
+            this.lblAggrBillableSum.Size = new System.Drawing.Size(84, 23);
+            this.lblAggrBillableSum.TabIndex = 53;
+            this.lblAggrBillableSum.Text = "0";
+            this.lblAggrBillableSum.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblAggrBillable
+            // 
+            this.lblAggrBillable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAggrBillable.Location = new System.Drawing.Point(708, 82);
+            this.lblAggrBillable.Name = "lblAggrBillable";
+            this.lblAggrBillable.Size = new System.Drawing.Size(175, 23);
+            this.lblAggrBillable.TabIndex = 52;
+            this.lblAggrBillable.Text = "Billable:";
+            this.lblAggrBillable.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblAggrHoursSum
+            // 
+            this.lblAggrHoursSum.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAggrHoursSum.Location = new System.Drawing.Point(885, 35);
+            this.lblAggrHoursSum.Name = "lblAggrHoursSum";
+            this.lblAggrHoursSum.Size = new System.Drawing.Size(84, 23);
+            this.lblAggrHoursSum.TabIndex = 51;
+            this.lblAggrHoursSum.Text = "0";
+            this.lblAggrHoursSum.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblAggrHours
+            // 
+            this.lblAggrHours.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAggrHours.Location = new System.Drawing.Point(708, 35);
+            this.lblAggrHours.Name = "lblAggrHours";
+            this.lblAggrHours.Size = new System.Drawing.Size(175, 23);
+            this.lblAggrHours.TabIndex = 50;
+            this.lblAggrHours.Text = "Hours:";
+            this.lblAggrHours.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblTotals
+            // 
+            this.lblTotals.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotals.Location = new System.Drawing.Point(737, 11);
+            this.lblTotals.Name = "lblTotals";
+            this.lblTotals.Size = new System.Drawing.Size(331, 23);
+            this.lblTotals.TabIndex = 49;
+            this.lblTotals.Text = "Totals";
+            this.lblTotals.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblFilterClient
             // 
@@ -559,14 +639,14 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
             this.saveAsToolStripMenuItem.Text = "Save As";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.SaveAsToolStripMenuItem_Click);
             // 
@@ -650,22 +730,6 @@
             this.lblDatabaseName.TabIndex = 48;
             this.lblDatabaseName.Text = "lblDatabaseName";
             // 
-            // txtComments
-            // 
-            this.txtComments.Location = new System.Drawing.Point(556, 176);
-            this.txtComments.Name = "txtComments";
-            this.txtComments.Size = new System.Drawing.Size(318, 20);
-            this.txtComments.TabIndex = 10;
-            // 
-            // lblComments
-            // 
-            this.lblComments.Location = new System.Drawing.Point(490, 179);
-            this.lblComments.Name = "lblComments";
-            this.lblComments.Size = new System.Drawing.Size(60, 13);
-            this.lblComments.TabIndex = 24;
-            this.lblComments.Text = "Comments";
-            this.lblComments.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // btnRefreshView
             // 
             this.btnRefreshView.Location = new System.Drawing.Point(1018, 613);
@@ -675,6 +739,26 @@
             this.btnRefreshView.Text = "Refresh";
             this.btnRefreshView.UseVisualStyleBackColor = true;
             this.btnRefreshView.Click += new System.EventHandler(this.BtnRefreshView_Click);
+            // 
+            // lblAggrReimbursableSum
+            // 
+            this.lblAggrReimbursableSum.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAggrReimbursableSum.Location = new System.Drawing.Point(885, 58);
+            this.lblAggrReimbursableSum.Name = "lblAggrReimbursableSum";
+            this.lblAggrReimbursableSum.Size = new System.Drawing.Size(84, 23);
+            this.lblAggrReimbursableSum.TabIndex = 55;
+            this.lblAggrReimbursableSum.Text = "0";
+            this.lblAggrReimbursableSum.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblAggrReimbursable
+            // 
+            this.lblAggrReimbursable.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAggrReimbursable.Location = new System.Drawing.Point(708, 58);
+            this.lblAggrReimbursable.Name = "lblAggrReimbursable";
+            this.lblAggrReimbursable.Size = new System.Drawing.Size(175, 23);
+            this.lblAggrReimbursable.TabIndex = 54;
+            this.lblAggrReimbursable.Text = "Reimbursables:";
+            this.lblAggrReimbursable.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // WorkLog
             // 
@@ -729,7 +813,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label lblItem;
         private System.Windows.Forms.ComboBox cbItem;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblReimbursableCost;
         private System.Windows.Forms.TextBox txtReimburseCost;
         private System.Windows.Forms.Button btnTest;
         private System.Windows.Forms.Button btnClear;
@@ -767,6 +851,13 @@
         private System.Windows.Forms.TextBox txtComments;
         private System.Windows.Forms.Label lblComments;
         private System.Windows.Forms.Button btnRefreshView;
+        private System.Windows.Forms.Label lblAggrBillableSum;
+        private System.Windows.Forms.Label lblAggrBillable;
+        private System.Windows.Forms.Label lblAggrHoursSum;
+        private System.Windows.Forms.Label lblAggrHours;
+        private System.Windows.Forms.Label lblTotals;
+        private System.Windows.Forms.Label lblAggrReimbursableSum;
+        private System.Windows.Forms.Label lblAggrReimbursable;
     }
 }
 

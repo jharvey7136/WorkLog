@@ -34,6 +34,8 @@ namespace WorkLog
 
             tabCategories.SelectedIndexChanged += TabCategories_SelectedIndexChanged;
 
+            dgvClient.DataBindingComplete += DgvClient_DataBindingComplete;
+
             FormClosing += CategoryForm_FormClosing;
 
             dgvTask.DataSource = null;
@@ -48,8 +50,7 @@ namespace WorkLog
                 GetDataClient();
                 GetDataProService();
                 RefreshComboBoxes();
-
-                dgvClient.AutoResizeColumns();
+                
                 dgvProService.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dgvTask.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 dgvItem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -58,6 +59,13 @@ namespace WorkLog
             {
                 logger.Error(ex, ex.Source);
             }
+        }
+
+        private void DgvClient_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            dgvClient.Columns["ClientID"].Visible = false;
+            dgvClient.Columns["ClientID"].ReadOnly = true;
+            dgvClient.AutoResizeColumns();
         }
 
         private void RefreshComboBoxes()
@@ -80,13 +88,14 @@ namespace WorkLog
                         logger.Info("Client table updated");
                     }
                     else
-                        DisplayMessage(lblMessageTop, "An unexpected error has occurred", Color.Red);
+                        DisplayMessage(lblMessageTop, "Client update failed", Color.Red);
                 }
                 else
                     return;
             }
             catch (Exception ex)
             {
+                DisplayMessage(lblMessageTop, "An unexpected error has occurred", Color.Red);
                 logger.Error(ex, ex.Source);
             }
         }
@@ -103,15 +112,16 @@ namespace WorkLog
                         DisplayMessage(lblMessageTopPS, "Update Successful", Color.Green);
                         logger.Info("Professional Service table updated");
                     }
-                        
+
                     else
-                        DisplayMessage(lblMessageTopPS, "An unexpected error has occurred", Color.Red);
+                        DisplayMessage(lblMessageTopPS, "Professional Service update failed", Color.Red);
                 }
                 else
                     return;
             }
             catch (Exception ex)
             {
+                DisplayMessage(lblMessageTopPS, "An unexpected error has occurred", Color.Red);
                 logger.Error(ex, ex.Source);
             }
         }
@@ -129,14 +139,15 @@ namespace WorkLog
                         logger.Info("Task table updated");
                     }
                     else
-                        DisplayMessage(lblMessageTopTask, "An unexpected error has occurred", Color.Red);
+                        DisplayMessage(lblMessageTopTask, "Task update failed", Color.Red);
                 }
                 else
                     return;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                DisplayMessage(lblMessageTopTask, "An unexpected error has occurred", Color.Red);
+                logger.Error(ex, ex.Source);
             }
         }
 
@@ -153,13 +164,14 @@ namespace WorkLog
                         logger.Info("Item table updated");
                     }
                     else
-                        DisplayMessage(lblMessageTopItem, "An unexpected error has occurred", Color.Red);
+                        DisplayMessage(lblMessageTopItem, "Item update failed", Color.Red);
                 }
                 else
                     return;
             }
             catch (Exception ex)
             {
+                DisplayMessage(lblMessageTopItem, "An unexpected error has occurred", Color.Red);
                 logger.Error(ex, ex.Source);
             }
         }
@@ -240,7 +252,7 @@ namespace WorkLog
         {
             try
             {
-                string cmd = "SELECT DISTINCT ClientID, ClientName, Rate, AddressLine1, AddressLine2, City, State, Zip, Enabled FROM Client ORDER BY ClientID";
+                const string cmd = "SELECT DISTINCT ClientID, ClientName, Rate, AddressLine1, AddressLine2, City, State, Zip, Enabled FROM Client ORDER BY ClientID";
                 oDAL.FillDataGrid(cmd, dgvClient);
                 dgvClient.Columns["ClientID"].Visible = false;
                 dgvClient.Columns["ClientID"].ReadOnly = true;
@@ -353,7 +365,7 @@ namespace WorkLog
 
         private void TabCategories_SelectedIndexChanged(object sender, EventArgs e)
         {
-            RefreshComboBoxes();
+            //RefreshComboBoxes();
         }
 
 
@@ -420,7 +432,7 @@ namespace WorkLog
                         if (i == 1)
                             DisplayMessage(lbl, "1 row deleted", Color.Green);
                         else if (i > 1)
-                            DisplayMessage(lbl, i.ToString() + " rows deleted", Color.Green);
+                            DisplayMessage(lbl, i + " rows deleted", Color.Green);
                     }
                     else
                         return;
@@ -448,11 +460,8 @@ namespace WorkLog
 
             if (e.FormattedValue.ToString() == "0" || e.FormattedValue.ToString() == "1")
                 return;
-            else
-            {
-                dgvClient.Rows[e.RowIndex].ErrorText = "Enabled must be 0 or 1 (0 = disabled, 1 = enabled)";
-                e.Cancel = true;
-            }
+            dgvClient.Rows[e.RowIndex].ErrorText = "Enabled must be 0 or 1 (0 = disabled, 1 = enabled)";
+            e.Cancel = true;
         }
 
         private void DgvClient_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -470,11 +479,8 @@ namespace WorkLog
 
             if (e.FormattedValue.ToString() == "0" || e.FormattedValue.ToString() == "1")
                 return;
-            else
-            {
-                dgvProService.Rows[e.RowIndex].ErrorText = "Enabled must be 0 or 1 (0 = disabled, 1 = enabled)";
-                e.Cancel = true;
-            }
+            dgvProService.Rows[e.RowIndex].ErrorText = "Enabled must be 0 or 1 (0 = disabled, 1 = enabled)";
+            e.Cancel = true;
         }
 
         private void DgvProService_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -492,11 +498,8 @@ namespace WorkLog
 
             if (e.FormattedValue.ToString() == "0" || e.FormattedValue.ToString() == "1")
                 return;
-            else
-            {
-                dgvTask.Rows[e.RowIndex].ErrorText = "Enabled must be 0 or 1 (0 = disabled, 1 = enabled)";
-                e.Cancel = true;
-            }
+            dgvTask.Rows[e.RowIndex].ErrorText = "Enabled must be 0 or 1 (0 = disabled, 1 = enabled)";
+            e.Cancel = true;
         }
 
         private void DgvTask_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -514,11 +517,8 @@ namespace WorkLog
 
             if (e.FormattedValue.ToString() == "0" || e.FormattedValue.ToString() == "1")
                 return;
-            else
-            {
-                dgvItem.Rows[e.RowIndex].ErrorText = "Enabled must be 0 or 1 (0 = disabled, 1 = enabled)";
-                e.Cancel = true;
-            }
+            dgvItem.Rows[e.RowIndex].ErrorText = "Enabled must be 0 or 1 (0 = disabled, 1 = enabled)";
+            e.Cancel = true;
         }
 
         private void DgvItem_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -529,7 +529,7 @@ namespace WorkLog
 
         private void CategoryForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            logger.Info("Category form closing... Backing up database");
+            //logger.Info("Category form closing... Backing up database");
             oDAL.BackupDB();
         }
 

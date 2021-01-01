@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+//using System.Data.Entity.Core.Common.CommandTrees;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -17,6 +18,8 @@ namespace WorkLog
         private readonly DAL oDAL = new DAL();
         private int iCount;
         private string strFilterClientID, strCurrDatabase;
+        private double dblTotalHours, dblTotalBillable, dblTotalReimbursable;
+        private readonly CultureInfo ci = new CultureInfo("en-us");
 
         public WorkLog(ILogger<WorkLog> logger)
         {
@@ -43,7 +46,7 @@ namespace WorkLog
             txtReimburseCost.KeyPress += TxtReimburseCost_KeyPress;
             dgvRecords.RowsAdded += (s, a) => OnRowNumberChanged();
 
-            _logger.LogInformation("Work Log opened... Backing up current database state");
+            //_logger.LogInformation("Work Log opened... Backing up current database state");
             oDAL.BackupDB();
         }
 
@@ -57,23 +60,29 @@ namespace WorkLog
             cbProService.SelectedValue = "";
             lblMessage.Text = "";
             lblRecordCount.Text = "";
+
+            lblAggrHoursSum.Text = @"0.00";
+            lblAggrReimbursableSum.Text = @"$0.00";
+            lblAggrBillableSum.Text = @"$0.00";
+
             dgvRecords.AllowUserToAddRows = false;
 
-            RefreshComboBox();
+            oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
+            oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
+            oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbFilterClient, "ClientName", "ClientID");
 
             dtpFilterStart.CustomFormat = @"M/dd/yyyy";
             dtpFilterEnd.CustomFormat = @"M/dd/yyyy";
 
             strCurrDatabase = oDAL.ReadString("SELECT file FROM pragma_database_list WHERE seq = 0");
             lblDatabaseName.Text = Path.GetFileName(strCurrDatabase);
-            //dgvRecords.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;            
         }
 
         private void RefreshComboBox()
         {
-            oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
-            oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
-            oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbFilterClient, "ClientName", "ClientID");
+            //oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
+            //oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
+            //oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbFilterClient, "ClientName", "ClientID");
         }
 
         private void DtpStartTime_ValueChanged(object sender, EventArgs e)
@@ -142,11 +151,6 @@ namespace WorkLog
                 oDAL.FillComboBox(cmdTask, cbTask, "TaskName", "TaskID");
                 oDAL.FillComboBox(cmdItem, cbItem, "ItemName", "ItemID");
             }
-            //else
-            //{
-            //    cmdTask = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = 1 AND Enabled = 1";
-            //    cmdItem = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = 1 AND Enabled = 1";
-            //}
 
             if (cbProService.Text == @"Reimbursable")
             {
@@ -164,17 +168,6 @@ namespace WorkLog
             }
         }
 
-        private void CbTask_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //string cmd;
-            //if (cbTask.SelectedIndex > 0 && cbTask.SelectedValue != null)
-            //    cmd = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = " + cbProService.SelectedValue + " AND Enabled = 1";
-            //else
-            //    cmd = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = 1 AND Enabled = 1";
-
-            //oDAL.FillComboBox(cmd, cbItem, "ItemName", "ItemID");
-        }
-
         private void TxtReimburseCost_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar)
@@ -187,38 +180,47 @@ namespace WorkLog
 
         private void BtnTest_Click(object sender, EventArgs e)
         {
-            Random rnd = new Random();
-            int i = rnd.Next(1, 16);
-            cbClient.SelectedValue = i;
-
-            i = rnd.Next(1, 4);
-            cbProService.SelectedValue = i;
-
-            switch (i)
+            try
             {
-                case 1:
-                    cbTask.SelectedValue = rnd.Next(1, 5);
-                    cbItem.SelectedValue = rnd.Next(1, 5);
-                    break;
-                case 2:
-                    cbTask.SelectedValue = rnd.Next(6, 11);
-                    break;
-                case 3:
-                    cbTask.SelectedValue = rnd.Next(12, 16);
-                    break;
+                Random rnd = new Random();
+                int i = rnd.Next(1, 16);
+                cbClient.SelectedValue = i;
+
+                i = rnd.Next(1, 4);
+                cbProService.SelectedValue = i;
+
+                switch (i)
+                {
+                    case 1:
+                        cbTask.SelectedValue = rnd.Next(1, 5);
+                        cbItem.SelectedValue = rnd.Next(1, 5);
+                        break;
+                    case 2:
+                        cbTask.SelectedValue = rnd.Next(6, 11);
+                        break;
+                    case 3:
+                        cbTask.SelectedValue = rnd.Next(12, 16);
+                        break;
+                }
+
+                int hr = rnd.Next(1, 12);
+                int m = rnd.Next(1, 29);
+                int d = rnd.Next(1, 30);
+
+                dtpDate.Value = DateTime.Now.AddDays(d * -1);
+                dtpStartTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hr, m, 0).AddDays(-d);
+                dtpEndTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hr + rnd.Next(1, 11), m + rnd.Next(1, 29), 0).AddDays(-d);
+                txtDescription.Text = "";
+                int r = rnd.Next(1, 15);
+                r *= 10;
+                txtReimburseCost.Text = r.ToString();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
             }
 
-            int hr = rnd.Next(1, 12);
-            int m = rnd.Next(1, 29);
-            int d = rnd.Next(1, 30);
-
-            dtpDate.Value = DateTime.Now.AddDays(d * -1);
-            dtpStartTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day-d, hr, m, 0);
-            dtpEndTime.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day-d, hr + rnd.Next(1, 11), m + rnd.Next(1, 29), 0);
-            txtDescription.Text = "";
-            int r = rnd.Next(1, 15);
-            r *= 10;
-            txtReimburseCost.Text = r.ToString();
         }
 
         private Record NewRecord()
@@ -256,9 +258,6 @@ namespace WorkLog
             txtReimburseCost.Text = @"0";
             lblMessage.Text = "";
             lblMessage.ForeColor = SystemColors.ControlText;
-
-            lblRecordCount.Text = @"0";
-            //dgvRecords.DataSource = null;
         }
 
         private void BtnSubmit_Click(object sender, EventArgs e)
@@ -286,7 +285,7 @@ namespace WorkLog
 
                 if (insert)
                 {
-                    _logger.LogInformation("New expense submitted: " + myRecord.FullRecord, Color.Green);
+                    _logger.LogInformation("New expense: " + myRecord.FullRecord, Color.Green);
                     iCount++;
                     FillDataGridOnSubmit(iCount);
                 }
@@ -312,8 +311,6 @@ namespace WorkLog
                     "INNER JOIN Client C ON R.Client = C.ClientName " +
                     "ORDER BY R.RowID DESC, R.Date, R.StartTime LIMIT " + i;
                 oDAL.FillDataGrid(cmd, dgvRecords);
-
-
             }
             catch (Exception ex)
             {
@@ -327,36 +324,41 @@ namespace WorkLog
             if (Convert.ToInt32(cbClient.SelectedValue) < 1)
             {
                 MessageBox.Show(@"Select a Client");
+                cbClient.Focus();
+                cbClient.DroppedDown = true;
                 return false;
             }
 
             if (Convert.ToInt32(cbProService.SelectedValue) < 1)
             {
                 MessageBox.Show(@"Select a Professional Service");
+                cbProService.Focus();
+                cbProService.DroppedDown = true;
                 return false;
             }
 
             if (Convert.ToInt32(cbTask.SelectedValue) < 1)
             {
                 MessageBox.Show(@"Select a Task");
+                cbTask.Focus();
+                cbTask.DroppedDown = true;
                 return false;
             }
 
             if (cbProService.Text == @"Reimbursable")
             {
-                if (txtReimburseCost.Text == "")
+                if (string.IsNullOrWhiteSpace(txtReimburseCost.Text))
                 {
                     MessageBox.Show(@"Reimbursable cost cannot be blank");
                     txtReimburseCost.Focus();
                     return false;
                 }
 
-                if (!Regex.IsMatch(txtReimburseCost.Text.Trim().Replace(",", ""), @"^\d+(\.\d{1,2})?$"))
-                {
-                    MessageBox.Show(@"Reimbursable cost must be in valid numeric form, e.g., 30, 56.23, 80.4 ");
-                    txtReimburseCost.Focus();
-                    return false;
-                }
+                if (Regex.IsMatch(txtReimburseCost.Text.Trim().Replace(",", ""), @"^\d+(\.\d{1,2})?$")) return true;
+
+                MessageBox.Show(@"Reimbursable cost must be in valid numeric form, e.g., 30, 56.23, 80.4 ");
+                txtReimburseCost.Focus();
+                return false;
             }
             else
             {
@@ -427,6 +429,8 @@ namespace WorkLog
                 string end = dtpFilterEnd.Value.ToString("yyyy-MM-dd");
                 string where = "WHERE R.Date BETWEEN '" + start + "' AND '" + end + "' ";
                 FillRecordView(where);
+                if (dgvRecords.RowCount == 0)
+                    OnRowNumberChanged();
             }
             catch (Exception ex)
             {
@@ -484,9 +488,45 @@ namespace WorkLog
             dgvRecords.Columns["Zip"].Visible = false;
             dgvRecords.Columns["RowID"].ReadOnly = true;
             dgvRecords.Columns["CreateDate"].ReadOnly = true;
+            dgvRecords.Columns["StartTime"].Visible = false;
+            dgvRecords.Columns["EndTime"].Visible = false;
             lblMessage.ForeColor = SystemColors.ControlText;
             lblMessage.Text = "";
             dgvRecords.AutoResizeColumns();
+
+            CalculateTotals();
+            lblAggrHoursSum.Text = dblTotalHours.ToString("N02", ci);
+            lblAggrReimbursableSum.Text = dblTotalReimbursable.ToString("C", ci);
+            lblAggrBillableSum.Text = dblTotalBillable.ToString("C", ci);
+        }
+
+        private void CalculateTotals()
+        {
+            dblTotalHours = 0;
+            dblTotalReimbursable = 0;
+            dblTotalBillable = 0;
+
+            try
+            {
+                if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
+                    return;
+
+                foreach (DataGridViewRow row in dgvRecords.Rows)
+                {
+                    if (!string.IsNullOrEmpty(row.Cells["Hours"].Value.ToString()) && row.Cells["Hours"].Value != DBNull.Value)
+                        dblTotalHours += double.Parse(row.Cells["Hours"].Value.ToString());
+
+                    if (!string.IsNullOrEmpty(row.Cells["ReimbursableCost"].Value.ToString()) && row.Cells["ReimbursableCost"].Value != DBNull.Value)
+                        dblTotalReimbursable += double.Parse(row.Cells["ReimbursableCost"].Value.ToString());
+
+                    dblTotalBillable += double.Parse(row.Cells["Billable"].Value.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void DisplayMessage(string msg, Color color)
@@ -507,6 +547,9 @@ namespace WorkLog
             cmd = "SELECT date('now','start of month', '-1 day')";
             string endDate = oDAL.ReadString(cmd);
             dtpFilterEnd.Value = DateTime.Parse(endDate);
+
+            if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
+                OnRowNumberChanged();
         }
 
         private void BtnLast30_Click(object sender, EventArgs e)
@@ -519,6 +562,9 @@ namespace WorkLog
             dtpFilterStart.Value = DateTime.Parse(startDate);
 
             dtpFilterEnd.Value = DateTime.Now;
+
+            if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
+                OnRowNumberChanged();
         }
 
         private void BtnYTD_Click(object sender, EventArgs e)
@@ -531,6 +577,9 @@ namespace WorkLog
             dtpFilterStart.Value = DateTime.Parse(startDate);
 
             dtpFilterEnd.Value = DateTime.Now;
+
+            if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
+                OnRowNumberChanged();
         }
 
         private void BtnMTD_Click(object sender, EventArgs e)
@@ -543,6 +592,9 @@ namespace WorkLog
             dtpFilterStart.Value = DateTime.Parse(startDate);
 
             dtpFilterEnd.Value = DateTime.Now;
+
+            if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
+                OnRowNumberChanged();
         }
 
         private void BtnAll_Click(object sender, EventArgs e)
@@ -563,6 +615,9 @@ namespace WorkLog
             cmd = "SELECT MAX(date) FROM Record";
             string endDate = oDAL.ReadString(cmd);
             dtpFilterEnd.Value = DateTime.Parse(endDate);
+
+            if (dgvRecords.DataSource == null || dgvRecords.RowCount < 1)
+                OnRowNumberChanged();
         }
 
         private void BtnDelete_Click(object sender, EventArgs e)
@@ -602,7 +657,7 @@ namespace WorkLog
                             DisplayMessage("1 record deleted", Color.Green);
                             _logger.LogInformation("1 record deleted");
                         }
-                            
+
                         else if (i > 1)
                         {
                             DisplayMessage(i + " records deleted", Color.Green);
@@ -659,6 +714,7 @@ namespace WorkLog
 
         private void BtnLoad_Click(object sender, EventArgs e)
         {
+            lblMessage.Text = "";
             try
             {
                 if (dgvRecords.SelectedCells.Count < 1 && dgvRecords.DataSource != null)
@@ -676,8 +732,12 @@ namespace WorkLog
                     txtReimburseCost.Text = dr.Cells["ReimbursableCost"].Value.ToString();
                     txtDescription.Text = dr.Cells["Description"].Value.ToString();
                     txtComments.Text = dr.Cells["Comments"].Value.ToString();
-                    dtpStartTime.Value = DateTime.ParseExact(dr.Cells["StartTime"].Value.ToString(), "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
-                    dtpEndTime.Value = DateTime.ParseExact(dr.Cells["EndTime"].Value.ToString(), "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+
+                    if (!string.IsNullOrEmpty(dr.Cells["StartTime"].Value.ToString()) && dr.Cells["StartTime"].Value != DBNull.Value)
+                        dtpStartTime.Value = DateTime.ParseExact(dr.Cells["StartTime"].Value.ToString(), "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+
+                    if (!string.IsNullOrEmpty(dr.Cells["EndTime"].Value.ToString()) && dr.Cells["EndTime"].Value != DBNull.Value)
+                        dtpEndTime.Value = DateTime.ParseExact(dr.Cells["EndTime"].Value.ToString(), "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
                 }
             }
             catch (Exception ex)
@@ -718,12 +778,30 @@ namespace WorkLog
 
         private void BtnRefreshView_Click(object sender, EventArgs e)
         {
-            RefreshRecordGrid();
+            try
+            {
+                RefreshRecordGrid();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
+
+
         }
 
         private void BtnReset_Click(object sender, EventArgs e)
         {
-            ResetRecordGrid();
+            try
+            {
+                ResetRecordGrid();
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
         }
 
         private void RefreshRecordGrid()
@@ -757,6 +835,10 @@ namespace WorkLog
             dtpFilterStart.Value = DateTime.Today;
             dtpFilterEnd.Value = DateTime.Today;
             cbFilterClient.SelectedIndex = 0;
+
+            lblAggrHoursSum.Text = @"0.00";
+            lblAggrReimbursableSum.Text = @"$0.00";
+            lblAggrBillableSum.Text = @"$0.00";
 
             if (iCount > 0)
             {
@@ -812,7 +894,7 @@ namespace WorkLog
             }
         }
 
-        
+
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -822,7 +904,7 @@ namespace WorkLog
                 lblDatabaseName.Text = Path.GetFileName(strCurrDatabase);
                 ResetRecordGrid();
                 DisplayMessage(@"Database file saved successfully", Color.Green);
-                _logger.LogInformation("Database file saved via File -> Save As: {0}", oDAL.SaveAsFilename );
+                _logger.LogInformation("Database file saved via File -> Save As: {0}", oDAL.SaveAsFilename);
             }
             else
                 DisplayMessage(@"Database file was not saved", Color.Red);
