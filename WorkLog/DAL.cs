@@ -117,6 +117,7 @@ namespace WorkLog
         {
             try
             {
+                Directory.CreateDirectory(@"..\..\..\db");
                 string now = DateTime.Now.ToString("yyyy-MM-dd_HHmmsss");
                 string strFilename = "WorkLog_" + now + ".db";
                 string backupConnection = @"DataSource=..\..\..\db\" + strFilename + ";Version=3;";

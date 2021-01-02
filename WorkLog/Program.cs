@@ -40,7 +40,7 @@ namespace WorkLog
                 try
                 {
 
-                    var workLog = services.GetRequiredService<WorkLog>();
+                    WorkLog workLog = services.GetRequiredService<WorkLog>();
                     Application.Run(workLog);
                 }
                 catch (Exception ex)

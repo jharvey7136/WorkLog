@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace WorkLog
@@ -524,6 +525,16 @@ namespace WorkLog
         private void DgvClient_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             string headerText = dgvClient.Columns[e.ColumnIndex].HeaderText;
+
+            if (headerText.Equals("Rate"))
+            {
+                if (string.IsNullOrWhiteSpace(e.FormattedValue.ToString()))
+                    return;
+
+                if (Regex.IsMatch(e.FormattedValue.ToString(), @"^\d+$")) return;
+                dgvClient.Rows[e.RowIndex].ErrorText = "Rate must be whole number";
+                e.Cancel = true;
+            }
 
             if (!headerText.Equals("Enabled")) return;
             if (dgvClient.Rows[e.RowIndex].IsNewRow) return;

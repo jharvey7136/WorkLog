@@ -30,6 +30,7 @@ namespace WorkLog
                 InitializeComponent();
 
                 btnTest.Visible = true;
+
                 dtpDate.Visible = false;
                 lblDate.Visible = false;
 
@@ -513,6 +514,10 @@ namespace WorkLog
             {
                 CategoryForm formCategories = new CategoryForm();
                 formCategories.ShowDialog();
+                oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
+                oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
+                oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbFilterClient, "ClientName", "ClientID");
+
             }
             catch (Exception ex)
             {
@@ -781,8 +786,12 @@ namespace WorkLog
             try
             {
                 _logger.LogInformation("Database backup initiated via Tools -> Backup Database");
-                oDAL.BackupDB();
-                MessageBox.Show(@"Backup successful!");
+                if (!oDAL.BackupDB())
+                {
+                    DisplayMessage("An unexpected error has occurred. Database backup failed", Color.Red);
+                    return;
+                }
+                DisplayMessage("Backup successful!", Color.Green);
             }
             catch (Exception ex)
             {
