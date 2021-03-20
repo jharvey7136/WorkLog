@@ -17,6 +17,8 @@ namespace WorkLog
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public string SaveAsFilename { get; set; }
 
+
+
         private static string LoadConnectionString(string id = "Default")
         {
             return ConfigurationManager.ConnectionStrings[id].ConnectionString;
@@ -24,6 +26,7 @@ namespace WorkLog
 
         public void SetConnectionString(string con)
         {
+
             ConnectionStringSettings DBCS = ConfigurationManager.ConnectionStrings["Default"];
 
             FieldInfo writable = typeof(ConfigurationElement).GetField("_bReadOnly", BindingFlags.Instance | BindingFlags.NonPublic);

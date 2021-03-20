@@ -8,6 +8,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
+using System.Configuration;
+using System.Collections.Specialized;
 
 namespace WorkLog
 {
@@ -63,6 +65,14 @@ namespace WorkLog
         {
             try
             {
+                if (ConfigurationManager.ConnectionStrings["Default"].ConnectionString == "") 
+                {
+                    SetDatabaseConnection();
+                    //MessageBox.Show(ConfigurationManager.ConnectionStrings["Default"].ConnectionString);
+                }
+
+
+
                 dtpStartTime.CustomFormat = @"M/d/yyyy h:mm tt";
                 dtpEndTime.CustomFormat = @"M/d/yyyy h:mm tt";
                 lblHours.Text = Math.Round(CalculateTimespan().TotalHours, 2).ToString();
@@ -78,7 +88,7 @@ namespace WorkLog
 
                 dgvRecords.AllowUserToAddRows = false;
 
-                oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
+                oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1 ORDER BY ClientName", cbClient, "ClientName", "ClientID");
                 oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
                 oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbFilterClient, "ClientName", "ClientID");
 
@@ -94,14 +104,6 @@ namespace WorkLog
                 _logger.LogError(ex, ex.Source);
             }
         }
-        /*
-                private void RefreshComboBox()
-                {
-                    //oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
-                    //oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
-                    //oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbFilterClient, "ClientName", "ClientID");
-                }
-        */
 
         private void DtpStartTime_ValueChanged(object sender, EventArgs e)
         {
@@ -166,23 +168,19 @@ namespace WorkLog
             {
                 if (cbProService.SelectedIndex > 0 && cbProService.SelectedValue != null)
                 {
-                    string cmdTask = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = " + cbProService.SelectedValue + " AND Enabled = 1";
-                    string cmdItem = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = " + cbProService.SelectedValue + " AND Enabled = 1";
+                    string cmdTask = "SELECT TaskID, TaskName FROM Task WHERE ProServiceID = " + cbProService.SelectedValue + " AND Enabled = 1 ORDER BY TaskName";
+                    string cmdItem = "SELECT ItemID, ItemName FROM Item WHERE ProServiceID = " + cbProService.SelectedValue + " AND Enabled = 1 ORDER BY ItemName";
                     oDAL.FillComboBox(cmdTask, cbTask, "TaskName", "TaskID");
                     oDAL.FillComboBox(cmdItem, cbItem, "ItemName", "ItemID");
                 }
                 if (cbProService.Text == @"Reimbursable")
                 {
-                    txtReimburseCost.Enabled = true;
-                    dtpStartTime.Enabled = false;
-                    dtpEndTime.Enabled = false;
+                    txtReimburseCost.Enabled = true;                    
                     lblHours.Enabled = false;
                 }
                 else
                 {
-                    txtReimburseCost.Enabled = false;
-                    dtpStartTime.Enabled = true;
-                    dtpEndTime.Enabled = true;
+                    txtReimburseCost.Enabled = false;                    
                     lblHours.Enabled = true;
                 }
             }
@@ -256,7 +254,7 @@ namespace WorkLog
                 StartTime = dtpStartTime.Value,
                 EndTime = dtpEndTime.Value,
                 TotalHours = Convert.ToDouble(lblHours.Text),
-                ReimburseAmount = Convert.ToInt32(txtReimburseCost.Text),
+                ReimburseAmount = Convert.ToDouble(txtReimburseCost.Text),
                 Description = txtDescription.Text,
                 Comments = txtComments.Text
             };
@@ -334,7 +332,7 @@ namespace WorkLog
             try
             {
                 string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTimeOnly, R.EndTimeOnly, R.Hours, " +
-                    "C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost) Billable, R.Description, R.Comments, R.RowID, " +
+                    "C.Rate, R.ReimbursableCost, (R.Hours * C.Rate) + R.ReimbursableCost Billable, R.Description, R.Comments, R.RowID, " +
                     "C.AddressLine1, C.AddressLine2, C.City, C.State, C.Zip, R.StartTime, R.EndTime  " +
                     "FROM Record R " +
                     "INNER JOIN Client C ON R.Client = C.ClientName " +
@@ -482,7 +480,7 @@ namespace WorkLog
             {
                 string cmd =
                     "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTimeOnly, R.EndTimeOnly, R.Hours, " +
-                    "C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost)  Billable, R.Description, R.Comments, R.RowID, " +
+                    "C.Rate, R.ReimbursableCost, (R.Hours * C.Rate) + R.ReimbursableCost  Billable, R.Description, R.Comments, R.RowID, " +
                     "C.AddressLine1, C.AddressLine2, C.City, C.State, C.Zip, R.StartTime , R.EndTime  " +
                     "FROM Record R " +
                     "INNER JOIN Client C ON R.Client = C.ClientName " +
@@ -514,9 +512,9 @@ namespace WorkLog
             {
                 CategoryForm formCategories = new CategoryForm();
                 formCategories.ShowDialog();
-                oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbClient, "ClientName", "ClientID");
+                oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1 ORDER BY ClientName", cbClient, "ClientName", "ClientID");
                 oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
-                oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbFilterClient, "ClientName", "ClientID");
+                oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1 ORDER BY ClientName", cbFilterClient, "ClientName", "ClientID");
 
             }
             catch (Exception ex)
@@ -946,7 +944,7 @@ namespace WorkLog
                 if (iCount > 0)
                 {
                     string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTimeOnly, R.EndTimeOnly, R.Hours, " +
-                                 "C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost) Billable, R.Description, R.Comments, R.RowID, " +
+                                 "C.Rate, R.ReimbursableCost, (R.Hours * C.Rate) + R.ReimbursableCost Billable, R.Description, R.Comments, R.RowID, " +
                                  "C.AddressLine1, C.AddressLine2, C.City, C.State, C.Zip, R.StartTime, R.EndTime  " +
                                  "FROM Record R " +
                                  "INNER JOIN Client C ON R.Client = C.ClientName " +
@@ -986,29 +984,7 @@ namespace WorkLog
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            try
-            {
-                using (OpenFileDialog ofg = new OpenFileDialog())
-                {
-                    ofg.Filter = @"SQLite Database|*.db";
-                    ofg.RestoreDirectory = true;
-
-                    if (ofg.ShowDialog() != DialogResult.OK) return;
-
-                    string filePath = @"DataSource=" + ofg.FileName + ";Version=3;";
-                    oDAL.SetConnectionString(filePath);
-                    strCurrDatabase = oDAL.ReadString("SELECT file FROM pragma_database_list WHERE seq = 0");
-                    lblDatabaseName.Text = Path.GetFileName(strCurrDatabase);
-                    ResetRecordGrid();
-                    DisplayMessage(@"Database loaded successfully", Color.Green);
-                    _logger.LogInformation("New database loaded via File -> Open: {0}", ofg.FileName);
-                }
-            }
-            catch (Exception ex)
-            {
-                DisplayMessage("An unexpected error has occurred", Color.Red);
-                _logger.LogError(ex, ex.Source);
-            }
+            SetDatabaseConnection();            
         }
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1031,6 +1007,61 @@ namespace WorkLog
                 DisplayMessage("An unexpected error has occurred", Color.Red);
                 _logger.LogError(ex, ex.Source);
             }
+        }
+
+        private void SetDatabaseConnection()
+        {
+            try
+            {
+                using (OpenFileDialog ofg = new OpenFileDialog())
+                {
+                    ofg.Filter = @"SQLite Database|*.db";
+                    ofg.RestoreDirectory = true;
+
+                    if (ofg.ShowDialog() != DialogResult.OK) return;
+
+                    string filePath = @"DataSource=" + ofg.FileName + ";Version=3;";
+
+                    SetConnection("Default", filePath);
+
+                    oDAL.SetConnectionString(filePath);
+                    strCurrDatabase = oDAL.ReadString("SELECT file FROM pragma_database_list WHERE seq = 0");
+                    lblDatabaseName.Text = Path.GetFileName(strCurrDatabase);
+                    ResetRecordGrid();
+                    DisplayMessage(@"Database loaded successfully", Color.Green);
+                    _logger.LogInformation("New database loaded via File -> Open: {0}", ofg.FileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                DisplayMessage("An unexpected error has occurred", Color.Red);
+                _logger.LogError(ex, ex.Source);
+            }
+        }
+
+
+        public static void SetConfig(string key, string value)
+        {
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            var entry = config.AppSettings.Settings[key];
+            if (entry == null)
+                config.AppSettings.Settings.Add(key, value);
+            else
+                config.AppSettings.Settings[key].Value = value;
+
+            config.Save(ConfigurationSaveMode.Modified);
+        }
+
+
+
+        public static void SetConnection(string key, string value)
+        {
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var connectionStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
+            connectionStringsSection.ConnectionStrings[key].ConnectionString = value;
+            config.Save();
+            ConfigurationManager.RefreshSection("connectionStrings");
         }
 
     }
