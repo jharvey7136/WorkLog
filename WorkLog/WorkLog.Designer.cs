@@ -88,6 +88,10 @@
             this.toolStripManageCat = new System.Windows.Forms.ToolStripMenuItem();
             this.backupDatabaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.archiveBackupsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.configurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.databaseConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backupDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.archiveDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lblRecordCount = new System.Windows.Forms.Label();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnUpdateRecord = new System.Windows.Forms.Button();
@@ -674,7 +678,8 @@
             this.menuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripManageCat,
             this.backupDatabaseToolStripMenuItem,
-            this.archiveBackupsToolStripMenuItem});
+            this.archiveBackupsToolStripMenuItem,
+            this.configurationToolStripMenuItem});
             this.menuFile.Name = "menuFile";
             this.menuFile.Size = new System.Drawing.Size(46, 20);
             this.menuFile.Text = "Tools";
@@ -682,23 +687,54 @@
             // toolStripManageCat
             // 
             this.toolStripManageCat.Name = "toolStripManageCat";
-            this.toolStripManageCat.Size = new System.Drawing.Size(176, 22);
+            this.toolStripManageCat.Size = new System.Drawing.Size(180, 22);
             this.toolStripManageCat.Text = "Manage Categories";
             this.toolStripManageCat.Click += new System.EventHandler(this.ToolStripManageCat_Click);
             // 
             // backupDatabaseToolStripMenuItem
             // 
             this.backupDatabaseToolStripMenuItem.Name = "backupDatabaseToolStripMenuItem";
-            this.backupDatabaseToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.backupDatabaseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.backupDatabaseToolStripMenuItem.Text = "Backup Database";
             this.backupDatabaseToolStripMenuItem.Click += new System.EventHandler(this.BackupDatabaseToolStripMenuItem_Click);
             // 
             // archiveBackupsToolStripMenuItem
             // 
             this.archiveBackupsToolStripMenuItem.Name = "archiveBackupsToolStripMenuItem";
-            this.archiveBackupsToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+            this.archiveBackupsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.archiveBackupsToolStripMenuItem.Text = "Archive Backups";
             this.archiveBackupsToolStripMenuItem.Click += new System.EventHandler(this.ArchiveBackupsToolStripMenuItem_Click);
+            // 
+            // configurationToolStripMenuItem
+            // 
+            this.configurationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.databaseConnectionToolStripMenuItem,
+            this.backupDirectoryToolStripMenuItem,
+            this.archiveDirectoryToolStripMenuItem});
+            this.configurationToolStripMenuItem.Name = "configurationToolStripMenuItem";
+            this.configurationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.configurationToolStripMenuItem.Text = "Configuration";
+            // 
+            // databaseConnectionToolStripMenuItem
+            // 
+            this.databaseConnectionToolStripMenuItem.Name = "databaseConnectionToolStripMenuItem";
+            this.databaseConnectionToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.databaseConnectionToolStripMenuItem.Text = "Set Database Connection";
+            this.databaseConnectionToolStripMenuItem.Click += new System.EventHandler(this.DatabaseConnectionToolStripMenuItem_Click);
+            // 
+            // backupDirectoryToolStripMenuItem
+            // 
+            this.backupDirectoryToolStripMenuItem.Name = "backupDirectoryToolStripMenuItem";
+            this.backupDirectoryToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.backupDirectoryToolStripMenuItem.Text = "Set Backup Directory";
+            this.backupDirectoryToolStripMenuItem.Click += new System.EventHandler(this.BackupDirectoryToolStripMenuItem_Click);
+            // 
+            // archiveDirectoryToolStripMenuItem
+            // 
+            this.archiveDirectoryToolStripMenuItem.Name = "archiveDirectoryToolStripMenuItem";
+            this.archiveDirectoryToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.archiveDirectoryToolStripMenuItem.Text = "Set Archive Directory";
+            this.archiveDirectoryToolStripMenuItem.Click += new System.EventHandler(this.ArchiveDirectoryToolStripMenuItem_Click);
             // 
             // lblRecordCount
             // 
@@ -857,6 +893,10 @@
         private System.Windows.Forms.Label lblTotals;
         private System.Windows.Forms.Label lblAggrReimbursableSum;
         private System.Windows.Forms.Label lblAggrReimbursable;
+        private System.Windows.Forms.ToolStripMenuItem configurationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem databaseConnectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem backupDirectoryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem archiveDirectoryToolStripMenuItem;
     }
 }
 

@@ -9,6 +9,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Security.AccessControl;
+using System.Security.Principal;
 
 namespace WorkLog
 {
@@ -17,22 +19,110 @@ namespace WorkLog
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public string SaveAsFilename { get; set; }
 
-
-
         private static string LoadConnectionString(string id = "Default")
         {
             return ConfigurationManager.ConnectionStrings[id].ConnectionString;
         }
 
-        public void SetConnectionString(string con)
+
+        /********************************* CONFIGURATIONS *********************************/
+        public void SetConnectionStringConfig(string key, string value)
         {
+            try
+            {
+                var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var connectionStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
+                var entry = connectionStringsSection.ConnectionStrings[key];
 
-            ConnectionStringSettings DBCS = ConfigurationManager.ConnectionStrings["Default"];
+                if (entry == null)
+                {
+                    ConnectionStringSettings con = new ConnectionStringSettings
+                    {
+                        ConnectionString = value,
+                        ProviderName = "System.Data.SQLClient",
+                        Name = key
+                    };
+                    connectionStringsSection.ConnectionStrings.Add(con);
+                    logger.Info("New connection string set: key={0} value={1}", key, value);
+                }
+                else
+                {
+                    connectionStringsSection.ConnectionStrings[key].ConnectionString = value;
+                    logger.Info("Existing connection string updated: key={0} value={1}", key, value);
+                }
 
-            FieldInfo writable = typeof(ConfigurationElement).GetField("_bReadOnly", BindingFlags.Instance | BindingFlags.NonPublic);
-            writable.SetValue(DBCS, false);
+                config.Save();
+                ConfigurationManager.RefreshSection("connectionStrings");
+                Properties.Settings.Default.Reload();
+            }
+            catch(Exception ex)
+            {
+                logger.Error(ex, ex.Source);
+                logger.Info("Error setting connection string value: key={0} value={1}", key, value);
+            }
+            
+        }
 
-            DBCS.ConnectionString = con;
+        public static void SetAppSettingsConfig(string key, string value)
+        {
+            try
+            {
+                var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var appSettings = (AppSettingsSection)config.GetSection("appSettings");
+                var entry = appSettings.Settings[key];
+
+                if (entry == null)
+                    config.AppSettings.Settings.Add(key, value);
+                else
+                    config.AppSettings.Settings[key].Value = value;
+
+                config.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection("appSettings");
+                Properties.Settings.Default.Reload();
+            }
+            catch(Exception ex)
+            {
+                logger.Error(ex, ex.Source);
+                logger.Info("Error setting app setting value: key={0} value={1}", key, value);
+            }            
+        }
+
+        public void SetBackupDir()
+        {
+            try
+            {
+                using (var fldrDlg = new FolderBrowserDialog())
+                {
+                    if (fldrDlg.ShowDialog() == DialogResult.OK)
+                    {
+                        SetAppSettingsConfig("dbBackupDir", fldrDlg.SelectedPath);
+                    }
+                }
+                logger.Info("dbBackupDir appSettings value set");
+            }
+            catch(Exception ex)
+            {
+                logger.Error(ex, ex.Source);                
+            }            
+        }
+
+        public void SetArchiveDir()
+        {
+            try
+            {
+                using (var fldrDlg = new FolderBrowserDialog())
+                {
+                    if (fldrDlg.ShowDialog() == DialogResult.OK)
+                    {
+                        SetAppSettingsConfig("dbArchiveDir", fldrDlg.SelectedPath);
+                    }
+                }
+                logger.Info("dbArchiveDir appSettings value set");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Source);
+            }
         }
 
         public void FillComboBox(string cmd, ComboBox cb, string strDisplay, string strValue)
@@ -89,12 +179,14 @@ namespace WorkLog
                     FileName = "WorkLog_" + DateTime.Now.ToString("yyyy-MM-dd_HHmm")
                 };
 
-                if (sfd.ShowDialog() != DialogResult.OK) return false;
+                if (sfd.ShowDialog() != DialogResult.OK)
+                    return false;
 
                 string fn = sfd.FileName;
                 string backupConnection = @"DataSource=" + fn + ";Version=3;";
 
-                if (string.IsNullOrWhiteSpace(fn)) return false;
+                if (string.IsNullOrWhiteSpace(fn))
+                    return false;
 
                 using (SQLiteConnection dest = new SQLiteConnection(backupConnection))
                 using (SQLiteConnection src = new SQLiteConnection(LoadConnectionString()))
@@ -102,7 +194,7 @@ namespace WorkLog
                     dest.Open();
                     src.Open();
                     src.BackupDatabase(dest, "main", "main", -1, null, 0);
-                    SetConnectionString(backupConnection);
+                    //SetConnectionString(backupConnection);
                     SaveAsFilename = sfd.FileName;
                 }
 
@@ -118,36 +210,93 @@ namespace WorkLog
 
         public bool BackupDB()
         {
+            string strBackupDir = "";
+            logger.Info("Backup database initiated");
             try
             {
-                Directory.CreateDirectory(@"..\..\..\db");
-                string now = DateTime.Now.ToString("yyyy-MM-dd_HHmmsss");
-                string strFilename = "WorkLog_" + now + ".db";
-                string backupConnection = @"DataSource=..\..\..\db\" + strFilename + ";Version=3;";
+                strBackupDir = ConfigurationManager.AppSettings.Get("dbBackupDir");
 
-                //string fullPathNew = Path.GetFullPath(@"..\..\..\db\" + strFilename);
-
-                using (SQLiteConnection dest = new SQLiteConnection(backupConnection))
-                using (SQLiteConnection src = new SQLiteConnection(LoadConnectionString()))
+                if (!string.IsNullOrEmpty(strBackupDir))
                 {
-                    dest.Open();
-                    src.Open();
-                    src.BackupDatabase(dest, "main", "main", -1, null, 0);
+                    string now = DateTime.Now.ToString("yyyy-MM-dd_HHmmsss");
+                    string strFilename = "WorkLog_" + now + ".db";
+
+                    string backupConnection = @"DataSource=" + strBackupDir + "\\" + strFilename + ";Version=3;";
+                    SetConnectionStringConfig("DBBackup", backupConnection);
+
+                    using (SQLiteConnection dest = new SQLiteConnection(backupConnection))
+                    using (SQLiteConnection src = new SQLiteConnection(LoadConnectionString()))
+                    {
+                        dest.Open();
+                        src.Open();
+                        src.BackupDatabase(dest, "main", "main", -1, null, 0);
+                    }
+
+                    int iBackups = Directory.GetFiles(strBackupDir, "*.db", SearchOption.TopDirectoryOnly).Length;
+
+                    DeleteDuplicateFiles(strBackupDir);
+
+                    if (iBackups <= 50)
+                        return true;
+
+                    if (!ArchiveBackups())
+                        logger.Info("Archive failed");
+
+                    return true;
                 }
-                //logger.Info("Database backed up: {0}", fullPathNew);
-
-                int iBackups = Directory.GetFiles(@"..\..\..\db\", "*.db", SearchOption.TopDirectoryOnly).Length;
-
-                DeleteDuplicateFiles(@"..\..\..\db\");
-
-                if (iBackups <= 50) return true;
-                ArchiveBackups();
-
-                return true;
+                else
+                {                    
+                    logger.Info("The backup directory declared in the configuration is null or empty: " + strBackupDir);
+                    return false;
+                }
             }
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Source);
+                logger.Error("Variables on error: strBackupDir: {0}", strBackupDir);
+                return false;
+            }
+        }        
+
+        public bool ArchiveBackups(int daysOld = 0)
+        {
+            logger.Info("Archive backups initiated");
+            string strArchiveDir = "", strBackupDir = "", zipPath = "", now = "", strFilename = "";
+            try
+            {
+                strArchiveDir = ConfigurationManager.AppSettings.Get("dbArchiveDir");
+                strBackupDir = ConfigurationManager.AppSettings.Get("dbBackupDir");
+
+                if (!string.IsNullOrEmpty(strArchiveDir))
+                {
+                    now = DateTime.Now.ToString("yyyy-MM-dd_HHmm");
+                    strFilename = "WorkLog_" + now + ".zip";
+                    zipPath = Path.GetFullPath(strArchiveDir + "\\" + strFilename);
+                    int i = 0;
+
+                    using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Create))
+                    {
+                        foreach (FileInfo fi in new DirectoryInfo(strBackupDir).GetFiles().OrderBy(x => x.LastWriteTime))
+                        {
+                            if (fi.LastWriteTime >= DateTime.Now.AddDays(daysOld)) continue;
+                            zip.CreateEntryFromFile(fi.FullName, fi.Name);
+                            fi.Delete();
+                            i++;
+                        }
+                    }
+                    logger.Info("Database archive count: {0}, zip file: {1} ", i.ToString(), zipPath);
+                    return true;
+                }
+                else
+                {
+                    logger.Info("The archive directory declared in the configuration is null or empty: " + strArchiveDir);
+                    return false;
+                }                    
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Source);
+                logger.Error("Variables on error: strArchiveDir: {0}, strBackupDir: {1}, zipPath: {2}", strArchiveDir, strBackupDir, zipPath);
                 return false;
             }
         }
@@ -156,55 +305,22 @@ namespace WorkLog
         public void DeleteDuplicateFiles(string directoryPath)
         {
             string[] allFiles = Directory.GetFiles(directoryPath, "*.db*", SearchOption.AllDirectories);
-            //logger.Info(@"Backups found: {0}", allFiles.Length);
+            logger.Info(@"Backups found: {0}", allFiles.Length);
 
-            // get duplicate files
             var dupFiles = allFiles.Select(f =>
-                {
-                    using (FileStream fs = new FileStream(f, FileMode.Open, FileAccess.Read))
-                    {
-                        return new
-                        {
-                            FileName = f,
-                            FileHash = BitConverter.ToString(SHA1.Create().ComputeHash(fs))
-                        };
-                    }
-                }).GroupBy(f => f.FileHash).Select(g => new { FileHash = g.Key, Files = g.Select(z => z.FileName).ToList() })
-                .SelectMany(f => f.Files.Skip(1)).ToList();
-            //int iDupes = dupFiles.Count;
-
-            // delete duplicate files
-            dupFiles.ForEach(File.Delete);
-
-            //if (iDupes > 0)
-            //    logger.Info(@"Duplicate backups found and deleted: {0}", dupFiles.Count);
-        }
-
-        public void ArchiveBackups(int daysOld = 0)
-        {
-            string now = DateTime.Now.ToString("yyyy-MM-dd_HHmm");
-            string strFilename = "WorkLog_" + now + ".zip";
-            string zipPath = Path.GetFullPath(@"..\..\..\db\Archive\" + strFilename);
-            int i = 0;
-
-            try
             {
-                using (ZipArchive zip = ZipFile.Open(zipPath, ZipArchiveMode.Create))
+                using (FileStream fs = new FileStream(f, FileMode.Open, FileAccess.Read))
                 {
-                    foreach (FileInfo fi in new DirectoryInfo(@"..\..\..\db").GetFiles().OrderBy(x => x.LastWriteTime))
+                    return new
                     {
-                        if (fi.LastWriteTime >= DateTime.Now.AddDays(daysOld)) continue;
-                        zip.CreateEntryFromFile(fi.FullName, fi.Name);
-                        fi.Delete();
-                        i++;
-                    }
+                        FileName = f,
+                        FileHash = BitConverter.ToString(SHA1.Create().ComputeHash(fs))
+                    };
                 }
-                logger.Info("Database archive count: {0}, zip file: {1} ", i.ToString(), zipPath);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, ex.Source);
-            }
+            }).GroupBy(f => f.FileHash).Select(g => new { FileHash = g.Key, Files = g.Select(z => z.FileName).ToList() })
+                .SelectMany(f => f.Files.Skip(1)).ToList();
+
+            dupFiles.ForEach(File.Delete);
         }
 
         public bool InsertRecord(Record record, bool isReimburse)
@@ -613,6 +729,39 @@ namespace WorkLog
             }
             return true;
         }
+
+
+        public static bool DirectoryHasPermission(string DirectoryPath, FileSystemRights AccessRight)
+        {
+            if (string.IsNullOrEmpty(DirectoryPath))
+                return false;
+
+            try
+            {
+                AuthorizationRuleCollection rules = Directory.GetAccessControl(DirectoryPath).GetAccessRules(true, true, typeof(System.Security.Principal.SecurityIdentifier));
+                WindowsIdentity identity = WindowsIdentity.GetCurrent();
+
+                foreach (FileSystemAccessRule rule in rules)
+                {
+                    if (identity.Groups.Contains(rule.IdentityReference))
+                    {
+                        if ((AccessRight & rule.FileSystemRights) == AccessRight)
+                        {
+                            if (rule.AccessControlType == AccessControlType.Allow)
+                                return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Source);
+                return false;
+            }
+            return
+                false;
+        }
+
     }
 
     public static class CSVUtility

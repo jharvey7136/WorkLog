@@ -14,6 +14,7 @@ namespace WorkLog
         {
             try
             {
+                logger.Info("Initializing Category Form");
                 InitializeComponent();
                 InitializeDefaults();
 
@@ -610,7 +611,7 @@ namespace WorkLog
 
         private void CategoryForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //logger.Info("Category form closing... Backing up database");
+            logger.Info("Category form closing... Backing up database");
             oDAL.BackupDB();
         }
 

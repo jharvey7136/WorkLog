@@ -50,9 +50,6 @@ namespace WorkLog
 
                 txtReimburseCost.KeyPress += TxtReimburseCost_KeyPress;
                 dgvRecords.RowsAdded += (s, a) => OnRowNumberChanged();
-
-                //_logger.LogInformation("Work Log opened... Backing up current database state");
-                oDAL.BackupDB();
             }
             catch (Exception ex)
             {
@@ -65,13 +62,16 @@ namespace WorkLog
         {
             try
             {
-                if (ConfigurationManager.ConnectionStrings["Default"].ConnectionString == "") 
-                {
+                if (ConfigurationManager.ConnectionStrings["Default"] == null)
                     SetDatabaseConnection();
-                    //MessageBox.Show(ConfigurationManager.ConnectionStrings["Default"].ConnectionString);
+
+
+                ConnectionStringSettings con = ConfigurationManager.ConnectionStrings["Default"];
+
+                if (string.IsNullOrEmpty(con.ToString()))
+                {
+                    SetDatabaseConnection();                    
                 }
-
-
 
                 dtpStartTime.CustomFormat = @"M/d/yyyy h:mm tt";
                 dtpEndTime.CustomFormat = @"M/d/yyyy h:mm tt";
@@ -90,7 +90,7 @@ namespace WorkLog
 
                 oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1 ORDER BY ClientName", cbClient, "ClientName", "ClientID");
                 oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
-                oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1", cbFilterClient, "ClientName", "ClientID");
+                oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1 ORDER BY ClientName", cbFilterClient, "ClientName", "ClientID");
 
                 dtpFilterStart.CustomFormat = @"M/dd/yyyy";
                 dtpFilterEnd.CustomFormat = @"M/dd/yyyy";
@@ -513,7 +513,7 @@ namespace WorkLog
                 CategoryForm formCategories = new CategoryForm();
                 formCategories.ShowDialog();
                 oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1 ORDER BY ClientName", cbClient, "ClientName", "ClientID");
-                oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1", cbProService, "ProServiceName", "ProServiceID");
+                oDAL.FillComboBox("SELECT ProServiceID, ProServiceName FROM ProfessionalService WHERE Enabled = 1 ORDER BY ProServiceName", cbProService, "ProServiceName", "ProServiceID");
                 oDAL.FillComboBox("SELECT ClientID, ClientName FROM Client WHERE Enabled = 1 ORDER BY ClientName", cbFilterClient, "ClientName", "ClientID");
 
             }
@@ -688,15 +688,6 @@ namespace WorkLog
         {
             try
             {
-                //string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTimeOnly, R.EndTimeOnly, R.Hours, " +
-                //             "C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost)  Billable, R.Description, R.Comments, R.RowID, " +
-                //             "C.AddressLine1, C.AddressLine2, C.City, C.State, C.Zip, R.StartTime, R.EndTime  " +
-                //             "FROM Record R " +
-                //             "INNER JOIN Client C ON R.Client = C.ClientName " +
-                //             "ORDER BY R.Date, R.StartTime";
-
-                //oDAL.FillDataGrid(cmd, dgvRecords);
-
                 FillRecordView("");
 
                 string cmd = "SELECT MIN(date) FROM Record";
@@ -729,7 +720,7 @@ namespace WorkLog
 
                 if (dgvRecords.SelectedRows.Count > 0)
                 {
-                    oDAL.BackupDB();
+                    //oDAL.BackupDB();
                     int i = 0;
                     DialogResult result = MessageBox.Show(@"Selected rows will be deleted. Continue?", @"Confirmation", MessageBoxButtons.YesNo);
                     if (result == DialogResult.Yes)
@@ -789,7 +780,7 @@ namespace WorkLog
                     DisplayMessage("An unexpected error has occurred. Database backup failed", Color.Red);
                     return;
                 }
-                DisplayMessage("Backup successful!", Color.Green);
+                DisplayMessage("Backup successful", Color.Green);
             }
             catch (Exception ex)
             {
@@ -803,8 +794,12 @@ namespace WorkLog
             try
             {
                 _logger.LogInformation("Backup archive initiated via Tools -> Archive Backups");
-                oDAL.ArchiveBackups();
-                MessageBox.Show(@"Archive successful!");
+                if (!oDAL.ArchiveBackups())
+                {
+                    DisplayMessage("An unexpected error has occurred. Archive failed", Color.Red);
+                    return;
+                }                
+                DisplayMessage("Archive successful", Color.Green);
             }
             catch (Exception ex)
             {
@@ -944,7 +939,7 @@ namespace WorkLog
                 if (iCount > 0)
                 {
                     string cmd = "SELECT R.CreateDate, R.Client, R.ProService, R.Task, R.Item, R.Date, R.StartTimeOnly, R.EndTimeOnly, R.Hours, " +
-                                 "C.Rate, R.ReimbursableCost, (R.Hours * C.Rate) + R.ReimbursableCost Billable, R.Description, R.Comments, R.RowID, " +
+                                 "C.Rate, R.ReimbursableCost, round((R.Hours * C.Rate) + R.ReimbursableCost, 2) Billable, R.Description, R.Comments, R.RowID, " +
                                  "C.AddressLine1, C.AddressLine2, C.City, C.State, C.Zip, R.StartTime, R.EndTime  " +
                                  "FROM Record R " +
                                  "INNER JOIN Client C ON R.Client = C.ClientName " +
@@ -963,7 +958,7 @@ namespace WorkLog
 
         private void InitializeTimer()
         {
-            timer.Interval = 600000;
+            timer.Interval = 9000000;
             timer.Enabled = true;
             timer.Tick += Timer_Tick;
         }
@@ -972,8 +967,7 @@ namespace WorkLog
         {
             try
             {
-                oDAL.BackupDB();
-                //_logger.LogInformation(@"Timer tick: Database backup executed");
+                oDAL.BackupDB();                
             }
             catch (Exception ex)
             {
@@ -982,9 +976,25 @@ namespace WorkLog
             }
         }
 
+        private void DatabaseConnectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BackupDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            oDAL.SetBackupDir();
+        }
+
+        private void ArchiveDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            oDAL.SetArchiveDir();
+        }
+
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SetDatabaseConnection();            
+            SetDatabaseConnection();
+            ResetRecordGrid();
         }
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1017,14 +1027,15 @@ namespace WorkLog
                 {
                     ofg.Filter = @"SQLite Database|*.db";
                     ofg.RestoreDirectory = true;
+                    ofg.Title = "Select SQLite database";
 
-                    if (ofg.ShowDialog() != DialogResult.OK) return;
+                    if (ofg.ShowDialog() != DialogResult.OK) 
+                        return;
 
                     string filePath = @"DataSource=" + ofg.FileName + ";Version=3;";
 
-                    SetConnection("Default", filePath);
+                    oDAL.SetConnectionStringConfig("Default", filePath);                    
 
-                    oDAL.SetConnectionString(filePath);
                     strCurrDatabase = oDAL.ReadString("SELECT file FROM pragma_database_list WHERE seq = 0");
                     lblDatabaseName.Text = Path.GetFileName(strCurrDatabase);
                     ResetRecordGrid();
@@ -1038,31 +1049,5 @@ namespace WorkLog
                 _logger.LogError(ex, ex.Source);
             }
         }
-
-
-        public static void SetConfig(string key, string value)
-        {
-            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
-            var entry = config.AppSettings.Settings[key];
-            if (entry == null)
-                config.AppSettings.Settings.Add(key, value);
-            else
-                config.AppSettings.Settings[key].Value = value;
-
-            config.Save(ConfigurationSaveMode.Modified);
-        }
-
-
-
-        public static void SetConnection(string key, string value)
-        {
-            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            var connectionStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
-            connectionStringsSection.ConnectionStrings[key].ConnectionString = value;
-            config.Save();
-            ConfigurationManager.RefreshSection("connectionStrings");
-        }
-
     }
 }
